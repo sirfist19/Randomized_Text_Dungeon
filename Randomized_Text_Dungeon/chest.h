@@ -1,6 +1,7 @@
 #ifndef chest_h
 #define chest_h
 #include "weapon.h"
+#include "potion.h"
 #include "helper_fxns.h"
 #include <vector>
 
@@ -19,6 +20,7 @@ public:
 		int amt_of_gold = random(0, 20);
 		contents.push_back(new gold(amt_of_gold));
 		contents.push_back(new dagger());
+		contents.push_back(new lesser_healing_potion());
 	}
 	void open()
 	{
@@ -39,6 +41,10 @@ public:
 		default:
 			break;
 		}
+	}
+	std::string identify()
+	{
+		return "chest";
 	}
 	std::vector<std::string> get_all_content_names() const 
 	{
@@ -80,6 +86,11 @@ public:
 	{
 		return contents;
 	}
+	bool is_empty() {
+		if (contents.size() == 0)
+			return true;
+		return false;
+	}
 	open_method get_open_status()
 	{
 		return locked;
@@ -91,6 +102,8 @@ public:
 	void display_chest_contents()
 	{
 		print("\nContents:");
+		if (contents.size() == 0)
+			print("\tEMPTY");
 		for (unsigned int i = 0; i < contents.size(); i++)
 		{
 			std::cout << "\t-";

@@ -9,8 +9,8 @@
 #include "player.h"
 
 enum verb {
-	go, examine, look, take, drop, quit, clear,
-	open, jump, info, hello, inventory, help, list, error
+	go, examine, look, take, drop, drink, quit, clear,
+	open, jump, info, hello, inventory, help, list, equip, error
 };
 enum noun {
 	north, south, east, west, pit, _chest, all, error_, un_assigned, _none
@@ -47,6 +47,9 @@ public:
 	void help();
 	void open();
 	void take();
+	void equip();
+	void drink();
+	void drop();
 	void clear_command();
 	std::string get_player_input_noun() const;
 	//void open(object* cur);

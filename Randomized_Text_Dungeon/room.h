@@ -24,6 +24,7 @@ class room {
 		int depth;//smallest number of rooms from the start room to this room
 		depth_tier tier;
 		std::vector<Enemy*> enemies;
+		std::vector<object*> items;
 		chest* Chest;
 
 	public:
@@ -46,15 +47,23 @@ class room {
 				delete enemies[i];
 			}
 		}
-		chest* get_chest()
+		chest* get_chest() const
 		{
 			return Chest;
 		}
-		int get_depth()
+		std::vector<object*> get_items() const 
+		{
+			return items;
+		}
+		void add_item(object* in)
+		{
+			items.push_back(in);
+		}
+		int get_depth() const
 		{
 			return depth;
 		}
-		depth_tier get_tier()
+		depth_tier get_tier() const
 		{
 			return tier;
 		}
@@ -70,7 +79,30 @@ class room {
 				}
 			}
 		}
+		void clear_items()
+		{
+			items.clear();
+		}
+		object* get_matching_object(std::string player_input_noun)
+		{
+			for (unsigned int i = 0; i < items.size(); i++)
+			{
+				std::string cur_name = items[i]->get_name();
+				turn_to_lower_case(cur_name);
+					
+				if (player_input_noun == cur_name)
+				{
+					object* result = items[i];
 
+					//to remove the object from the chest move the last vector item to it's place and 
+					//then pop_back()
+					items[i] = items[items.size() - 1];
+					items.pop_back();
+					return result;
+				}
+			}
+			return nullptr;
+		}
 		void assign_room_type(depth_tier tier, room_descriptions* descriptions_holder)
 		{
 			std::vector<room_description*> start_descriptions =
@@ -223,11 +255,38 @@ class room {
 		{
 			print(description);
 			std::cout << "\n";
-			if (Chest != nullptr)
+			if ((Chest != nullptr) || (items.size() != 0))
 			{
-				std::cout<<"There is a wooden chest lying on the floor. ";
+				std::cout << "On the floor you find ";
+				if (Chest != nullptr)
+				{
+					if(items.size() == 0)
+						std::cout << "a wooden chest";
+					else
+						std::cout << "a wooden chest, ";
+				}
+				if (items.size() != 0)
+				{
+					for (unsigned int i = 0; i < items.size(); i++)
+					{
+						
+						if (i != items.size() - 1)
+							std::cout << items[i]->get_name() << ", ";
+						else if (Chest != nullptr)
+							std::cout << "and " << items[i]->get_name();
+						else
+							items[i]->get_name();
+					}
+				}
+				std::cout << ".\n";
 			}
 			display_exit_information();
+
+			if (id == 1)
+			{
+				std::cout << "\n";
+				print("TIP: Don't know what to type. Type 'help' for more information.");
+			}
 		}
 		
 		void display_exit_information() const

@@ -154,6 +154,7 @@
     <ClInclude Include="helper_fxns.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="potion.h" />
     <ClInclude Include="room.h" />
     <ClInclude Include="room_descriptons.h" />
     <ClInclude Include="weapon.h" />

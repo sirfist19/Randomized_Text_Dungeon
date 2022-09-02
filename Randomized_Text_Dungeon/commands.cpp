@@ -206,6 +206,12 @@ bool commands::parseInputVector(bool& game_over)
 	case verb::jump:
 		jump();
 		break;
+	case verb::drink:
+		drink();
+		break;
+	case verb::equip:
+		equip();
+		break;
 	case verb::quit:
 		game_over = true;
 		print("\nYou quit the game. Bye bye. See you next time!\n");
@@ -219,6 +225,9 @@ bool commands::parseInputVector(bool& game_over)
 		break;
 	case verb::inventory:
 		player->display_inventory();
+		break;
+	case verb::drop:
+		drop();
 		break;
 	case verb::help:
 		help();
@@ -254,6 +263,7 @@ commands::commands(std::string player_name)
 	verb_chart["look"] = verb::look;
 	verb_chart["take"] = verb::take;
 	verb_chart["pickup"] = verb::take;
+	verb_chart["equip"] = verb::equip;
 	verb_chart["quit"] = verb::quit;
 	verb_chart["clear"] = verb::clear;
 	verb_chart["open"] = verb::open;
@@ -263,6 +273,8 @@ commands::commands(std::string player_name)
 	verb_chart["hello"] = verb::hello;
 	verb_chart["help"] = verb::help;
 	verb_chart["list"] = verb::list;
+	verb_chart["drink"] = verb::drink;
+	verb_chart["drop"] = verb::drop;
 
 	noun_chart["north"] = noun::north;
 	noun_chart["south"] = noun::south;
@@ -308,7 +320,7 @@ std::string commands::get_player_input_noun() const
 	if (cur_player_input.size() == 1)
 		return player_input_noun;
 	
-	for (int i = 1; i < cur_player_input.size(); i++)
+	for (unsigned int i = 1; i < cur_player_input.size(); i++)
 	{
 		if (i != 1) 
 		{
@@ -318,20 +330,106 @@ std::string commands::get_player_input_noun() const
 	}
 	return player_input_noun;
 }
-void commands::take()
+void commands::equip()
 {
-	chest* cur_room_chest = player->get_cur_room()->get_chest();
-	std::vector<std::string> chest_content_names = cur_room_chest->get_all_content_names();
-	open_method open_status = cur_room_chest->get_open_status();
 	std::string player_input_noun = get_player_input_noun();
-	object* obj_to_take = cur_room_chest->get_matching_object(player_input_noun);
+	object* obj_to_equip = player->get_matching_object(player_input_noun);
+	
+	if (player_input_noun == "")
+	{
+		print("You can't equip nothing.");
+		return;
+	}
+	if (obj_to_equip == nullptr)
+	{
+		print("That item is not in your inventory.");
+		return;
+	}
+	std::string identifier = obj_to_equip->identify();
 
-	//taking only one item or one type of item
-	if ((obj_to_take != nullptr) && (open_status == open_method::already_open))
+	if (identifier == "gold")
+	{
+		print("You cannot equip gold.");
+		return;
+	}
+	if (identifier == "chest")
+	{
+		print("You cannot equip chests.");
+		return;
+	}
+	if (identifier == "potion" || identifier == "healing potion")
+	{
+		print("You cannot equip potions.");
+		return;
+	}
+	if (identifier == "weapon")
+	{
+		weapon* old_weapon = player->get_weapon();
+		player->set_weapon(obj_to_equip);
+		player->delete_item_from_inventory(obj_to_equip);
+
+		if (old_weapon->get_name() != "Fists")
+		{
+			player->add_item_to_inventory(old_weapon);
+			std::cout << "You equipped " << obj_to_equip->get_name() <<
+				" and " << old_weapon->get_name() << " has been placed into you inventory.\n";
+		}
+		else //if the player only had fists before
+		{
+			std::cout << "You equipped " << obj_to_equip->get_name() << ".\n";
+		}
+	}
+}
+void commands::take() //take objects either from the room's items or an open chest in the room
+{
+	//the noun is invalid
+	if (cur_noun == noun::_none)
+	{
+		std::cout << "You can't take nothing. Type an object for the take command.\n";
+		return;
+	}
+
+	//variables
+	std::string player_input_noun = get_player_input_noun();
+	room* cur_room = player->get_cur_room();
+	chest* cur_room_chest = cur_room->get_chest();
+	std::vector<std::string> chest_content_names; 
+	open_method open_status; 
+	std::vector<object*> floor_contents = cur_room->get_items();
+
+	object* obj_to_take_room = cur_room->get_matching_object(player_input_noun);
+	object* obj_to_take_chest = nullptr;
+	if (cur_room_chest != nullptr)
+	{
+		obj_to_take_chest = cur_room_chest->get_matching_object(player_input_noun);
+		open_status = cur_room_chest->get_open_status();
+		chest_content_names = cur_room_chest->get_all_content_names();
+	}
+		
+
+	//if no object is recognized
+	if ((obj_to_take_chest == nullptr) && (obj_to_take_room == nullptr) && (cur_noun != noun::all))
+	{
+		print("That object is not in this room.");
+		return;
+	}
+	//if there are no items in the room and all is used
+	bool no_items_to_take = ((cur_noun == noun::all) && (cur_room_chest == nullptr) && (floor_contents.size() == 0))
+		|| ((cur_noun == noun::all) && (floor_contents.size() == 0) && (cur_room_chest != nullptr) && (cur_room_chest->is_empty()))
+		|| ((cur_noun == noun::all) && (floor_contents.size() == 0) && (cur_room_chest != nullptr) && (cur_room_chest->get_open_status() != open_method::already_open));
+	if (no_items_to_take)
+	{
+		print("There are no items in the room to take.");
+		return;
+	}
+
+	//TAKING FROM THE ROOM FLOOR
+	//taking only one item or one type of item 
+	if ((obj_to_take_room != nullptr) && (cur_noun != noun::all))
 	{
 		//print what the player took
-		std::string name = obj_to_take->get_name();
-		int amt = obj_to_take->get_amt();
+		std::string name = obj_to_take_room->get_name();
+		int amt = obj_to_take_room->get_amt();
 		std::cout << "You took ";
 
 		if (amt > 1)
@@ -353,38 +451,28 @@ void commands::take()
 			}
 		}
 
-		std::cout << name <<".\n";
+		std::cout << name << " from the floor.\n";
 
 		//add the item to the player's inventory
-		player->add_item_to_inventory(obj_to_take);
+		player->add_item_to_inventory(obj_to_take_room);
 	}
-	//the noun is invalid
-	else if (cur_noun == noun::_none)
+	//taking all items from the floor
+	else if ((cur_noun == noun::all) && (floor_contents.size() > 0))
 	{
-		std::cout << "You can't take nothing. Type an object for the take command.\n";
-	}
-	else if ((cur_noun == noun::un_assigned) || ((cur_room_chest != nullptr) && (open_status != open_method::already_open) && (cur_noun == noun::all)))
-	{
-		std::cout << "Object not recognized! Please try again.\n";
-	}
-	//there is a chest and it is open and the noun is all
-	else if ((cur_room_chest != nullptr) && (open_status == open_method::already_open) && (cur_noun == noun::all))
-	{
-		//taking all chest contents
-		std::vector<object*> chest_contents = cur_room_chest->get_all_contents();
+		
 		std::cout << "You took ";
 
-		for (unsigned int i = 0; i < chest_contents.size(); i++)
+		for (unsigned int i = 0; i < floor_contents.size(); i++)
 		{
-			std::string name = chest_contents[i]->get_name();
-			int amt = chest_contents[i]->get_amt();
-			
-			if (i == chest_contents.size() - 1)
+			std::string name = floor_contents[i]->get_name();
+			int amt = floor_contents[i]->get_amt();
+
+			if (i == floor_contents.size() - 1)
 				std::cout << "and ";
 
 			if (amt > 1)
 			{
-				std::cout << amt<<" ";
+				std::cout << amt << " ";
 			}
 			else
 			{
@@ -401,15 +489,185 @@ void commands::take()
 				}
 			}
 
-			if ((chest_contents.size() == 1) || (i == chest_contents.size() - 1))
+			if ((floor_contents.size() == 1) || (i == floor_contents.size() - 1))
 				std::cout << name;
 			else
 				std::cout << name << ", ";
 		}
-		std::cout << ".\n";
-		cur_room_chest->clear_chest_contents();
-		player->add_items_to_inventory(chest_contents);
+		std::cout << " from the floor.\n";
+		cur_room->clear_items();
+		player->add_items_to_inventory(floor_contents);
 	}
+
+	//TAKING FROM A CHEST
+	//taking only one item or one type of item
+	if ((obj_to_take_chest != nullptr) && (open_status == open_method::already_open) && (cur_noun != noun::all))
+	{
+		//print what the player took
+		std::string name = obj_to_take_chest->get_name();
+		int amt = obj_to_take_chest->get_amt();
+		std::cout << "You took ";
+
+		if (amt > 1)
+		{
+			std::cout << amt << " ";
+		}
+		else
+		{
+			switch (name[0])
+			{
+			case 'a':
+			case 'e':
+			case 'i':
+			case 'o':
+			case 'u':
+				std::cout << "an ";
+			default:
+				std::cout << "a ";
+			}
+		}
+		std::cout << name <<" from the chest.\n";
+
+		//add the item to the player's inventory
+		player->add_item_to_inventory(obj_to_take_chest);
+	}
+	
+	//there is a chest and it is open and the noun is all
+	else if ((cur_room_chest != nullptr) && (open_status == open_method::already_open) && (cur_noun == noun::all))
+	{
+		//taking all chest contents
+		std::vector<object*> chest_contents = cur_room_chest->get_all_contents();
+		if (chest_contents.size() > 0)
+		{
+			std::cout << "You took ";
+
+			for (unsigned int i = 0; i < chest_contents.size(); i++)
+			{
+				std::string name = chest_contents[i]->get_name();
+				int amt = chest_contents[i]->get_amt();
+
+				if (i == chest_contents.size() - 1)
+					std::cout << "and ";
+
+				if (amt > 1)
+				{
+					std::cout << amt << " ";
+				}
+				else
+				{
+					switch (name[0])
+					{
+					case 'a':
+					case 'e':
+					case 'i':
+					case 'o':
+					case 'u':
+						std::cout << "an ";
+					default:
+						std::cout << "a ";
+					}
+				}
+
+				if ((chest_contents.size() == 1) || (i == chest_contents.size() - 1))
+					std::cout << name;
+				else
+					std::cout << name << ", ";
+			}
+			std::cout << " from the chest.\n";
+			cur_room_chest->clear_chest_contents();
+			player->add_items_to_inventory(chest_contents);
+		}
+	}
+}
+void commands::drink()
+{
+	std::string player_input_noun = get_player_input_noun();
+	//std::cout << player_input_noun;
+	object* obj_to_drink = player->get_matching_object(player_input_noun);
+
+	if (player_input_noun == "")
+	{
+		print("You can't equip nothing.");
+		return;
+	}
+	if (obj_to_drink == nullptr)
+	{
+		print("That item is not in your inventory.");
+		return;
+	}
+	std::string identifier = obj_to_drink->identify();
+
+	if (identifier == "healing potion")
+	{
+		healing_potion* cur = (healing_potion*)obj_to_drink;
+		int heal_amt = cur->get_heal_amt();
+		health_bar* player_health = player->get_health();
+		int cur_health = player_health->get_health();
+
+		if (player_health->health_is_full())
+		{
+			print("It will have no effect.");
+			return;
+		}
+		player->delete_item_from_inventory(obj_to_drink);
+		player_health->heal(heal_amt);
+		int healed_amt = player_health->get_health() - cur_health;
+		std::cout << "You were healed by " << healed_amt << " health.\n";
+	}
+	else
+	{
+		print("You cannot drink that.");
+		return;
+	}
+}
+void commands::drop()
+{
+	std::string player_input_noun = get_player_input_noun();
+	object* obj_to_drop = player->get_matching_object(player_input_noun);
+
+	if (player_input_noun == "")
+	{
+		print("You can't drop nothing.");
+		return;
+	}
+	if ((obj_to_drop == nullptr) && (cur_noun != noun::all))
+	{
+		print("That item is not in your inventory.");
+		return;
+	}
+	//std::string identifier = obj_to_equip->identify();
+	room* cur_room = player->get_cur_room();
+
+	if (cur_noun != noun::all)
+	{
+		cur_room->add_item(obj_to_drop);
+		player->delete_item_from_inventory(obj_to_drop);
+
+		std::cout << "You dropped " << obj_to_drop->get_name() << " onto the floor.\n";
+	}
+	else //cur_noun == noun::all
+	{
+		std::vector<object*> player_items = player->get_inventory();
+		if (player_items.empty())
+		{
+			print("You have no items to drop.");
+			return;
+		}
+
+		std::string item_names = "";
+		for (unsigned int i = 0; i < player_items.size(); i++)
+		{
+			item_names += player_items[i]->get_name();
+
+			if(i != player_items.size() - 1)
+				item_names += ", ";
+
+			cur_room->add_item(player_items[i]);
+			player->delete_item_from_inventory(player_items[i]);
+		}
+		std::cout << "You dropped " << item_names << " onto the floor.\n";
+	}
+	
 }
 void commands::jump()
 {
@@ -440,32 +698,38 @@ void commands::hello()
 }
 void commands::help()
 {
-	using std::cout;
-	using std::endl;
-	print("When typing a command always use the syntax VERB then an OBJECT.");
-	cout << "    NOTE: In certain commands objects are optional.\n\n";
-	print("Example 1: 'examine key'");
-	cout << "             VERB   OBJ\n";
-	print("Example 2: 'look'");
-	cout << "            VERB\n\n";
-	print("To get a full list of commands type 'list'");
+	std::string player_input_noun = get_player_input_noun();
 
+	if (player_input_noun == "")
+	{
+		print("BASIC COMMANDS: ");
+		print("1. go - Allows the player to move through the dungeon. Need to type a direction (Ex: north or east) as the object.");
+		print("2. quit - Simply quits the game.");
+		print("3. inventory - Shows your health, current weapon, and items.");
+		print("4. open - Opens chests.");
+		print("5. take - Take objects off the ground or from chests.");
+		print("6. equip - Equips items from the inventory into use.");
+		print();
+		print("- To get a full list of commands type 'list'.");
+		print("- To find out more information about a specific command, type 'help' followed by the command you want to learn more about. Ex: help equip");
+		print();
 
-	/*cout << "1.look" << endl;
-	cout << "2.quit" << endl;
-	cout << "3.inventorygo" << endl;
-	cout << "4.examine" << endl;
-	cout << "5.take" << endl;
-	cout << "6.inventory" << endl;
-	cout << "7.drop" << endl;
-	cout << "8.info" << endl;
-	cout << "9.clear" << endl;
-	cout << "10.open" << endl;
-	cout << "11.jump" << endl;*/
+		print("SYNTAX: ");
+		print("When typing a command always use the syntax VERB then an OBJECT.");
+		std::cout << "    NOTE: In certain commands objects are optional.\n\n";
+		print("Example 1: 'examine key'");
+		std::cout << "             VERB   OBJ\n";
+		print("Example 2: 'look'");
+		std::cout << "            VERB\n\n";
+	}
+	else
+	{
+		print("Help command not configured yet to take objects.");
+	}
 }
 void commands::print_all_commands()
 {
-	print("Note: Objects written in upper case letters are room specific and will not be included on this list. These names are still valid in commands.");
+	print("Note: Objects found in rooms are also valid objects.");
 	std::cout << "\nList of all valid verbs: \n";
 	print_all_verbs();
 

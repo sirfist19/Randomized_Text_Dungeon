@@ -37,12 +37,44 @@ public:
 	{
 		inventory.push_back(obj);
 	}
+	std::vector<object*> get_inventory() const
+	{
+		return inventory;
+	}
+	void delete_item_from_inventory(object* obj) //the obj is the object to be deleted
+	{
+		//to remove the object from the player's inventory move the last vector item to it's place and 
+		//then pop_back()
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			if (obj == inventory[i])
+			{
+				inventory[i] = inventory[inventory.size() - 1];
+				inventory.pop_back();
+			}
+		}
+	}
 	void add_items_to_inventory(std::vector<object*> objs)
 	{
 		for (unsigned int i = 0; i < objs.size(); i++)
 		{
 			inventory.push_back(objs[i]);
 		}
+	}
+	object* get_matching_object(std::string player_input_noun) 
+	{
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			std::string cur_name = inventory[i]->get_name();
+			turn_to_lower_case(cur_name);
+
+			if (player_input_noun == cur_name)
+			{
+				object* result = inventory[i];
+				return result;
+			}
+		}
+		return nullptr;
 	}
 	virtual void display_attack_info() 
 	{

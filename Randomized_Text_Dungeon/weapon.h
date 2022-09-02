@@ -22,6 +22,10 @@ public:
 	{
 		std::cout << name << " (Damage: " << damage << ")\n";
 	}
+	std::string identify()
+	{
+		return "weapon";
+	}
 	int get_damage()
 	{
 		return damage;

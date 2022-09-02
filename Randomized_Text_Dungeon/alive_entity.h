@@ -35,6 +35,12 @@ public:
 			health = 0;
 		}
 	}
+	bool health_is_full()
+	{
+		if (health == max_health)
+			return true;
+		return false;
+	}
 	void heal(int& amt) {
 		health += amt;
 
@@ -64,17 +70,22 @@ public:
 		return alive;
 	}
 	
-	std::string get_name()
+	std::string get_name() const
 	{
 		return name;
 	}
-	health_bar* get_health()
+	health_bar* get_health() const
 	{
 		return health;
 	}
-	weapon* get_weapon()
+	weapon* get_weapon() const 
 	{
 		return main_weapon;
+	}
+	void set_weapon(object* new_weapon)
+	{
+		if(new_weapon->identify() == "weapon")
+			main_weapon = (weapon*) new_weapon;
 	}
 	virtual void f() = 0;
 	Alive_Entity(std::string name, weapon* main_weapon, int health) : name(name), alive(true), health(new health_bar(health)), main_weapon(main_weapon)

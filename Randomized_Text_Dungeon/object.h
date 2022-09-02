@@ -32,6 +32,7 @@ public:
 	}
 	virtual void display() = 0;
 	virtual void display_chest() = 0;
+	virtual std::string identify() = 0;
 };
 
 class gold : public object
@@ -55,6 +56,10 @@ public:
 	{
 		std::cout << "Gold x" << amt << "\n";
 	}
+	std::string identify()
+	{
+		return "gold";
+	}
 	gold* combine_gold_piles(gold* a, gold* b)
 	{
 		a->amt = a->amt + b->amt;
@@ -62,6 +67,5 @@ public:
 		return a;
 	}
 };
-
 
 #endif

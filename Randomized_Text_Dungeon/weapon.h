@@ -18,7 +18,10 @@ public:
 		std::cout << "\tDescription - ";
 		print(description);
 	}
-	
+	virtual void display_chest()
+	{
+		std::cout << name << " (Damage: " << damage << ")\n";
+	}
 	int get_damage()
 	{
 		return damage;

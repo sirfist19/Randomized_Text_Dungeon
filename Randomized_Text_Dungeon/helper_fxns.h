@@ -19,6 +19,8 @@ void printUnderscore();
 void game_Over();
 int random(int start, int end);
 std::vector<std::string> prompt();
+void turn_to_lower_case(std::string& user_input);
+void turn_to_lower_case(std::vector<std::string>& user_input);
 std::vector<std::string> basic_parse(std::string& user_input);
 std::string get_player_name();
 std::string welcome_screen();

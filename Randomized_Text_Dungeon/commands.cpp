@@ -119,60 +119,58 @@ void commands::input_loop(bool& loop, bool& game_over)
 
 	while (loop)
 	{
-		std::vector<std::string> usr_text = prompt();
+		cur_player_input = prompt();
 		printUnderscore();
-		loop = parseInputVector(usr_text, game_over);
+		loop = parseInputVector(game_over);
 
 		if (loop)
 			printUnderscore();
 	}
 }
-bool commands::parseInputVector(std::vector<std::string> in, bool& game_over)
+bool commands::parseInputVector(bool& game_over) 
 {
 	//set cur_noun and cur_verb based on user input
 	//if not found in the maps then return false and print 
 	//command string not found
 
 	//returning false reprints the top bar and room info
-	if (in.size() <= 0)
+	if (cur_player_input.size() <= 0)
 	{
 		print("You cannot enter nothing. That's not a command. Please try again.");
 		return true;
 	}
 
+	//verb stuff
 	std::unordered_map<std::string, verb>::iterator gotVerb
-		= verb_chart.find(in[0]);
-	std::unordered_map<std::string, noun>::iterator gotNoun;
-	if (in.size() > 1)
-	{
-		gotNoun = noun_chart.find(in[1]);
-	}
-	else //noun not typed
-		cur_noun = noun::un_assigned;
+		= verb_chart.find(cur_player_input[0]);
 
-	
 	if (gotVerb == verb_chart.end())
 	{
 		std::cout << "Command not recognized! Please try again.\n";
 		return true;
 	}
-	if ((in.size() > 1) && (gotNoun == noun_chart.end())) //if a noun was typed but not recognized
-	{
-		std::cout << "Object not recognized! Please try again.\n";
-		return true;
-	}
-
 	cur_verb = gotVerb->second;
-	if(in.size() > 1)
+
+	//noun stuff
+	std::unordered_map<std::string, noun>::iterator gotNoun;
+	if (cur_player_input.size() > 1)
+	{
+		gotNoun = noun_chart.find(cur_player_input[1]);
+	}
+	if ((cur_player_input.size() > 1) && (gotNoun != noun_chart.end()))//size is greater than 1 and noun is recognized
 		cur_noun = gotNoun->second;
+	else if ((cur_player_input.size() <= 1))//if a noun is not typed
+		cur_noun = noun::_none;
+	else
+		cur_noun = noun::un_assigned;
 
 	if (DEBUG_MODE)
 	{
-		std::cout<<"Input Size: "<<in.size();
+		std::cout<<"Input Size: "<<cur_player_input.size();
 		std::cout << "Current Verb: " << cur_verb;
 		std::cout << "\nCurrent Noun: " << cur_noun;
 	}
-	switch (cur_verb)
+	switch (cur_verb)//goes to all commands
 	{
 	case verb::go:
 		if (cur_noun == noun::north)
@@ -228,10 +226,9 @@ bool commands::parseInputVector(std::vector<std::string> in, bool& game_over)
 	case verb::list:
 		print_all_commands();
 		break;
-		//case verb::take:
-		//	debug_print("In taking case");
-		//	take(player->get_cur_room());
-		//	break;
+	case verb::take:
+		take();
+		break;
 	default:
 		print("Command recognized but not implemented");
 		break;
@@ -273,6 +270,7 @@ commands::commands(std::string player_name)
 	noun_chart["west"] = noun::west;
 	noun_chart["pit"] = noun::pit;
 	noun_chart["chest"] = noun::_chest;
+	noun_chart["all"] = noun::all;
 	
 }
 Player* commands::get_player()
@@ -291,7 +289,7 @@ void commands::open()
 {
 	chest* cur_room_chest = player->get_cur_room()->get_chest();
 
-	if (cur_noun == noun::un_assigned)
+	if (cur_noun == noun::_none)
 	{
 		std::cout << "You can't open nothing. Type an object for the open command.\n";
 	}
@@ -302,6 +300,115 @@ void commands::open()
 	else if ((cur_room_chest != nullptr)&&(cur_noun == noun::_chest)) 
 	{
 		cur_room_chest->open();
+	}
+}
+std::string commands::get_player_input_noun() const 
+{
+	std::string player_input_noun = "";
+	if (cur_player_input.size() == 1)
+		return player_input_noun;
+	
+	for (int i = 1; i < cur_player_input.size(); i++)
+	{
+		if (i != 1) 
+		{
+			player_input_noun += " ";
+		}
+		player_input_noun += cur_player_input[i];
+	}
+	return player_input_noun;
+}
+void commands::take()
+{
+	chest* cur_room_chest = player->get_cur_room()->get_chest();
+	std::vector<std::string> chest_content_names = cur_room_chest->get_all_content_names();
+	open_method open_status = cur_room_chest->get_open_status();
+	std::string player_input_noun = get_player_input_noun();
+	object* obj_to_take = cur_room_chest->get_matching_object(player_input_noun);
+
+	//taking only one item or one type of item
+	if ((obj_to_take != nullptr) && (open_status == open_method::already_open))
+	{
+		//print what the player took
+		std::string name = obj_to_take->get_name();
+		int amt = obj_to_take->get_amt();
+		std::cout << "You took ";
+
+		if (amt > 1)
+		{
+			std::cout << amt << " ";
+		}
+		else
+		{
+			switch (name[0])
+			{
+			case 'a':
+			case 'e':
+			case 'i':
+			case 'o':
+			case 'u':
+				std::cout << "an ";
+			default:
+				std::cout << "a ";
+			}
+		}
+
+		std::cout << name <<".\n";
+
+		//add the item to the player's inventory
+		player->add_item_to_inventory(obj_to_take);
+	}
+	//the noun is invalid
+	else if (cur_noun == noun::_none)
+	{
+		std::cout << "You can't take nothing. Type an object for the take command.\n";
+	}
+	else if ((cur_noun == noun::un_assigned) || ((cur_room_chest != nullptr) && (open_status != open_method::already_open) && (cur_noun == noun::all)))
+	{
+		std::cout << "Object not recognized! Please try again.\n";
+	}
+	//there is a chest and it is open and the noun is all
+	else if ((cur_room_chest != nullptr) && (open_status == open_method::already_open) && (cur_noun == noun::all))
+	{
+		//taking all chest contents
+		std::vector<object*> chest_contents = cur_room_chest->get_all_contents();
+		std::cout << "You took ";
+
+		for (unsigned int i = 0; i < chest_contents.size(); i++)
+		{
+			std::string name = chest_contents[i]->get_name();
+			int amt = chest_contents[i]->get_amt();
+			
+			if (i == chest_contents.size() - 1)
+				std::cout << "and ";
+
+			if (amt > 1)
+			{
+				std::cout << amt<<" ";
+			}
+			else
+			{
+				switch (name[0])
+				{
+				case 'a':
+				case 'e':
+				case 'i':
+				case 'o':
+				case 'u':
+					std::cout << "an ";
+				default:
+					std::cout << "a ";
+				}
+			}
+
+			if ((chest_contents.size() == 1) || (i == chest_contents.size() - 1))
+				std::cout << name;
+			else
+				std::cout << name << ", ";
+		}
+		std::cout << ".\n";
+		cur_room_chest->clear_chest_contents();
+		player->add_items_to_inventory(chest_contents);
 	}
 }
 void commands::jump()

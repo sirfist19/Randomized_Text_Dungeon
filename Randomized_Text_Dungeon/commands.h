@@ -13,7 +13,7 @@ enum verb {
 	open, jump, info, hello, inventory, help, list, error
 };
 enum noun {
-	north, south, east, west, pit, _chest, error_, un_assigned
+	north, south, east, west, pit, _chest, all, error_, un_assigned, _none
 };
 
 class commands //a very high up class
@@ -22,6 +22,7 @@ class commands //a very high up class
 private:
 	Player* player;
 	dungeon* Dungeon;
+	std::vector<std::string> cur_player_input;
 	noun cur_noun;
 	verb cur_verb;
 	std::unordered_map<std::string, verb> verb_chart;
@@ -31,7 +32,7 @@ public:
 	
 	commands(std::string player_name);//default constructor
 	~commands();
-	bool parseInputVector(std::vector<std::string> in, bool& game_over);
+	bool parseInputVector(bool& game_over);
 	void print_all_commands();
 	void print_all_verbs();
 	void print_all_nouns();
@@ -45,7 +46,9 @@ public:
 	void jump();
 	void help();
 	void open();
+	void take();
 	void clear_command();
+	std::string get_player_input_noun() const;
 	//void open(object* cur);
 	void go(int index);
 	Player* get_player();

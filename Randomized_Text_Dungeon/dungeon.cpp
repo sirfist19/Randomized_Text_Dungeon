@@ -170,16 +170,13 @@ void dungeon::dfs_set_depth() const
 	//for the first room
 	int cur_depth = 0;
 	cur_room->set_depth(cur_depth);
-	
 	visited.push_back(cur_room);
-
 	int* cur_exits = cur_room->get_exits();
 	cur_depth = 1;//dealing with the rooms next to the first room
 
 	for (int i = 0; i < 4; i++)
 	{
 		int id = cur_exits[i];
-		
 		if ((cur_exits[i] != 0) && (!in_visited(visited, id))) {
 			room* next_room = rooms[id - 1];
 			next_room->set_depth(cur_depth);

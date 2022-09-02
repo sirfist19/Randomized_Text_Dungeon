@@ -80,6 +80,7 @@ std::string input()
 	std::cout << ">";
 	std::string in;
 	std::getline(std::cin, in);
+	turn_to_lower_case(in);
 	return in;
 }
 void Quit()
@@ -135,8 +136,11 @@ std::vector<std::string> prompt()
 	std::string temp = "";
 	std::getline(std::cin, temp);
 	std::vector<std::string> res;
-	if ((temp != "") && (&temp != nullptr))
+	if ((temp != "") && (&temp != nullptr)) {
 		res = basic_parse(temp);
+		turn_to_lower_case(res);
+	}
+		
 	return res;
 }
 std::vector<std::string> basic_parse(std::string& user_input)
@@ -165,9 +169,27 @@ std::vector<std::string> basic_parse(std::string& user_input)
 	}
 	return res;
 }
+void turn_to_lower_case(std::string& user_input)
+{
+	for (unsigned int i = 0; i < user_input.size(); i++)
+	{
+		user_input[i] = tolower(user_input[i]);
+	}
+}
+void turn_to_lower_case(std::vector<std::string>& user_input)
+{
+	for (unsigned int i = 0; i < user_input.size(); i++)
+	{
+		for(unsigned int j = 0; j < user_input[i].size(); j++)
+			user_input[i][j] = tolower(user_input[i][j]);
+	}
+}
 std::string get_player_name()
 {
-	std::string name = input();
+	print();
+	std::cout << ">";
+	std::string name;
+	std::getline(std::cin, name);
 	std::cout << "\nAre you sure that " << name << " is correct?\n";
 	print("1. Yes");
 	print("2. No");

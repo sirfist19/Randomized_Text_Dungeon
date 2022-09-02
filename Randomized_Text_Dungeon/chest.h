@@ -40,12 +40,66 @@ public:
 			break;
 		}
 	}
-	void display_chest_contents()
+	std::vector<std::string> get_all_content_names() const 
 	{
+		std::vector<std::string> names;
 		for (unsigned int i = 0; i < contents.size(); i++)
 		{
-			contents[i]->display();
+			std::string cur_name = contents[i]->get_name();
+			names.push_back(cur_name);
 		}
+		turn_to_lower_case(names);
+		return names;
+	}
+	object* get_matching_object(std::string player_input_noun)  
+	{
+		if (locked == open_method::already_open)
+		{
+			for (unsigned int i = 0; i < contents.size(); i++)
+			{
+				std::string cur_name = contents[i]->get_name();
+				turn_to_lower_case(cur_name);
+				//std::cout << "Cur Chest obj name: " << cur_name<<"\n";
+
+				if (player_input_noun == cur_name)
+				{
+					object* result = contents[i];
+
+					//to remove the object from the chest move the last vector item to it's place and 
+					//then pop_back()
+					contents[i] = contents[contents.size() - 1];
+					contents.pop_back();
+
+					return result;
+				}
+			}
+		}
+		return nullptr;
+	}
+	std::vector<object*> get_all_contents()
+	{
+		return contents;
+	}
+	open_method get_open_status()
+	{
+		return locked;
+	}
+	void clear_chest_contents()
+	{
+		contents.clear();
+	}
+	void display_chest_contents()
+	{
+		print("\nContents:");
+		for (unsigned int i = 0; i < contents.size(); i++)
+		{
+			std::cout << "\t-";
+			contents[i]->display_chest();
+		}
+	}
+	void display_chest()
+	{
+		print(name);
 	}
 	void display()
 	{

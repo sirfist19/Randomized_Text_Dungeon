@@ -19,15 +19,29 @@ public:
 		//printEquals();
 		std::cout << name << "'s Inventory\n";
 		health->display_health_bar();
-		main_weapon->display();
+		std::cout << "Weapon: ";
+		main_weapon->display_chest();
 
 		std::cout << "\nItems: ";
 
 		if (inventory.size() == 0)
-			std::cout << "\n NO ITEMS IN INVENTORY\n";
+			std::cout << "\n NO ITEMS IN INVENTORY";
+		std::cout << "\n";
 		for (unsigned int i = 0; i < inventory.size(); i++)
 		{
-			inventory[i]->display();
+			std::cout << "\t-";
+			inventory[i]->display_chest();
+		}
+	}
+	void add_item_to_inventory(object* obj)
+	{
+		inventory.push_back(obj);
+	}
+	void add_items_to_inventory(std::vector<object*> objs)
+	{
+		for (unsigned int i = 0; i < objs.size(); i++)
+		{
+			inventory.push_back(objs[i]);
 		}
 	}
 	virtual void display_attack_info() 

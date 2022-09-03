@@ -16,6 +16,29 @@ void commands::game_loop(commands* game, bool& game_over)
 	fighting(cur_room, game_over, player);
 	input_loop(loop, game_over);
 }
+void commands::stack_objects(std::vector<object*>& in)
+{
+	//player->display_inventory();
+	//n^2 algo to stack same objects
+	bool combine = false;
+	for (unsigned int i = 0; i < in.size(); i++)
+	{
+		for (unsigned int j = i + 1; j < in.size(); j++)
+		{
+			combine = in[i]->is_same_type_of_object(in[j]);
+
+			if (combine)
+			{
+				//std::cout << "Combining " << in[i]->get_name() << " with " << in[j]->get_name();
+				in[i]->combine(in[j]);//in[j] is now invalid
+
+				//remove in[j]
+				in[j] = in[in.size() - 1];//set in[j] to the last element of the vector
+				in.pop_back();
+			}
+		}
+	}
+}
 void commands::fighting(room* cur_room, bool& game_over, Player* player)
 {
 	//fighting stuff
@@ -389,7 +412,7 @@ void commands::equip_weapon(object* obj_to_equip)
 {
 	weapon* old_weapon = player->get_weapon();
 	player->set_weapon(obj_to_equip);
-	player->delete_item_from_inventory(obj_to_equip);
+	player->delete_item_from_inventory(obj_to_equip, 1);
 
 	if (old_weapon->get_name() != "Fists")
 	{
@@ -489,7 +512,7 @@ void commands::take() //take objects either from the room's items or an open che
 			std::string name = floor_contents[i]->get_name();
 			int amt = floor_contents[i]->get_amt();
 
-			if (i == floor_contents.size() - 1)
+			if ((i == floor_contents.size() - 1) && (i != 0))
 				std::cout << "and ";
 
 			if (amt > 1)
@@ -568,7 +591,7 @@ void commands::take() //take objects either from the room's items or an open che
 				std::string name = chest_contents[i]->get_name();
 				int amt = chest_contents[i]->get_amt();
 
-				if (i == chest_contents.size() - 1)
+				if ((i == floor_contents.size() - 1) && (i != 0))
 					std::cout << "and ";
 
 				if (amt > 1)
@@ -600,6 +623,11 @@ void commands::take() //take objects either from the room's items or an open che
 			player->add_items_to_inventory(chest_contents);
 		}
 	}
+
+	//stack the player's inventory
+	std::vector<object*> inventory = player->get_inventory();
+	stack_objects(inventory);
+	player->set_inventory(inventory);
 }
 void commands::drink()
 {
@@ -631,7 +659,7 @@ void commands::drink()
 			print("It will have no effect.");
 			return;
 		}
-		player->delete_item_from_inventory(obj_to_drink);
+		player->delete_item_from_inventory(obj_to_drink, 1);
 		player_health->heal(heal_amt);
 		int healed_amt = player_health->get_health() - cur_health;
 		std::cout << "You were healed by " << healed_amt << " health.\n";
@@ -662,10 +690,29 @@ void commands::drop()
 
 	if (cur_noun != noun::all)
 	{
-		cur_room->add_item(obj_to_drop);
-		player->delete_item_from_inventory(obj_to_drop);
+		int amt = obj_to_drop->get_amt();
+		int amt_to_drop = 1;
+		if (amt > 1)
+		{
+			std::cout << "Ther are " << amt << " of those in your inventory. How many do you want to drop?";
+			std::string answer = "0";
+			
+			while (!is_number_in_range(answer, 1, amt))
+			{
+				answer = input();
+				if (!is_number_in_range(answer, 1, amt))
+				{
+					print("You don't have that many of those. Type the amount again.");
+				}
+			}
+			amt_to_drop = std::stoi(answer);
+		}
 
-		std::cout << "You dropped " << obj_to_drop->get_name() << " onto the floor.\n";
+		object* copy_obj_to_drop = new object(*obj_to_drop, amt_to_drop);//copy the object to the room
+		cur_room->add_item(copy_obj_to_drop);
+		player->delete_item_from_inventory(obj_to_drop, amt_to_drop);
+
+		std::cout << "You dropped " << amt_to_drop << " " <<obj_to_drop->get_name() << " onto the floor.\n";
 	}
 	else //cur_noun == noun::all
 	{
@@ -685,7 +732,7 @@ void commands::drop()
 				item_names += ", ";
 
 			cur_room->add_item(player_items[i]);
-			player->delete_item_from_inventory(player_items[i]);
+			player->delete_item_from_inventory_all(player_items[i]);
 		}
 		std::cout << "You dropped " << item_names << " onto the floor.\n";
 	}

@@ -297,13 +297,29 @@ class room {
 				{
 					for (unsigned int i = 0; i < items.size(); i++)
 					{
-						
+						int amt = items[i]->get_amt();
 						if (i != items.size() - 1)
-							std::cout << items[i]->get_name() << ", ";
+						{
+							if (amt == 1)
+								std::cout << "a " << items[i]->get_name() << ", ";
+							else
+								std::cout << amt << " " << items[i]->get_name() << "s, ";
+						}
 						else if (Chest != nullptr)
-							std::cout << "and " << items[i]->get_name();
+						{
+							if (amt == 1)
+								std::cout << "and a " << items[i]->get_name();
+							else
+								std::cout << "and " << amt << " " << items[i]->get_name();
+						}
 						else
-							items[i]->get_name();
+						{
+							if (amt == 1)
+								std::cout << " a" << items[i]->get_name();
+							else
+								std::cout << amt << " " << items[i]->get_name();
+						}
+							
 					}
 				}
 				std::cout << ".\n";

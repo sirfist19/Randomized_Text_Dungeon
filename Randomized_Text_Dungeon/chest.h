@@ -142,6 +142,10 @@ public:
 		for (unsigned int i = 0; i < contents.size(); i++)
 		{
 			std::cout << "\t-";
+			if (contents[i]->get_amt() != 1)
+				std::cout << contents[i]->get_amt() << " ";
+			else if (contents[i]->identify() == "gold")
+				std::cout << "1 ";
 			contents[i]->display_chest();
 		}
 	}

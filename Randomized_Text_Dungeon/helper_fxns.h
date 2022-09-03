@@ -17,6 +17,7 @@ void clear_();
 void printEquals();
 void printUnderscore();
 void game_Over();
+bool is_number_in_range(const std::string& in, const int& start, const int& end);
 int random(int start, int end);
 std::vector<std::string> prompt();
 void turn_to_lower_case(std::string& user_input);

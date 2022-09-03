@@ -41,8 +41,8 @@ public:
 	void fighting(room* cur_room, bool& game_over, Player* player);
 	void fighting_input_loop(bool& game_over, Player* player, Enemy* enemy);
 	void attack(bool& game_over, Player* player, Enemy* enemy);
-	//void look(room* cur);
 	void hello();
+	void stack_objects(std::vector<object*>& in);
 	void jump();
 	void help();
 	void open();

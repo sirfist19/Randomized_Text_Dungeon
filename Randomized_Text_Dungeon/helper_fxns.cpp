@@ -61,6 +61,23 @@ void game_Over()
 	printEquals();
 	exit(0);
 }
+bool is_number_in_range(const std::string& in, const int& start, const int& end)
+{
+	for (unsigned int i = 0; i < in.size(); i++)
+	{
+		if (!isdigit(in[i])) {
+			print("That's not a number.");
+			return false;//if not a number don't check it
+		}
+	}
+	int num = std::stoi(in);
+	for (int i = start; i < end + 1; i++)
+	{
+		if (num == i)
+			return true;
+	}
+	return false;
+}
 void print() {
 	std::cout << std::endl;
 }

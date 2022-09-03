@@ -20,19 +20,42 @@ public:
 	{
 		return amt;
 	}
+	std::string identify() { return "object"; }
+	virtual void display(){ print(name); }
+	virtual void display_chest(){ print(name); }
+	virtual void decrease_amt(const int& _amt)
+	{
+		amt -= _amt;
+		if (amt < 0)
+			amt = 0;
+	}
+	bool is_same_type_of_object(object* other)
+	{
+		if ((name == other->get_name()) && (description == other->get_description()))
+			return true;
+		return false;
+	}
+	void combine(object* other) //combines the parameter into the current object
+	{
+		amt += other->amt;
+		other = nullptr;
+	}
 	//init one obj
 	object(std::string name, std::string description):name(name), description(description), amt(1)
 	{
 		
+	}
+	object(const object& in, int _amt) //copy constructor
+	{
+		name = in.name;
+		description = in.description;
+		amt = _amt;
 	}
 	//init a stack of objs
 	object(std::string name, int amt, std::string description) :name(name), description(description), amt(amt)
 	{
 
 	}
-	virtual void display() = 0;
-	virtual void display_chest() = 0;
-	virtual std::string identify() = 0;
 };
 
 class gold : public object
@@ -54,7 +77,7 @@ public:
 	
 	virtual void display_chest()
 	{
-		std::cout << "Gold x" << amt << "\n";
+		std::cout << "Gold\n";
 	}
 	std::string identify()
 	{

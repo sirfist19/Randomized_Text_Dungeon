@@ -29,7 +29,9 @@ public:
 		std::cout << "\n";
 		for (unsigned int i = 0; i < inventory.size(); i++)
 		{
-			std::cout << "\t-";
+			std::cout << "\tx";
+			//if(inventory[i]->get_amt() != 1)
+			std::cout << inventory[i]->get_amt()<<" - ";
 			inventory[i]->display_chest();
 		}
 	}
@@ -37,11 +39,41 @@ public:
 	{
 		inventory.push_back(obj);
 	}
+	void set_inventory(std::vector<object*> in)
+	{
+		inventory = in;
+	}
 	std::vector<object*> get_inventory() const
 	{
 		return inventory;
 	}
-	void delete_item_from_inventory(object* obj) //the obj is the object to be deleted
+	void delete_item_from_inventory(object* obj, int amt_used) //the obj is the object to be deleted
+	{
+		//to remove the object from the player's inventory move the last vector item to it's place and 
+		//then pop_back()
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			if (obj == inventory[i])
+			{
+				if (obj->get_amt() > 1)
+				{
+					obj->decrease_amt(amt_used);
+					if (obj->get_amt() == 0)
+					{
+						inventory[i] = inventory[inventory.size() - 1];
+						inventory.pop_back();
+					}
+				}
+				else //amt is only 1 so delete the item
+				{
+					inventory[i] = inventory[inventory.size() - 1];
+					inventory.pop_back();
+				}
+				
+			}
+		}
+	}
+	void delete_item_from_inventory_all(object* obj) //the obj is the object to be deleted
 	{
 		//to remove the object from the player's inventory move the last vector item to it's place and 
 		//then pop_back()

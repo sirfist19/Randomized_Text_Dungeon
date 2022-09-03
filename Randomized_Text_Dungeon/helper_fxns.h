@@ -25,5 +25,6 @@ void turn_to_lower_case(std::vector<std::string>& user_input);
 std::vector<std::string> basic_parse(std::string& user_input);
 std::string get_player_name();
 std::string welcome_screen();
+void winning_screen();
 
 #endif

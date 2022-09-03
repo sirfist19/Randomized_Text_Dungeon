@@ -67,6 +67,12 @@ public:
 	Phantom_Knight() : Enemy("Phantom Knight", new daedric_sword(), random(30, 40), enemy_tier::very_hard) {}
 	virtual void f() {};
 };
+class Dragon : public Enemy
+{
+public:
+	Dragon() : Enemy("Red Dragon", new dragon_fire(), random(50, 65), enemy_tier::very_hard) {} 
+	virtual void f() {};
+};
 
 #endif
 

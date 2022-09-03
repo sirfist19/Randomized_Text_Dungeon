@@ -9,7 +9,7 @@
 #include "player.h"
 
 enum verb {
-	go, examine, look, take, drop, drink, quit, clear,
+	go, examine, use, take, drop, drink, quit, clear,
 	open, jump, info, hello, inventory, help, list, equip, error
 };
 enum noun {
@@ -28,7 +28,7 @@ private:
 	std::unordered_map<std::string, verb> verb_chart;
 	std::unordered_map<std::string, noun> noun_chart;
 public:
-	void game_loop(commands* game, bool& game_over);
+	void game_loop(commands* game, bool& game_over, bool& first_time_enter);
 	
 	commands(std::string player_name);//default constructor
 	~commands();
@@ -47,6 +47,7 @@ public:
 	void help();
 	void open();
 	void take();
+	void use();
 	void equip();
 	void equip_weapon(object* obj_to_equip);
 	void drink();
@@ -56,6 +57,7 @@ public:
 	void go(int index);
 	Player* get_player();
 	dungeon* get_dungeon();
+	void intro_cut_scene();
 };
 #endif
 

@@ -1,7 +1,7 @@
 #include <string>
 #include "commands.h"
 
-void commands::game_loop(commands* game, bool& game_over)
+void commands::game_loop(commands* game, bool& game_over, bool& first_time_enter)
 {
 	//check to make sure the player is still alive
 	game_over = !(player->is_alive());
@@ -9,12 +9,31 @@ void commands::game_loop(commands* game, bool& game_over)
 		return;
 
 	bool loop = true;
-	player->printTopBar();
 	room* cur_room = player->get_cur_room();
-	cur_room->display_room();
-
+	if (!first_time_enter)
+	{
+		player->printTopBar();
+		cur_room->display_room();
+	}
+	else
+	{
+		first_time_enter = false;
+	}
+	
 	fighting(cur_room, game_over, player);
 	input_loop(loop, game_over);
+}
+void commands::intro_cut_scene()
+{
+	player->printTopBar();
+	print("You enter the dungeon and stare at the entrance room. Two large golden doors with a jade carving of a dragon breathing fire lie open. Marble covered in geometric designs line the floor. The walls are made of cold, gray, stone. You feel the temperature start to drop the farther into the room you go.\n");
+	//wait(5);
+	print("All of a sudden the two golden doors begin to swing shut. You run towards the entrance, but it's too late. They've already closed. You push the door with all your might, but it won't budge. You examine the door and find a slot for a key. It looks like your only way out is to explore the dungeon and find the special dragon key.");
+	//wait(5);
+	std::cout << "\n";
+	player->get_cur_room()->display_exit_information();
+	std::cout << "\n";
+	print("TIP: Don't know what to type? Type 'help' for more information.");
 }
 void commands::stack_objects(std::vector<object*>& in)
 {
@@ -223,9 +242,9 @@ bool commands::parseInputVector(bool& game_over)
 		clear_();
 		return false;
 		break;
-		//case verb::look:
-		//	look(Player->get_cur_room());
-		//	break;
+	case verb::use:
+		use();
+		break;
 	case verb::jump:
 		jump();
 		break;
@@ -283,7 +302,7 @@ commands::commands(std::string player_name)
 	//create the verb and noun charts
 	verb_chart["go"] = verb::go;
 	verb_chart["examine"] = verb::examine;
-	verb_chart["look"] = verb::look;
+	verb_chart["use"] = verb::use;
 	verb_chart["take"] = verb::take;
 	verb_chart["pickup"] = verb::take;
 	verb_chart["equip"] = verb::equip;
@@ -319,6 +338,37 @@ dungeon* commands::get_dungeon()
 commands::~commands()
 {
 	delete player;
+}
+void commands::use()
+{
+	std::string player_input_noun = get_player_input_noun();
+	object* obj_to_use = player->get_matching_object(player_input_noun);
+
+	if (player_input_noun == "")
+	{
+		print("You can't equip nothing.");
+		return;
+	}
+	if (obj_to_use == nullptr)
+	{
+		print("That item is not in your inventory.");
+		return;
+	}
+
+	std::string identifier = obj_to_use->identify();
+	if (identifier == "key")
+	{
+		obj_to_use->use(player->get_cur_room()->get_exits());
+	}
+	else if ((identifier == "potion") || (identifier == "healing potion")) 
+	{
+		//if a potion is used just drink it
+		drink();
+	}
+	else
+	{
+		obj_to_use->use();
+	}
 }
 void commands::open()
 {

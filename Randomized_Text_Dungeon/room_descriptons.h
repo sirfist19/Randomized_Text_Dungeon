@@ -66,8 +66,8 @@ public:
 		//start
 		start_descriptions.push_back(
 			new room_description(
-				"Start Room",
-				"A bare room with a smooth stone floor and walls. It's pitch black in here."
+				"Entrance Room",
+				"This room is where you entered the dungeon from and is the only way out. The golden doors with the jade dragon carving remain shut. A strip of light comes through from outside."
 			));
 
 		//any

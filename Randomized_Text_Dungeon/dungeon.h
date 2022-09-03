@@ -113,6 +113,7 @@ class dungeon {
 			return false;
 		}
 		room_coord get_coord(int& index) const;
+		void place_dragon_key();
 		void create_new_exits(room* cur_room, room_descriptions* descriptions);
 		int get_opposite_exit(int exit_num);
 		void display_debug();

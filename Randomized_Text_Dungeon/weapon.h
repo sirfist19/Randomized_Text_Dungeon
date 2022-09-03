@@ -34,6 +34,10 @@ public:
 	{
 		return damage;
 	}
+	virtual void use()
+	{
+		print("You can't use a weapon like that.");
+	}
 };
 
 class fists : public weapon
@@ -85,6 +89,11 @@ class molomir : public weapon
 {
 public:
 	molomir() : weapon("Molomir", 22, "The legendary hammer of the Norse god of thunder Thor.") {}
+};
+class dragon_fire : public weapon
+{
+public:
+	dragon_fire() : weapon("Dragon Fire", 45, "Fire that using the magical power of dragon's can turn anything to dust.") {}
 };
 
 class weapon_list

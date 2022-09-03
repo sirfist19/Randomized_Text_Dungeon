@@ -2,8 +2,8 @@
 #define constant_h
 
 const bool DEBUG_MODE = false;
-const int MAX_DUNGEON_SIZE = 35;
-const int MIN_DUNGEON_SIZE = 25;
+const int MAX_DUNGEON_SIZE = 35;//35
+const int MIN_DUNGEON_SIZE = 25;//25
 const int MAX_CHAR_PER_LINE = 120;
 
 //depth tiers
@@ -41,8 +41,8 @@ const int VERY_FAR_SPAWN_PHANTOM_KNIGHT = 25;
 const int VERY_FAR_SPAWN_ORC = 30;
 
 //chest spawning 
-const int NEAR_SPAWN_WOOD_CHEST = 100;// 10;
-const int MID_SPAWN_WOOD_CHEST = 95;//25;
+const int NEAR_SPAWN_WOOD_CHEST = 30;// 10;
+const int MID_SPAWN_WOOD_CHEST = 30;//25;
 const int MID_SPAWN_GOLD_CHEST = 5;
 const int FAR_SPAWN_GOLD_CHEST = 40;
 const int VERY_FAR_SPAWN_DRAGON_CHEST = 10;

@@ -217,22 +217,23 @@ std::string welcome_screen()
 	printEquals();
 	print("Welcome to Randomized Text Dungeon!");
 	print();
-	print("This is a randomized text dungeon. Every time you play the dungeon will be different. The goal is to find the hidden treasure and escape without dying.");
+	print("This is a randomized text dungeon. The rooms, enemies, and items are randomized so every time you play the dungeon will be different.\n");
+	print("You are an explorer that has just found the dungeon that you have been searching for for 10 years. A massive entrance lined with columns stands leads into the depths below. Enter if you dare.");
 	printEquals();
 	print();
-	print("1. Start");
-	print("2. Quit");
-	std::string yes_inputs[] = { "1", "start" };
-	std::string no_inputs[] = { "2", "quit" };
+	print("1. Enter");
+	print("2. Leave");
+	std::string yes_inputs[] = { "1", "start", "enter" };
+	std::string no_inputs[] = { "2", "quit", "leave" };
 
 	bool valid_input = false;
 	while (valid_input == false) {
 		std::string welcome_input = input();
 
-		if (str_input_accepted(welcome_input, no_inputs, 2, valid_input)) {
+		if (str_input_accepted(welcome_input, no_inputs, 3, valid_input)) {
 			Quit();
 		}
-		else if (str_input_accepted(welcome_input, yes_inputs, 2, valid_input)) {
+		else if (str_input_accepted(welcome_input, yes_inputs, 3, valid_input)) {
 			//returns to main to generate the dungeon
 		}
 		else {
@@ -262,6 +263,18 @@ std::string welcome_screen()
 			invalid_input();
 		}
 	}
+	wait(10);
+	clear_();
 	return name;
+}
+void winning_screen()
+{
+	clear_();
+	printEquals();
+	print("You insert the Dragon Key into the keyhole of the golden doors. As soon as you insert the key a wind rises up around you. You slowly turn the key to the left and hear the sound of the mechanism opening. The carving of the dragon on the door begins to glow and with a click the doors begin to open.");
+	print("\nYou up the steps that lead down to the dungeon and enter the forest you came to right before entering. You look up at the blue sky.");
+	print("\nYou escaped the dungeon! YOU WIN! CONGRATULATIONS!");
+	printEquals();
+	exit(0);
 }
 

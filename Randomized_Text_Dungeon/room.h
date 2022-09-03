@@ -75,6 +75,11 @@ class room {
 		{
 			return Chest;
 		}
+		void clear_chests()
+		{
+			//deletes chests in the room if there are any
+			Chest = nullptr;
+		}
 		std::vector<object*> get_items() const 
 		{
 			return items;
@@ -254,6 +259,11 @@ class room {
 		{
 			return name;
 		}
+		void set_info(std::string in_name, std::string in_description)
+		{
+			name = in_name;
+			description = in_description;
+		}
 		void set_num_exits(int num)
 		{
 			num_exits = num;
@@ -329,7 +339,7 @@ class room {
 			if (id == 1)
 			{
 				std::cout << "\n";
-				print("TIP: Don't know what to type. Type 'help' for more information.");
+				print("TIP: Don't know what to type? Type 'help' for more information.");
 			}
 		}
 		
@@ -470,6 +480,13 @@ class room {
 				break;
 			default:
 				break;
+			}
+			std::cout << "\n\nITEMS: ";
+			if (items.empty())
+				std::cout << "NONE";
+			for (unsigned int i = 0; i < items.size(); i++)
+			{
+				std::cout<<items[i]->get_name();
 			}
 			std::cout << "\n\nCHESTS: ";
 			if (Chest != nullptr)

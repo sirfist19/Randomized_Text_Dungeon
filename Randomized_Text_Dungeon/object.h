@@ -20,7 +20,7 @@ public:
 	{
 		return amt;
 	}
-	std::string identify() { return "object"; }
+	virtual std::string identify() { return "object"; }
 	virtual void display(){ print(name); }
 	virtual void display_chest(){ print(name); }
 	virtual void decrease_amt(const int& _amt)
@@ -40,6 +40,16 @@ public:
 		amt += other->amt;
 		other = nullptr;
 	}
+	virtual void use() 
+	{
+		print("ERROR: You can't use a base class object.");
+		exit(1);
+	}
+	virtual void use(int* cur_room_exits)
+	{
+		print("ERROR: You can't use a base class object.");
+		exit(1);
+	}
 	//init one obj
 	object(std::string name, std::string description):name(name), description(description), amt(1)
 	{
@@ -57,7 +67,55 @@ public:
 
 	}
 };
+class key : public object
+{
+public:
+	key(int amt, std::string name, std::string description) : object(name, amt, description)
+	{
 
+	}
+	virtual void display() = 0;
+	virtual void display_chest()
+	{
+		std::cout << "Key\n";
+	}
+	virtual std::string identify()
+	{
+		return "key";
+	}
+	virtual void use(int* cur_room_exits) = 0;
+};
+class dragon_key : public object
+{
+public:
+	dragon_key() : object("Dragon Key", 1, "A bright golden key with an engraving of a fire breathing dragon on its handle. This is the key to open the Golden Dragon door in the entrance room. Its your way out!")
+	{
+
+	}
+	virtual void display()
+	{
+		std::cout << "Dragon Key\n";
+	}
+	virtual void display_chest()
+	{
+		std::cout << "Dragon Key\n";
+	}
+	virtual std::string identify()
+	{
+		return "key";
+	}
+	virtual void use(int* cur_room_exits)
+	{
+		for (unsigned int i = 0; i < 4; i++)
+		{
+			if (cur_room_exits[i] == -1)
+			{
+				winning_screen();
+			}
+		}
+		print("The dragon key doesn't do anything here.");
+	}
+};
 class gold : public object
 {
 protected:
@@ -74,7 +132,6 @@ public:
 		//print(description);
 		//print(description);
 	}
-	
 	virtual void display_chest()
 	{
 		std::cout << "Gold\n";
@@ -83,11 +140,9 @@ public:
 	{
 		return "gold";
 	}
-	gold* combine_gold_piles(gold* a, gold* b)
+	void use()
 	{
-		a->amt = a->amt + b->amt;
-		delete b;
-		return a;
+		print("Not yet implemented.");
 	}
 };
 

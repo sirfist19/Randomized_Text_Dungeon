@@ -1,4 +1,5 @@
 #include "dungeon.h"
+#include "enemy.h"
 
 dungeon::dungeon() 
 {
@@ -28,12 +29,24 @@ dungeon::dungeon()
 		cur_room->assign_room_type(cur_room->get_tier(), stock_room_descriptions);
 		cur_room->place_chests();
 	}
+	place_dragon_key();
 }
 void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 {
-	if (cur_room->get_id() == 1)
+	if (cur_room->get_id() == 1) //entrance room
 	{
-		cur_room->set_num_exits(random(1,4));
+		//first add the exit to the dungeon through the golden dragon door
+		int exit_num = random(0, 3);
+		int* cur_exits = cur_room->get_exits();
+		cur_exits[exit_num] = -1;
+		cur_room->set_exits(cur_exits);
+
+		//add dragon key (temporarily)
+		//dragon_key* dragonKey = new dragon_key();
+		//cur_room->add_item(dragonKey);
+
+		//set the remaining exits
+		cur_room->set_num_exits(random(1,3));
 	}
 	else
 	{
@@ -48,11 +61,15 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 		if (rooms.size() < MAX_DUNGEON_SIZE)
 		{
 			int index;
+			int iterations = 0;
 			while (true)
 			{
-				index = rand() % 4;//0 to 3
+				index = random(0,3);//0 to 3
 				if (cur_exits[index] == 0)
 					break;
+				iterations++;
+				if (iterations > 100) //no infinite looping
+					return;
 			}
 
 			if (DEBUG_MODE)
@@ -126,7 +143,7 @@ void dungeon::dfs(std::vector<room_info>& visited, room* cur_room) const
 	for (int i = 0; i < 4; i++)
 	{
 		int id = cur_exits[i];
-		if ((cur_exits[i] != 0) && (!in_visited(visited, id))) {
+		if ((cur_exits[i] > 0) && (!in_visited(visited, id))) {
 			room* next_room = rooms[id - 1];
 			room_coord delta_coord = get_coord(i);
 			//delta_coord.display();
@@ -149,7 +166,7 @@ void dungeon::dfs(std::vector<room_info>& visited, room* cur_room) const
 		for (int i = 0; i < 4; i++)
 		{
 			int id = cur_exits[i];
-			if ((cur_exits[i] != 0) && (!in_visited(visited, id))) //is an exit and already visited
+			if ((cur_exits[i] > 0) && (!in_visited(visited, id))) //is an exit and already visited
 			{
 				room* next_room = rooms[id - 1];
 				room_coord delta_coord = get_coord(i);
@@ -177,7 +194,7 @@ void dungeon::dfs_set_depth() const
 	for (int i = 0; i < 4; i++)
 	{
 		int id = cur_exits[i];
-		if ((cur_exits[i] != 0) && (!in_visited(visited, id))) {
+		if ((cur_exits[i] > 0) && (!in_visited(visited, id))) {
 			room* next_room = rooms[id - 1];
 			next_room->set_depth(cur_depth);
 			Stack.push(next_room);//push the next room with its coord to the stack
@@ -252,6 +269,29 @@ room* dungeon::find_adj_room(int& index, room* cur_room) const//finds any adjace
 		}
 	}
 	return nullptr;
+}
+void dungeon::place_dragon_key()
+{
+	//add dragon key to the deepest room of the dungeon and change that room to a dragon lair with a dragon boss
+	dragon_key* dragonKey = new dragon_key();
+
+	//find the deepest room of the dungeon
+	room* deepest_room = rooms[0];
+	for (unsigned int i = 0; i < rooms.size(); i++)
+	{
+		if (rooms[i]->get_depth() > deepest_room->get_depth())
+		{
+			deepest_room = rooms[i];
+		}
+	}
+	deepest_room->add_item(dragonKey);
+	std::string dragon_lair_description = "You enter a room filled with red sand that slowly goes up to form a hill. Atop the hill sits a sleeping glowing red dragon. Its tail is curled up as it sleeps. You spot a sparkling object beneath its belly. Could it be the key needed to get out of here?";
+	deepest_room->set_info("Dragon's Lair", dragon_lair_description);
+	deepest_room->clear_chests();//no chests in the boss room
+	Enemy* boss = new Dragon();
+	std::vector<Enemy*> enemies;
+	enemies.push_back(boss);
+	deepest_room->set_enemies(enemies);
 }
 room_coord dungeon::get_coord(int& index) const//uses the room index, to the north or to the south to get a room_coord
 {

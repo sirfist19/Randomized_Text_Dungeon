@@ -2,7 +2,6 @@
 #define room_h
 #include <iostream>
 #include <string>
-#include "constants.h"
 #include "helper_fxns.h"
 #include "enemy.h"
 #include "room_descriptons.h"
@@ -31,13 +30,38 @@ class room {
 		room(int id) //an extremely basic constructor ... more details are constructed later in the dungeon constructor
 			:id(id), name("Unnamed Room"), description("It's a cold bare room."), num_exits(0), depth(-1), tier(depth_tier::unassigned), Chest(nullptr)
 		{
-			int chest_num = random(0, 9);
-			if (chest_num <= 5)
-				Chest = new chest();
-
 			for (int i = 0; i < 4; i++)
 			{
 				exits[i] = 0;
+			}
+		}
+		void place_chests()
+		{
+			int spawn_chest = random(0, 99);
+			switch (tier)
+			{
+				case depth_tier::near:
+					if(spawn_chest < NEAR_SPAWN_WOOD_CHEST)
+						Chest = new wooden_chest(open_method::openable);
+					break;
+				case depth_tier::mid:
+					if (spawn_chest < MID_SPAWN_WOOD_CHEST)
+						Chest = new wooden_chest(open_method::openable);
+					else if (spawn_chest < MID_SPAWN_GOLD_CHEST + MID_SPAWN_WOOD_CHEST)
+						Chest = new gold_chest(open_method::openable);
+					break;
+				case depth_tier::far:
+					if (spawn_chest < FAR_SPAWN_GOLD_CHEST)
+						Chest = new gold_chest(open_method::openable);
+					break;
+				case depth_tier::very_far:
+					if (spawn_chest < VERY_FAR_SPAWN_DRAGON_CHEST)
+						Chest = new dragon_chest(open_method::openable);
+					else if (spawn_chest < VERY_FAR_SPAWN_GOLD_CHEST + VERY_FAR_SPAWN_DRAGON_CHEST)
+						Chest = new gold_chest(open_method::openable);
+					break;
+				default:
+					break;
 			}
 		}
 		~room()
@@ -260,10 +284,14 @@ class room {
 				std::cout << "On the floor you find ";
 				if (Chest != nullptr)
 				{
-					if(items.size() == 0)
-						std::cout << "a wooden chest";
-					else
-						std::cout << "a wooden chest, ";
+					
+					std::string chest_name = "a " + Chest->get_name();
+					turn_to_lower_case(chest_name);
+					std::cout << chest_name;
+					if (items.size() != 0)
+					{
+						std::cout << ", ";
+					}
 				}
 				if (items.size() != 0)
 				{
@@ -427,13 +455,25 @@ class room {
 			default:
 				break;
 			}
-			std::cout << "\n";
-
+			std::cout << "\n\nCHESTS: ";
+			if (Chest != nullptr)
+			{
+				std::cout << "\nName: "<<Chest->get_name()<<"\n";
+				Chest->display_chest_contents();
+			}
+			else
+			{
+				std::cout << "NONE";
+			}
+			std::cout << "\nENEMIES: ";
+			if (enemies.empty())
+				std::cout << "NONE";
 			for (unsigned int i = 0; i < enemies.size(); i++)
 			{
+				std::cout << "\n";
 				enemies[i]->display_attack_info();
 			}
-			std::cout << "Exits:\n";
+			std::cout << "\n\nEXITS:\n";
 			std::cout << "North: " << exits[0]<<std::endl;
 			std::cout << "South: " << exits[1] << std::endl;
 			std::cout << "East: " << exits[2] << std::endl;

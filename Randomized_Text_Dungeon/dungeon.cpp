@@ -26,8 +26,8 @@ dungeon::dungeon()
 		cur_room->set_depth_tier();
 		cur_room->spawn_enemies();
 		cur_room->assign_room_type(cur_room->get_tier(), stock_room_descriptions);
+		cur_room->place_chests();
 	}
-
 }
 void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 {

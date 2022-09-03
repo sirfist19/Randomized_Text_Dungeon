@@ -105,10 +105,10 @@ public:
 	void printTopBar()
 	{
 		printEquals();
-		std::cout << "\nPlayer: " + name + "     " + "Room: "<<location->get_name()
-			<<"-"<<location->get_id()<<
-			"     Score: " + std::to_string(0) + "\n";
-		//std::cout << std::endl;
+		std::cout << "\nPlayer: " + name + "     " + "Room: " << location->get_name()
+			<< "-" << location->get_id();
+		std::cout << "     Health: " << health->get_health() << "/" << health->get_max_health();
+		std::cout<<"\n";
 		printEquals();
 		std::cout << "\n";
 	}

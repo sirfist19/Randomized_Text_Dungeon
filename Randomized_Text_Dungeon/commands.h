@@ -48,15 +48,14 @@ public:
 	void open();
 	void take();
 	void equip();
+	void equip_weapon(object* obj_to_equip);
 	void drink();
 	void drop();
 	void clear_command();
 	std::string get_player_input_noun() const;
-	//void open(object* cur);
 	void go(int index);
 	Player* get_player();
 	dungeon* get_dungeon();
-	//void take(room* cur);
 };
 #endif
 

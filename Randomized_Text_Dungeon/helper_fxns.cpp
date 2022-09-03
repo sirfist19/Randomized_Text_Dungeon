@@ -8,7 +8,7 @@ void print(std::string in) {
 	std::vector<std::string> text = basic_parse(in);
 	int cur = 0;
 
-	for (int i = 0; i < text.size(); i++)
+	for (unsigned int i = 0; i < text.size(); i++)
 	{
 		if (text[i] == "\n")
 		{

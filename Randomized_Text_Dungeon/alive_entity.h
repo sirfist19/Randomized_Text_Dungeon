@@ -18,6 +18,10 @@ public:
 	{
 		return health;
 	}
+	int get_max_health()
+	{
+		return max_health;
+	}
 	void display_health_bar()
 	{
 		std::cout << "Health: " << health << "/" << max_health << std::endl;

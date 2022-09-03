@@ -11,6 +11,10 @@ public:
 	{
 
 	}
+	weapon(const weapon& in) : object(in.name, in.description), damage(in.damage)
+	{
+		//copy constructor for random placement of weapons
+	}
 	virtual void display()
 	{
 		std::cout << "Weapon: " << name<<"\n";
@@ -31,6 +35,7 @@ public:
 		return damage;
 	}
 };
+
 class fists : public weapon
 {
 public: 
@@ -75,6 +80,57 @@ class daedric_sword : public weapon
 {
 public:
 	daedric_sword() : weapon("Daedric Sword", 20, "This legendary blade is made from volcanic magma that has been infused with magical dragon bone. Whoever yields this blade can kill their opponents very quickly.") {}
+};
+class molomir : public weapon
+{
+public:
+	molomir() : weapon("Molomir", 22, "The legendary hammer of the Norse god of thunder Thor.") {}
+};
+
+class weapon_list
+{
+private:
+	std::vector<weapon*> common;
+	std::vector<weapon*> rare;
+	std::vector<weapon*> legendary;
+public:
+	weapon_list()
+	{
+		common.push_back(new dagger());
+		common.push_back(new shortsword());
+		common.push_back(new bow());
+		rare.push_back(new axe());
+		rare.push_back(new sword());
+		legendary.push_back(new daedric_sword());
+		legendary.push_back(new molomir());
+	}
+	~weapon_list()
+	{
+		for (unsigned int i = 0; i < common.size(); i++)
+		{
+			delete common[i];
+		}
+		for (unsigned int i = 0; i < rare.size(); i++)
+		{
+			delete rare[i];
+		}
+		for (unsigned int i = 0; i < legendary.size(); i++)
+		{
+			delete legendary[i];
+		}
+	}
+	std::vector<weapon*> get_common_list()
+	{
+		return common;
+	}
+	std::vector<weapon*> get_rare_list()
+	{
+		return rare;
+	}
+	std::vector<weapon*> get_legendary_list()
+	{
+		return legendary;
+	}
 };
 
 

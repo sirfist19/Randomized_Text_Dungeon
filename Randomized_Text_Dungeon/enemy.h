@@ -27,13 +27,13 @@ public:
 class Rat : public Enemy
 {
 public:
-	Rat() : Enemy("Rat", new claws(), random(1, 3), enemy_tier::easy) {}
+	Rat() : Enemy("Rat", new claws(), random(1, 4), enemy_tier::easy) {}
 	virtual void f() {};
 };
 class Slime : public Enemy
 {
 public:
-	Slime() : Enemy("Slime", new slime_shooter(), random(2, 4), enemy_tier::easy) {}
+	Slime() : Enemy("Slime", new slime_shooter(), random(3, 5), enemy_tier::easy) {}
 	virtual void f() {};
 };
 
@@ -42,13 +42,13 @@ public:
 class Skeleton : public Enemy
 {
 public:
-	Skeleton() : Enemy("Skeleton", new bow(), random(4,6), enemy_tier::medium){}
+	Skeleton() : Enemy("Skeleton", new bow(), random(6,10), enemy_tier::medium){}
 	virtual void f() {};
 };
 class Goblin : public Enemy
 {
 public:
-	Goblin() : Enemy("Goblin", new shortsword(), random(6, 10), enemy_tier::medium) {}
+	Goblin() : Enemy("Goblin", new shortsword(), random(10, 12), enemy_tier::medium) {}
 	virtual void f() {};
 };
 
@@ -56,7 +56,7 @@ public:
 class Orc : public Enemy
 {
 public:
-	Orc() : Enemy("Orc", new axe(), random(8,12), enemy_tier::hard){}
+	Orc() : Enemy("Orc", new axe(), random(15,20), enemy_tier::hard){}
 	virtual void f() {};
 };
 

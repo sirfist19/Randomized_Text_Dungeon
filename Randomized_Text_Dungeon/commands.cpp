@@ -340,9 +340,27 @@ void commands::equip()
 		print("You can't equip nothing.");
 		return;
 	}
-	if (obj_to_equip == nullptr)
+	if ((obj_to_equip == nullptr) && (cur_noun != noun::all))
 	{
 		print("That item is not in your inventory.");
+		return;
+	}
+
+	if (cur_noun == noun::all)
+	{
+		std::vector<object*> inventory = player->get_inventory();
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			std::string identifier = inventory[i]->identify();
+
+			//equip if it is a weapon that is different from the current one
+			if ((identifier == "weapon") && (inventory[i]->get_name() != player->get_weapon()->get_name()))
+			{
+				equip_weapon(inventory[i]);
+				return;
+			}
+		}
+		std::cout << "There's nothing to be equipped.\n";
 		return;
 	}
 	std::string identifier = obj_to_equip->identify();
@@ -364,20 +382,24 @@ void commands::equip()
 	}
 	if (identifier == "weapon")
 	{
-		weapon* old_weapon = player->get_weapon();
-		player->set_weapon(obj_to_equip);
-		player->delete_item_from_inventory(obj_to_equip);
+		equip_weapon(obj_to_equip);
+	}
+}
+void commands::equip_weapon(object* obj_to_equip)
+{
+	weapon* old_weapon = player->get_weapon();
+	player->set_weapon(obj_to_equip);
+	player->delete_item_from_inventory(obj_to_equip);
 
-		if (old_weapon->get_name() != "Fists")
-		{
-			player->add_item_to_inventory(old_weapon);
-			std::cout << "You equipped " << obj_to_equip->get_name() <<
-				" and " << old_weapon->get_name() << " has been placed into you inventory.\n";
-		}
-		else //if the player only had fists before
-		{
-			std::cout << "You equipped " << obj_to_equip->get_name() << ".\n";
-		}
+	if (old_weapon->get_name() != "Fists")
+	{
+		player->add_item_to_inventory(old_weapon);
+		std::cout << "You equipped " << obj_to_equip->get_name() <<
+			" and " << old_weapon->get_name() << " has been placed into you inventory.\n";
+	}
+	else //if the player only had fists before
+	{
+		std::cout << "You equipped " << obj_to_equip->get_name() << ".\n";
 	}
 }
 void commands::take() //take objects either from the room's items or an open chest in the room

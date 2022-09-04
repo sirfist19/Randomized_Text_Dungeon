@@ -1,5 +1,6 @@
 #ifndef object_h
 #define object_h
+#include "constants.h"
 
 class object
 {

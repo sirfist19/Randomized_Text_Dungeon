@@ -143,9 +143,11 @@
     <ClCompile Include="dungeon.cpp" />
     <ClCompile Include="helper_fxns.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="main_commands.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alive_entity.h" />
+    <ClInclude Include="armor.h" />
     <ClInclude Include="chest.h" />
     <ClInclude Include="commands.h" />
     <ClInclude Include="constants.h" />

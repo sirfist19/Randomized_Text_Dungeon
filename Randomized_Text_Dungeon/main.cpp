@@ -14,7 +14,7 @@ int main() {
 
 	bool first_time_enter = true;
 	game->intro_cut_scene();
-	Dungeon->display_debug();
+	//Dungeon->display_debug();
 	bool game_over = false;
 
 	while (!game_over)

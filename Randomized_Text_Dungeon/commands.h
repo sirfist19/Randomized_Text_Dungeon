@@ -10,7 +10,7 @@
 
 enum verb {
 	go, examine, use, take, drop, drink, quit, clear,
-	open, jump, info, hello, inventory, help, list, equip, error
+	open, jump, hello, inventory, help, list, equip, error
 };
 enum noun {
 	north, south, east, west, pit, _chest, all, error_, un_assigned, _none
@@ -22,6 +22,8 @@ class commands //a very high up class
 private:
 	Player* player;
 	dungeon* Dungeon;
+
+	//input stuff
 	std::vector<std::string> cur_player_input;
 	noun cur_noun;
 	verb cur_verb;
@@ -55,7 +57,7 @@ public:
 	void drop();
 	void clear_command();
 	std::string get_player_input_noun() const;
-	void go(int index);
+	bool go(int index);
 	Player* get_player();
 	dungeon* get_dungeon();
 	void intro_cut_scene();

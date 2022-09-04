@@ -1,9 +1,9 @@
 #ifndef chest_h
 #define chest_h
 #include "weapon.h"
+#include "armor.h"
 #include "potion.h"
 #include "helper_fxns.h"
-#include "constants.h"
 #include <vector>
 
 enum open_method {

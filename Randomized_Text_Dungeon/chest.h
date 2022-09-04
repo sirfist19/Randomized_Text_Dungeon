@@ -27,6 +27,11 @@ public:
 			delete contents[i];
 		}
 	}
+	virtual object* clone()
+	{
+		std::cout << "ERROR: Attempting to clone a chest. This is not implemented.";
+		return nullptr;
+	}
 	void open()
 	{
 		switch (locked)
@@ -110,7 +115,8 @@ public:
 		std::vector<weapon*> common_list = list->get_common_list();
 
 		int rand_num = random(0, common_list.size() - 1);
-		weapon* chosen_weapon = new weapon(*common_list[rand_num]);//copies the template weapon
+		weapon* template_weapon = common_list[rand_num];
+		weapon* chosen_weapon = template_weapon->clone_weapon();//copies the template weapon
 		delete list;
 		return chosen_weapon;
 	}
@@ -120,7 +126,8 @@ public:
 		std::vector<weapon*> rare_list = list->get_rare_list();
 
 		int rand_num = random(0, rare_list.size() - 1);
-		weapon* chosen_weapon = new weapon(*rare_list[rand_num]);//copies the template weapon
+		weapon* template_weapon = rare_list[rand_num];
+		weapon* chosen_weapon = template_weapon->clone_weapon();//copies the template weapon
 		delete list;
 		return chosen_weapon;
 	}
@@ -130,7 +137,8 @@ public:
 		std::vector<weapon*> legendary_list = list->get_legendary_list();
 
 		int rand_num = random(0, legendary_list.size() - 1);
-		weapon* chosen_weapon = new weapon(*legendary_list[rand_num]);//copies the template weapon
+		weapon* template_weapon = legendary_list[rand_num];
+		weapon* chosen_weapon = template_weapon->clone_weapon();//copies the template weapon
 		delete list;
 		return chosen_weapon;
 	}

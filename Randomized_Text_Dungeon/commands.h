@@ -25,6 +25,7 @@ private:
 	std::vector<std::string> cur_player_input;
 	noun cur_noun;
 	verb cur_verb;
+	std::string player_input_noun;
 	std::unordered_map<std::string, verb> verb_chart;
 	std::unordered_map<std::string, noun> noun_chart;
 public:

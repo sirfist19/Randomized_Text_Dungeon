@@ -348,8 +348,31 @@ class room {
 			int num = 0;
 			for (int i = 0; i < 4; i++)
 			{
-				if (exits[i] != 0)
+				if (exits[i] > 0)
 					num++;
+				else if (exits[i] == -2)
+				{
+					num++;
+					std::cout << "The locked gold jade doors that lead to the exit of the dungeon lies to your ";
+					switch (i)
+					{
+					case 0:
+						std::cout << "North. ";
+						break;
+					case 1:
+						std::cout << "South. ";
+						break;
+					case 2:
+						std::cout << "East. ";
+						break;
+					case 3:
+						std::cout << "West. ";
+						break;
+					default:
+						std::cout << i <<"room.h  - display_exit_information index error.";
+						break;
+					}
+				}
 			}
 			
 			//std::cout << exits[0] << exits[1] << exits[2] << exits[3];

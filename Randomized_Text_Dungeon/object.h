@@ -20,9 +20,14 @@ public:
 	{
 		return amt;
 	}
+	void set_amt(const int& in_amt)
+	{
+		amt = in_amt;
+	}
+	 
 	virtual std::string identify() { return "object"; }
-	virtual void display(){ print(name); }
-	virtual void display_chest(){ print(name); }
+	virtual void display() = 0;
+	virtual void display_chest() = 0;
 	virtual void decrease_amt(const int& _amt)
 	{
 		amt -= _amt;
@@ -55,22 +60,24 @@ public:
 	{
 		
 	}
+	//init a stack of objs
+	object(std::string name, int amt, std::string description) :name(name), description(description), amt(amt)
+	{
+
+	}
 	object(const object& in, int _amt) //copy constructor
 	{
 		name = in.name;
 		description = in.description;
 		amt = _amt;
 	}
-	//init a stack of objs
-	object(std::string name, int amt, std::string description) :name(name), description(description), amt(amt)
-	{
-
-	}
+	virtual object* clone() = 0;
+	
 };
 class key : public object
 {
 public:
-	key(int amt, std::string name, std::string description) : object(name, amt, description)
+	key(std::string name, int amt, std::string description) : object(name, amt, description)
 	{
 
 	}
@@ -85,12 +92,20 @@ public:
 	}
 	virtual void use(int* cur_room_exits) = 0;
 };
-class dragon_key : public object
+class dragon_key : public key
 {
 public:
-	dragon_key() : object("Dragon Key", 1, "A bright golden key with an engraving of a fire breathing dragon on its handle. This is the key to open the Golden Dragon door in the entrance room. Its your way out!")
+	dragon_key() : key("Dragon Key", 1, "A bright golden key with an engraving of a fire breathing dragon on its handle. This is the key to open the Golden Dragon door in the entrance room. Its your way out!")
 	{
 
+	}
+	dragon_key(const dragon_key& in) : key(in.name, in.amt, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new dragon_key(*this);
 	}
 	virtual void display()
 	{
@@ -124,6 +139,14 @@ public:
 	gold(int amt) : object("Gold", amt, "A pile of shining golden coins worth. The front face has a three-headed dragon and the back has a picture of Emperor Septonius III of the Second Dynasty of Helena.")
 	{
 
+	}
+	gold(const gold& in) : object(in.name, in.amt, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new gold(*this);
 	}
 	virtual void display()
 	{

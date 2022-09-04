@@ -46,6 +46,14 @@ public:
 	{
 
 	}
+	lesser_healing_potion(const lesser_healing_potion& in) : healing_potion(in.amt, in.name, in.description, in.heal_amt)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new lesser_healing_potion(*this);
+	}
 	virtual void display()
 	{
 		std::cout << "Potion: " << name << "\n";
@@ -67,6 +75,14 @@ public:
 	{
 
 	}
+	common_healing_potion(const common_healing_potion& in) : healing_potion(in.amt, in.name, in.description, in.heal_amt)
+	{
+		//copy constructor
+	}
+	virtual object* clone() //polymorphism copy constructor
+	{
+		return new common_healing_potion(*this);
+	}
 	virtual void display()
 	{
 		std::cout << "Potion: " << name << "\n";
@@ -87,6 +103,14 @@ public:
 	greater_healing_potion() : healing_potion(1, "Greater Healing Potion", "When you drink this potion it restores 20 health.", 20)
 	{
 
+	}
+	greater_healing_potion(const greater_healing_potion& in) : healing_potion(in.amt, in.name, in.description, in.heal_amt)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new greater_healing_potion(*this);
 	}
 	virtual void display()
 	{

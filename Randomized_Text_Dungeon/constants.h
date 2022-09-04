@@ -41,7 +41,7 @@ const int VERY_FAR_SPAWN_PHANTOM_KNIGHT = 25;
 const int VERY_FAR_SPAWN_ORC = 30;
 
 //chest spawning 
-const int NEAR_SPAWN_WOOD_CHEST = 30;// 10;
+const int NEAR_SPAWN_WOOD_CHEST = 100;// 30;
 const int MID_SPAWN_WOOD_CHEST = 30;//25;
 const int MID_SPAWN_GOLD_CHEST = 5;
 const int FAR_SPAWN_GOLD_CHEST = 40;

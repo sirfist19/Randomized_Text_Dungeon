@@ -38,7 +38,7 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 		//first add the exit to the dungeon through the golden dragon door
 		int exit_num = random(0, 3);
 		int* cur_exits = cur_room->get_exits();
-		cur_exits[exit_num] = -1;
+		cur_exits[exit_num] = -2;
 		cur_room->set_exits(cur_exits);
 
 		//add dragon key (temporarily)

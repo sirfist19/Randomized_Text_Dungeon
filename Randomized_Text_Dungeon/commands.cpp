@@ -205,6 +205,7 @@ bool commands::parseInputVector(bool& game_over)
 		cur_noun = noun::_none;
 	else
 		cur_noun = noun::un_assigned;
+	player_input_noun = get_player_input_noun();//set player_input_noun
 
 	if (DEBUG_MODE)
 	{
@@ -298,7 +299,7 @@ commands::commands(std::string player_name)
 	//create the player
 	room* start_room = Dungeon->get_start_room();
 	player = new Player(player_name, start_room);
-
+	
 	//create the verb and noun charts
 	verb_chart["go"] = verb::go;
 	verb_chart["examine"] = verb::examine;
@@ -341,7 +342,6 @@ commands::~commands()
 }
 void commands::use()
 {
-	std::string player_input_noun = get_player_input_noun();
 	object* obj_to_use = player->get_matching_object(player_input_noun);
 
 	if (player_input_noun == "")
@@ -405,7 +405,6 @@ std::string commands::get_player_input_noun() const
 }
 void commands::equip()
 {
-	std::string player_input_noun = get_player_input_noun();
 	object* obj_to_equip = player->get_matching_object(player_input_noun);
 	
 	if (player_input_noun == "")
@@ -485,7 +484,6 @@ void commands::take() //take objects either from the room's items or an open che
 	}
 
 	//variables
-	std::string player_input_noun = get_player_input_noun();
 	room* cur_room = player->get_cur_room();
 	chest* cur_room_chest = cur_room->get_chest();
 	std::vector<std::string> chest_content_names; 
@@ -681,8 +679,6 @@ void commands::take() //take objects either from the room's items or an open che
 }
 void commands::drink()
 {
-	std::string player_input_noun = get_player_input_noun();
-	//std::cout << player_input_noun;
 	object* obj_to_drink = player->get_matching_object(player_input_noun);
 
 	if (player_input_noun == "")
@@ -757,8 +753,9 @@ void commands::drop()
 			}
 			amt_to_drop = std::stoi(answer);
 		}
-
-		object* copy_obj_to_drop = new object(*obj_to_drop, amt_to_drop);//copy the object to the room
+		
+		object* copy_obj_to_drop = obj_to_drop->clone();//copy the object to the room (while keeping the polymorphism typing!)
+		copy_obj_to_drop->set_amt(amt_to_drop);//no duplicating items so set the correct amount that are dropping on the floor
 		cur_room->add_item(copy_obj_to_drop);
 		player->delete_item_from_inventory(obj_to_drop, amt_to_drop);
 

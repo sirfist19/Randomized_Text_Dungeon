@@ -1,6 +1,7 @@
 #ifndef alive_entity_h
 #define alive_entity_h
 #include "weapon.h"
+#include "armor.h"
 
 class health_bar
 {
@@ -61,8 +62,12 @@ public:
 class Alive_Entity {
 protected:
 	std::string name;
-	//room* location;
 	health_bar* health;
+	int defense;
+	helmet* Helmet;
+	chestplate* Chestplate;
+	boots* Boots;
+
 	weapon* main_weapon;
 	bool alive;
 
@@ -82,6 +87,10 @@ public:
 	{
 		return health;
 	}
+	int get_defense() const
+	{
+		return defense;
+	}
 	weapon* get_weapon() const 
 	{
 		return main_weapon;
@@ -91,8 +100,45 @@ public:
 		if(new_weapon->identify() == "weapon")
 			main_weapon = (weapon*) new_weapon;
 	}
+	void display_armor()
+	{
+		std::cout << "Armor: \n";
+		std::cout << "\tHelmet: ";
+		if (Helmet == nullptr)
+			std::cout << " NONE\n";
+		else
+			Helmet->display_chest();
+		std::cout << "\tChestplate: ";
+		if (Chestplate == nullptr)
+			std::cout << " NONE\n";
+		else
+			Chestplate->display_chest();
+		std::cout << "\tBoots: ";
+		if (Boots == nullptr)
+			std::cout << " NONE\n";
+		else
+			Boots->display_chest();
+		std::cout << std::endl;
+	}
+	virtual void compute_stats()
+	{
+		//calculate defense based on current armor
+		int helmet_def = 0;
+		int chestplate_def = 0;
+		int boots_def = 0;
+		if(Helmet != nullptr)
+			helmet_def = Helmet->get_defense();
+		if(Chestplate != nullptr)
+			chestplate_def = Chestplate->get_defense();
+		if(Boots != nullptr)
+			boots_def = Boots->get_defense();
+
+		defense = helmet_def + chestplate_def + boots_def;
+	}
 	virtual void f() = 0;
-	Alive_Entity(std::string name, weapon* main_weapon, int health) : name(name), alive(true), health(new health_bar(health)), main_weapon(main_weapon)
+	Alive_Entity(std::string name, weapon* main_weapon, int health, int defense) 
+		: name(name), alive(true), health(new health_bar(health)), main_weapon(main_weapon)
+		, defense(defense), Helmet(nullptr), Chestplate(nullptr), Boots(nullptr)
 	{
 
 	}
@@ -100,7 +146,7 @@ public:
 	{
 
 	}
-	~Alive_Entity()
+	virtual ~Alive_Entity()
 	{
 		delete health;
 		delete main_weapon;

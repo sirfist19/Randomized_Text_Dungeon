@@ -377,9 +377,10 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy)
 
 	//player attacks
 	weapon* player_weapon = player->get_weapon();
-	std::cout << player->get_name() << " attacks with " << player_weapon->get_name() << "\n";
 	int player_damage = player_weapon->get_damage();
+	player_damage = (player_damage * player_damage) / (player_damage + enemy->get_defense());//takes defense into account
 	enemy->get_health()->damage(player_damage);
+	std::cout << player->get_name() << " attacks with " << player_weapon->get_name() << " for "<<player_damage<<" damage.\n";
 
 	if (!enemy->is_alive())
 	{
@@ -389,9 +390,10 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy)
 		
 	//enemy attacks
 	weapon* enemy_weapon = enemy->get_weapon();
-	std::cout << enemy->get_name() << " attacks with " << enemy_weapon->get_name() << "\n\n";
 	int enemy_damage = enemy_weapon->get_damage();
+	enemy_damage = (enemy_damage * enemy_damage) / (enemy_damage + player->get_defense());//takes defense into account
 	player->get_health()->damage(enemy_damage);
+	std::cout << enemy->get_name() << " attacks with " << enemy_weapon->get_name() << " for " << enemy_damage << " damage.\n\n";
 
 	game_over = !(player->is_alive());
 }

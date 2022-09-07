@@ -31,7 +31,7 @@ public:
 	{
 		return "armor";
 	}
-	int get_defense()
+	virtual int get_defense()
 	{
 		return defense;
 	}
@@ -48,6 +48,10 @@ public:
 	{
 
 	}
+	std::string identify()
+	{
+		return "helmet";
+	}
 };
 class chestplate : public armor
 {
@@ -56,6 +60,10 @@ public:
 	{
 
 	}
+	std::string identify()
+	{
+		return "chestplate";
+	}
 };
 class boots : public armor
 {
@@ -63,6 +71,10 @@ public:
 	boots(std::string name, int defense, std::string description) : armor(name, defense, description)
 	{
 
+	}
+	std::string identify()
+	{
+		return "boots";
 	}
 };
 //chainmail armor - common (worst)
@@ -208,7 +220,7 @@ public:
 class silver_boots : public boots
 {
 public:
-	silver_boots() : boots("Bronze Boots", SILVER_BOOTS_DEFENSE, "A pair of silver boots that has shines in the light.") {}
+	silver_boots() : boots("Silver Boots", SILVER_BOOTS_DEFENSE, "A pair of silver boots that has shines in the light.") {}
 	silver_boots(const silver_boots& in) : boots(in.name, in.defense, in.description)
 	{
 		//copy constructor

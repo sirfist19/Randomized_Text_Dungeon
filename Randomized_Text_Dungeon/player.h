@@ -9,7 +9,7 @@ private:
 	room* location;
 	std::vector<object*> inventory;
 public:
-	Player(std::string name, room* location) : Alive_Entity(name, new fists(), 10), location(location) //new fists()
+	Player(std::string name, room* location) : Alive_Entity(name, new fists(), 10, 0), location(location) //new fists()
 	{
 
 	}
@@ -19,6 +19,8 @@ public:
 		//printEquals();
 		std::cout << name << "'s Inventory\n";
 		health->display_health_bar();
+		std::cout << "Defense: " << defense << std::endl;
+		display_armor();
 		std::cout << "Weapon: ";
 		main_weapon->display_chest();
 
@@ -31,7 +33,7 @@ public:
 		{
 			std::cout << "\tx";
 			//if(inventory[i]->get_amt() != 1)
-			std::cout << inventory[i]->get_amt()<<" - ";
+			std::cout << inventory[i]->get_amt() << " - ";
 			inventory[i]->display_chest();
 		}
 	}
@@ -46,6 +48,30 @@ public:
 	std::vector<object*> get_inventory() const
 	{
 		return inventory;
+	}
+	helmet* get_helmet() const
+	{
+		return Helmet;
+	}
+	void set_helmet(helmet* in)
+	{
+		Helmet = in;
+	}
+	chestplate* get_chestplate() const
+	{
+		return Chestplate;
+	}
+	void set_chestplate(chestplate* in)
+	{
+		Chestplate = in;
+	}
+	void set_boots(boots* in)
+	{
+		Boots = in;
+	}
+	boots* get_boots() const
+	{
+		return Boots;
 	}
 	void delete_item_from_inventory(object* obj, int amt_used) //the obj is the object to be deleted
 	{
@@ -112,6 +138,7 @@ public:
 	{
 		std::cout << "Player: " << name << "\n";
 		health->display_health_bar();
+		std::cout << "Defense: " << defense << std::endl;
 		std::cout << "Weapon: " << main_weapon->get_name()<<"\n";
 	}
 	room* get_cur_room() {

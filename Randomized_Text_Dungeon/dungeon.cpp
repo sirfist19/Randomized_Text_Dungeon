@@ -8,6 +8,17 @@ dungeon::dungeon()
 
 	//for the first room
 	room* temp_room = new room(rooms.size() + 1);
+	/*temp_room->add_item(new silver_chestplate());
+	temp_room->add_item(new silver_boots());
+	temp_room->add_item(new bow());
+	temp_room->add_item(new dragon_scale_chestplate());
+	temp_room->add_item(new dragon_scale_chestplate());
+	temp_room->add_item(new bronze_helmet());
+	
+	temp_room->add_item(new daedric_sword());*/
+	//temp_room->add_item(new common_healing_potion());
+	temp_room->add_item(new sword());
+	temp_room->add_item(new dragon_scale_chestplate());
 	rooms.push_back(temp_room);
 	create_new_exits(temp_room, stock_room_descriptions);
 
@@ -24,10 +35,17 @@ dungeon::dungeon()
 	for (unsigned int i = 0; i < rooms.size(); i++)
 	{
 		room* cur_room = rooms[i];
+		
 		cur_room->set_depth_tier();
 		cur_room->spawn_enemies();
 		cur_room->assign_room_type(cur_room->get_tier(), stock_room_descriptions);
 		cur_room->place_chests();
+		if (cur_room->get_id() == 2) //testing
+		{
+			std::vector<Enemy*> enemies;
+			enemies.push_back(new Goblin());
+			cur_room->set_enemies(enemies);
+		}
 	}
 	place_dragon_key();
 }

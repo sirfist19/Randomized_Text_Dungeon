@@ -132,18 +132,72 @@ void commands::equip()
 	if (cur_noun == noun::all)
 	{
 		std::vector<object*> inventory = player->get_inventory();
-		for (unsigned int i = 0; i < inventory.size(); i++)
+		bool nothing_to_equip = true;
+		int i = 0;
+		while(i < inventory.size())
 		{
+			inventory = player->get_inventory();
+			if (inventory.empty())
+				break;
 			std::string identifier = inventory[i]->identify();
 
-			//equip if it is a weapon that is different from the current one
-			if ((identifier == "weapon") && (inventory[i]->get_name() != player->get_weapon()->get_name()))
+			//equip if it is a weapon that is different from the current one and does more damage
+			if ((identifier == "weapon") 
+				&& (inventory[i]->get_name() != player->get_weapon()->get_name()) 
+				&& (((weapon*)inventory[i])->get_damage() > player->get_weapon()->get_damage()))
 			{
 				equip_weapon(inventory[i]);
-				return;
+				nothing_to_equip = false;
+				continue;
 			}
+
+			//equiping armor if there is no armor of that piece or if the specific piece is of a different type (the piece needs to have more defense)
+			if (identifier == "helmet")
+			{
+				if ((player->get_helmet() == nullptr)
+					||
+					(
+						(inventory[i]->get_name() != player->get_helmet()->get_name())
+						&& (((helmet*)inventory[i])->get_defense() > player->get_helmet()->get_defense()))
+					)
+				{
+					equip_armor((armor*)inventory[i]);
+					nothing_to_equip = false;
+					continue;
+				}
+			}
+			if (identifier == "chestplate")
+			{
+				if ((player->get_chestplate() == nullptr)
+					||
+					(
+						(inventory[i]->get_name() != player->get_chestplate()->get_name())
+						&& (((chestplate*)inventory[i])->get_defense() > player->get_chestplate()->get_defense()))
+					)
+				{
+					equip_armor((armor*)inventory[i]);
+					nothing_to_equip = false;
+					continue;
+				}
+			}
+			if (identifier == "boots")
+			{
+				if ((player->get_boots() == nullptr)
+					||
+					(
+						(inventory[i]->get_name() != player->get_boots()->get_name())
+						&& (((boots*)inventory[i])->get_defense() > player->get_boots()->get_defense()))
+					)
+				{
+					equip_armor((armor*)inventory[i]);
+					nothing_to_equip = false;
+					continue;
+				}
+			}
+			i++;
 		}
-		std::cout << "There's nothing to be equipped.\n";
+		if (nothing_to_equip)
+			print("There's nothing to equip.");
 		return;
 	}
 	std::string identifier = obj_to_equip->identify();
@@ -167,6 +221,42 @@ void commands::equip()
 	{
 		equip_weapon(obj_to_equip);
 	}
+	if ((identifier == "helmet") || (identifier == "chestplate") || (identifier == "boots"))
+	{
+		equip_armor((armor*)obj_to_equip);
+	}
+}
+void commands::equip_armor(armor* obj_to_equip)
+{
+	std::string identifier = obj_to_equip->identify();
+	armor* old_armor_piece = nullptr;
+
+	if (identifier == "helmet")
+	{
+		old_armor_piece =player->get_helmet();
+		player->set_helmet((helmet*)obj_to_equip);
+	}
+	else if (identifier == "chestplate")
+	{
+		old_armor_piece = player->get_chestplate();
+		player->set_chestplate((chestplate*)obj_to_equip);
+	}
+	else if (identifier == "boots")
+	{
+		old_armor_piece = player->get_boots();
+		player->set_boots((boots*)obj_to_equip);
+	}
+	player->delete_item_from_inventory(obj_to_equip, 1);
+	if (old_armor_piece != nullptr)
+	{
+		player->add_item_to_inventory(old_armor_piece);
+		std::cout << "You equipped " << obj_to_equip->get_name() << " and "<<old_armor_piece->get_name()<<" was placed in your inventory.\n";
+	}
+	else
+	{
+		std::cout << "You equipped " << obj_to_equip->get_name() << ".\n";
+	}
+	player->compute_stats();
 }
 void commands::equip_weapon(object* obj_to_equip)
 {
@@ -335,7 +425,7 @@ void commands::help()
 		print("COMMAND: equip");
 		print("Needs Object: Yes");
 		print("Takes all as an object: Yes");
-		print("Moves a weapon from the player's inventory to the player's main weapon. The previous player's main weapon is placed into the player's inventory. Using 'equip all' equips one of the weapons in your inventory that is different from the current weapon type.");
+		print("Moves a weapon or armor from the player's inventory to the player's main weapon or main armor. The previous player's main weapon or armor is placed into the player's inventory. Using 'equip all' equips all of the weapons and armor in your inventory that do more damage or have more defense than what the player currently has. In essence, your equipped gear is maximized for damage and defense.");
 		print("\nEx: equip all");
 		print("Ex: equip bow");
 	}

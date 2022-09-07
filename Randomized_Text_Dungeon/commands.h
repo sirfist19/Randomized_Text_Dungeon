@@ -53,6 +53,7 @@ public:
 	void use();
 	void equip();
 	void equip_weapon(object* obj_to_equip);
+	void equip_armor(armor* obj_to_equip);
 	void drink();
 	void drop();
 	void clear_command();

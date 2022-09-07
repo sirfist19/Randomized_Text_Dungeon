@@ -10,7 +10,7 @@ class Enemy : public Alive_Entity
 protected:
 	enemy_tier tier;
 public:
-	Enemy(std::string name, weapon* main_weapon, int health, enemy_tier tier) : Alive_Entity(name, main_weapon, health), tier(tier)//for basic enemy
+	Enemy(std::string name, weapon* main_weapon, int health, enemy_tier tier) : Alive_Entity(name, main_weapon, health, 0), tier(tier)//for basic enemy
 	{
 
 	}
@@ -19,6 +19,7 @@ public:
 	virtual void display_attack_info() {
 		std::cout << "Enemy: " << name << "\n";
 		health->display_health_bar();
+		std::cout << "Defense: " << defense << std::endl;
 		std::cout << "Weapon: " << main_weapon->get_name() << "\n\n";
 	}
 };

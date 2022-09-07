@@ -63,6 +63,7 @@ class Alive_Entity {
 protected:
 	std::string name;
 	health_bar* health;
+	int level;
 	int defense;
 	helmet* Helmet;
 	chestplate* Chestplate;
@@ -82,6 +83,14 @@ public:
 	std::string get_name() const
 	{
 		return name;
+	}
+	int get_level() const
+	{
+		return level;
+	}
+	void increase_level()
+	{
+		level++;
 	}
 	health_bar* get_health() const
 	{
@@ -136,11 +145,17 @@ public:
 		defense = helmet_def + chestplate_def + boots_def;
 	}
 	virtual void f() = 0;
-	Alive_Entity(std::string name, weapon* main_weapon, int health, int defense) 
+	Alive_Entity(std::string name, weapon* main_weapon, int health, int level) //constructor for no armor
 		: name(name), alive(true), health(new health_bar(health)), main_weapon(main_weapon)
-		, defense(defense), Helmet(nullptr), Chestplate(nullptr), Boots(nullptr)
+		, defense(0), Helmet(nullptr), Chestplate(nullptr), Boots(nullptr), level(level)
 	{
 
+	}
+	Alive_Entity(std::string name, weapon* main_weapon, int health, int level, helmet* Helmet, chestplate* Chestplate, boots* Boots)
+		: name(name), alive(true), health(new health_bar(health)), main_weapon(main_weapon)
+		, defense(0), Helmet(Helmet), Chestplate(Chestplate), Boots(Boots), level(level)
+	{
+		compute_stats();//calculate the defense based on new armor
 	}
 	Alive_Entity() :name(""), alive(false), health(new health_bar(10)), main_weapon(nullptr)
 	{

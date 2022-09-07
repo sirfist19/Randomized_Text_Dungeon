@@ -18,6 +18,7 @@ dungeon::dungeon()
 	temp_room->add_item(new daedric_sword());*/
 	//temp_room->add_item(new common_healing_potion());
 	temp_room->add_item(new sword());
+	temp_room->add_item(new bronze_helmet());
 	temp_room->add_item(new dragon_scale_chestplate());
 	rooms.push_back(temp_room);
 	create_new_exits(temp_room, stock_room_descriptions);
@@ -40,12 +41,12 @@ dungeon::dungeon()
 		cur_room->spawn_enemies();
 		cur_room->assign_room_type(cur_room->get_tier(), stock_room_descriptions);
 		cur_room->place_chests();
-		if (cur_room->get_id() == 2) //testing
+		/*if (cur_room->get_id() == 2) //testing
 		{
 			std::vector<Enemy*> enemies;
-			enemies.push_back(new Goblin());
+			enemies.push_back(new Goblin(2));
 			cur_room->set_enemies(enemies);
-		}
+		}*/
 	}
 	place_dragon_key();
 }
@@ -130,8 +131,8 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 			else if ((cur_exits[index] == 0))//there is no exit, but there is an adjacent room in a given direction
 			{
 				//a random chance to connect to that room
-				int chance = random(0,9); //0 to 9
-				if (chance < 3)//.3 chance to connect
+				int chance = random(0,99); //0 to 9
+				if (chance < CONNECT_ROOMS_CHANCE)
 				{
 					//connect the current room
 					cur_exits[index] = adj_room->get_id();
@@ -306,10 +307,23 @@ void dungeon::place_dragon_key()
 	std::string dragon_lair_description = "You enter a room filled with red sand that slowly goes up to form a hill. Atop the hill sits a sleeping glowing red dragon. Its tail is curled up as it sleeps. You spot a sparkling object beneath its belly. Could it be the key needed to get out of here?";
 	deepest_room->set_info("Dragon's Lair", dragon_lair_description);
 	deepest_room->clear_chests();//no chests in the boss room
-	Enemy* boss = new Dragon();
+	Enemy* boss = new Dragon(1);
 	std::vector<Enemy*> enemies;
 	enemies.push_back(boss);
 	deepest_room->set_enemies(enemies);
+}
+int dungeon::get_deepest_depth()
+{
+	//find the deepest room of the dungeon
+	room* deepest_room = rooms[0];
+	for (unsigned int i = 0; i < rooms.size(); i++)
+	{
+		if (rooms[i]->get_depth() > deepest_room->get_depth())
+		{
+			deepest_room = rooms[i];
+		}
+	}
+	return deepest_room->get_depth();
 }
 room_coord dungeon::get_coord(int& index) const//uses the room index, to the north or to the south to get a room_coord
 {

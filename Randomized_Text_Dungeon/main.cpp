@@ -1,9 +1,4 @@
-#include "helper_fxns.h"
-#include "dungeon.h"
-#include "room.h"
-#include "player.h"
-#include "enemy.h"
-#include "commands.h"
+#include "commands.h" //top level header file
 
 int main() {
     std::string player_name = welcome_screen();
@@ -14,7 +9,7 @@ int main() {
 
 	bool first_time_enter = true;
 	game->intro_cut_scene();
-	//Dungeon->display_debug();
+	Dungeon->display_debug();
 	bool game_over = false;
 
 	while (!game_over)

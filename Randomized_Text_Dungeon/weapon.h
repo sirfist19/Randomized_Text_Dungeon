@@ -61,7 +61,7 @@ public:
 class claws : public weapon
 {
 public:
-	claws() : weapon("Claws", 1, "Razor sharp claws that can tear the skin off of an opponent."){}
+	claws() : weapon("Claws", 3, "Razor sharp claws that can tear the skin off of an opponent."){}
 	claws(const claws& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -78,7 +78,7 @@ public:
 class slime_shooter : public weapon
 {
 public:
-	slime_shooter() : weapon("Slime Shooter", 1, "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process.") {}
+	slime_shooter() : weapon("Slime Shooter", random(2,3), "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process.") {}
 	slime_shooter(const slime_shooter& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -95,7 +95,7 @@ public:
 class dagger : public weapon
 {
 public:
-	dagger() : weapon("Dagger", 2, "A small iron dagger. Not very effective but better than your fists.") {}
+	dagger() : weapon("Dagger", 5, "A small iron dagger. Not very effective but better than your fists.") {}
 	dagger(const dagger& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -109,10 +109,27 @@ public:
 		return new dagger(*this);
 	}
 };
+class bow : public weapon
+{
+public:
+	bow() : weapon("Bow", 8, "Long ranged weapon. Hard to aim however. Without much skill a bowman will miss many shots.") {}
+	bow(const bow& in) : weapon(in.name, in.damage, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new bow(*this);
+	}
+	virtual weapon* clone_weapon()
+	{
+		return new bow(*this);
+	}
+};
 class shortsword : public weapon
 {
 public:
-	shortsword() : weapon("Shortsword", 3, "A small sword."){}
+	shortsword() : weapon("Shortsword", 7, "A small sword."){}
 	shortsword(const shortsword& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -129,7 +146,7 @@ public:
 class sword : public weapon
 {
 public:
-	sword() : weapon("Sword", 5, "A typical iron sword with a bronze hilt") {}
+	sword() : weapon("Sword", 10, "A typical iron sword with a bronze hilt") {}
 	sword(const sword& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -143,10 +160,27 @@ public:
 		return new sword(*this);
 	}
 };
+class long_bow : public weapon
+{
+public:
+	long_bow() : weapon("Long Bow", 12, "Long ranged weapon. Hard to aim however. Without much skill a bowman will miss many shots.") {}
+	long_bow(const long_bow& in) : weapon(in.name, in.damage, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new long_bow(*this);
+	}
+	virtual weapon* clone_weapon()
+	{
+		return new long_bow(*this);
+	}
+};
 class axe : public weapon
 {
 public:
-	axe() : weapon("Axe", 7, "A two-handed axe that needs lots of force to yield.") {}
+	axe() : weapon("Axe", 15, "A two-handed axe that needs lots of force to yield.") {}
 	axe(const axe& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -160,27 +194,27 @@ public:
 		return new axe(*this);
 	}
 };
-class bow : public weapon
+class long_axe : public weapon
 {
 public:
-	bow() : weapon("Bow", 3, "Long ranged weapon. Hard to aim however. Without much skill a bowman will miss many shots.") {}
-	bow(const bow& in) : weapon(in.name, in.damage, in.description)
+	long_axe() : weapon("Axe", 22, "A two-handed axe that needs lots of force to yield.") {}
+	long_axe(const long_axe& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
 	}
 	virtual object* clone()
 	{
-		return new bow(*this);
+		return new long_axe(*this);
 	}
 	virtual weapon* clone_weapon()
 	{
-		return new bow(*this);
+		return new long_axe(*this);
 	}
 };
 class daedric_sword : public weapon
 {
 public:
-	daedric_sword() : weapon("Daedric Sword", 20, "This legendary blade is made from volcanic magma that has been infused with magical dragon bone. Whoever yields this blade can kill their opponents very quickly.") {}
+	daedric_sword() : weapon("Daedric Sword", 30, "This legendary blade is made from volcanic magma that has been infused with magical dragon bone. Whoever yields this blade can kill their opponents very quickly.") {}
 	daedric_sword(const daedric_sword& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -197,7 +231,7 @@ public:
 class mjolnir : public weapon
 {
 public:
-	mjolnir() : weapon("Mjolnir", 22, "The legendary hammer of the Norse god of thunder Thor.") {}
+	mjolnir() : weapon("Mjolnir", 35, "The legendary hammer of the Norse god of thunder Thor.") {}
 	mjolnir(const mjolnir& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor
@@ -209,6 +243,23 @@ public:
 	virtual weapon* clone_weapon()
 	{
 		return new mjolnir(*this);
+	}
+};
+class excalibur : public weapon
+{
+public:
+	excalibur() : weapon("Excalibur", 40, "The legendary sword in the stone.") {}
+	excalibur(const excalibur& in) : weapon(in.name, in.damage, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new excalibur(*this);
+	}
+	virtual weapon* clone_weapon()
+	{
+		return new excalibur(*this);
 	}
 };
 class dragon_fire : public weapon
@@ -243,8 +294,11 @@ public:
 		common.push_back(new bow());
 		rare.push_back(new axe());
 		rare.push_back(new sword());
+		rare.push_back(new long_bow());
 		legendary.push_back(new daedric_sword());
 		legendary.push_back(new mjolnir());
+		legendary.push_back(new long_axe());
+		legendary.push_back(new excalibur());
 	}
 	~weapon_list()
 	{

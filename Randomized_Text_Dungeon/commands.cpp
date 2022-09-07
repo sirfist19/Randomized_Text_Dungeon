@@ -32,7 +32,7 @@ commands::commands(std::string player_name)
 	//create the dungeon 
 	do {
 		Dungeon = new dungeon();
-	} while (Dungeon->get_size() < MIN_DUNGEON_SIZE);
+	} while ((Dungeon->get_size() < MIN_DUNGEON_SIZE) || (Dungeon->get_deepest_depth() < MIN_DEEPEST_DEPTH));
 
 
 	//create the player
@@ -233,6 +233,7 @@ std::string commands::get_player_input_noun() const
 //first time entering the start room description
 void commands::intro_cut_scene()
 {
+	clear_();
 	player->printTopBar();
 	print("You enter the dungeon and stare at the entrance room. Two large golden doors with a jade carving of a dragon breathing fire lie open. Marble covered in geometric designs line the floor. The walls are made of cold, gray, stone. You feel the temperature start to drop the farther into the room you go.\n");
 	//wait(5);

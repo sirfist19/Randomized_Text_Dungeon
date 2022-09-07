@@ -9,7 +9,7 @@ private:
 	room* location;
 	std::vector<object*> inventory;
 public:
-	Player(std::string name, room* location) : Alive_Entity(name, new fists(), 10, 0), location(location) //new fists()
+	Player(std::string name, room* location) : Alive_Entity(name, new fists(), 10, 1), location(location) //new fists()
 	{
 
 	}
@@ -18,6 +18,7 @@ public:
 	{
 		//printEquals();
 		std::cout << name << "'s Inventory\n";
+		std::cout << "Level: " << level <<"\n";
 		health->display_health_bar();
 		std::cout << "Defense: " << defense << std::endl;
 		display_armor();
@@ -136,7 +137,7 @@ public:
 	}
 	virtual void display_attack_info() 
 	{
-		std::cout << "Player: " << name << "\n";
+		std::cout << "Player: " << name << "    Level: "<<level<<"\n";
 		health->display_health_bar();
 		std::cout << "Defense: " << defense << std::endl;
 		std::cout << "Weapon: " << main_weapon->get_name()<<"\n";

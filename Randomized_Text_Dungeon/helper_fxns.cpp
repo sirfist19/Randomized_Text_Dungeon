@@ -265,6 +265,7 @@ std::string welcome_screen()
 	}
 	wait(10);
 	clear_();
+	print("Generating the dungeon. Please wait.");
 	return name;
 }
 void winning_screen()

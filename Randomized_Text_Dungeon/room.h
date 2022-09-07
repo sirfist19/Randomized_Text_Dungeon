@@ -209,39 +209,39 @@ class room {
 			{
 			case depth_tier::near:
 				if(spawn_enemy_num < cur_num + NEAR_SPAWN_RAT)
-					enemies.push_back(new Rat());
+					enemies.push_back(new Rat(1));
 				else if (spawn_enemy_num < cur_num + NEAR_SPAWN_SLIME)
-					enemies.push_back(new Slime());
+					enemies.push_back(new Slime(1));
 				break;
 			case depth_tier::mid:
 				if (spawn_enemy_num < cur_num + MID_SPAWN_RAT)
-					enemies.push_back(new Rat());
+					enemies.push_back(new Rat(2));
 				else if (spawn_enemy_num < cur_num + MID_SPAWN_SLIME)
-					enemies.push_back(new Slime());
+					enemies.push_back(new Slime(2));
 				else if (spawn_enemy_num < cur_num + MID_SPAWN_SKELETON)
-					enemies.push_back(new Skeleton());
+					enemies.push_back(new Skeleton(1));
 				else if (spawn_enemy_num < cur_num + MID_SPAWN_GOBLIN)
-					enemies.push_back(new Goblin());
+					enemies.push_back(new Goblin(1));
 				break;
 			case depth_tier::far:
 				if (spawn_enemy_num < cur_num + FAR_SPAWN_RAT)
-					enemies.push_back(new Rat());
+					enemies.push_back(new Rat(3));
 				else if (spawn_enemy_num < cur_num + FAR_SPAWN_SLIME)
-					enemies.push_back(new Slime());
+					enemies.push_back(new Slime(3));
 				else if (spawn_enemy_num < cur_num + FAR_SPAWN_SKELETON)
-					enemies.push_back(new Skeleton());
+					enemies.push_back(new Skeleton(2));
 				else if (spawn_enemy_num < cur_num + FAR_SPAWN_GOBLIN)
-					enemies.push_back(new Goblin());
+					enemies.push_back(new Goblin(2));
 				else if (spawn_enemy_num < cur_num + FAR_SPAWN_ORC)
-					enemies.push_back(new Orc());
+					enemies.push_back(new Orc(1));
 				break;
 			case depth_tier::very_far:
 				if (spawn_enemy_num < cur_num + VERY_FAR_SPAWN_RAT)
-					enemies.push_back(new Rat());
+					enemies.push_back(new Rat(4));
 				else if (spawn_enemy_num < cur_num + VERY_FAR_SPAWN_PHANTOM_KNIGHT)
-					enemies.push_back(new Phantom_Knight());
+					enemies.push_back(new Phantom_Knight(1));
 				else if (spawn_enemy_num < cur_num + VERY_FAR_SPAWN_ORC)
-					enemies.push_back(new Orc());
+					enemies.push_back(new Orc(2));
 				break;
 			default:
 				break;

@@ -133,7 +133,7 @@ void commands::equip()
 	{
 		std::vector<object*> inventory = player->get_inventory();
 		bool nothing_to_equip = true;
-		int i = 0;
+		unsigned int i = 0;
 		while(i < inventory.size())
 		{
 			inventory = player->get_inventory();

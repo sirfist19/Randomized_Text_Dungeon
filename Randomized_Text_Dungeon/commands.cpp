@@ -385,7 +385,10 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy)
 
 	if (!enemy->is_alive())
 	{
-		std::cout << "\nYou killed the " << enemy->get_name() << "!\n\n";
+		std::cout << "\nYou killed the " << enemy->get_name() << "!\n";
+		int gained_exp = enemy->get_exp();
+		std::cout << "You gained " << gained_exp << "xp points.\n\n";
+		player->increase_exp(gained_exp);
 		return;
 	}
 		

@@ -352,24 +352,23 @@ class room {
 					num++;
 				else if (exits[i] == -2)
 				{
-					num++;
 					std::cout << "The locked gold jade doors that lead to the exit of the dungeon lies to your ";
 					switch (i)
 					{
 					case 0:
-						std::cout << "North. ";
+						std::cout << "North.\n";
 						break;
 					case 1:
-						std::cout << "South. ";
+						std::cout << "South.\n";
 						break;
 					case 2:
-						std::cout << "East. ";
+						std::cout << "East.\n";
 						break;
 					case 3:
-						std::cout << "West. ";
+						std::cout << "West.\n";
 						break;
 					default:
-						std::cout << i <<"room.h  - display_exit_information index error.";
+						std::cout << i <<"room.h  - display_exit_information index error.\n";
 						break;
 					}
 				}
@@ -381,92 +380,92 @@ class room {
 			if (num == 1)
 			{
 				std::cout << "There is an exit to the ";
-				if (exits[0] != 0)
+				if (exits[0] > 0)
 					std::cout << "North";
-				if (exits[1] != 0)
+				if (exits[1] > 0)
 					std::cout << "South";
-				if (exits[2] != 0)
+				if (exits[2] > 0)
 					std::cout << "East";
-				if (exits[3] != 0)
+				if (exits[3] > 0)
 					std::cout << "West";
 			}
 			else if (num == 2)
 			{
 				std::cout << "There are exits to the ";
-				if (exits[3] != 0)
+				if (exits[3] > 0)
 				{
-					if (exits[0] != 0)
+					if (exits[0] > 0)
 						std::cout << "North";
-					if (exits[1] != 0)
+					if (exits[1] > 0)
 						std::cout << "South";
-					if (exits[2] != 0)
+					if (exits[2] > 0)
 						std::cout << "East";
-					if (exits[3] != 0)
+					if (exits[3] > 0)
 						std::cout << " and West";
 				}
-				else if ((exits[3] == 0) && (exits[2] != 0))
+				else if ((exits[3] == 0) && (exits[2] > 0))
 				{
-					if (exits[0] != 0)
+					if (exits[0] > 0)
 						std::cout << "North";
-					if (exits[1] != 0)
+					if (exits[1] > 0)
 						std::cout << "South";
-					if (exits[2] != 0)
+					if (exits[2] > 0)
 						std::cout << " and East";
 				}
 				else if ((exits[3] == 0) && (exits[2] == 0))
 				{
-					if (exits[0] != 0)
+					if (exits[0] > 0)
 						std::cout << "North";
-					if (exits[1] != 0)
+					if (exits[1] > 0)
 						std::cout << " and South";
 				}
 			}
 			else if (num == 3)
 			{
 				std::cout << "There are exits to the ";
-				if (exits[3] != 0)
+				if (exits[3] > 0)
 				{
-					if (exits[0] != 0)
+					if (exits[0] > 0)
 					{
-						if (exits[0] != 0)
+						if (exits[0] > 0)
 							std::cout << "North";
-						if (exits[1] != 0)
+						if (exits[1] > 0)
 							std::cout << ", South ";
-						if (exits[2] != 0)
+						if (exits[2] > 0)
 							std::cout << ", East ";
-						if (exits[3] != 0)
+						if (exits[3] > 0)
 							std::cout << "and West";
 					}
 					else //if north is 0
 					{
-						if (exits[1] != 0)
+						if (exits[1] > 0)
 							std::cout << "South";
-						if (exits[2] != 0)
+						if (exits[2] > 0)
 							std::cout << ", East ";
-						if (exits[3] != 0)
+						if (exits[3] > 0)
 							std::cout << "and West";
 					}
 				}
 				else
 				{
-					if (exits[0] != 0)
+					if (exits[0] > 0)
 						std::cout << "North";
-					if (exits[1] != 0)
+					if (exits[1] > 0)
 						std::cout << ", South ";
-					if (exits[2] != 0)
+					if (exits[2] > 0)
 						std::cout << "and East";
 				}
 			}
 			else if (num == 4)
 			{
 				std::cout << "There are exits to the ";
-				if (exits[0] != 0)
+				if (exits[0] > 0)
 					std::cout << "North";
-				if (exits[1] != 0)
+				if (exits[1] > 0)
 					std::cout << ", South";
-				if (exits[2] != 0)
+				if (exits[2] > 0)
 					std::cout << ", East";
-				if (exits[3] != 0)
+				if (exits[3] > 0)
 					std::cout << " and West";
 			}
 			else
@@ -528,6 +527,7 @@ class room {
 			{
 				std::cout << "\n";
 				enemies[i]->display_attack_info();
+				std::cout<<"Exp to drop: "<<enemies[i]->get_exp();
 			}
 			std::cout << "\n\nEXITS:\n";
 			std::cout << "North: " << exits[0]<<std::endl;

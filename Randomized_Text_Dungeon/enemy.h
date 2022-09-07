@@ -2,26 +2,24 @@
 #define enemy_h
 #include "alive_entity.h"
 
-enum enemy_tier {
-	easy, medium, hard, very_hard
-};
 class Enemy : public Alive_Entity
 {
 protected:
-	enemy_tier tier;
+	int exp;
 public:
-	Enemy(std::string name, weapon* main_weapon, int health, int level, enemy_tier tier) : Alive_Entity(name, main_weapon, health, level), tier(tier)//for basic enemy
+	Enemy(std::string name, weapon* main_weapon, int health, int level, int exp) : Alive_Entity(name, main_weapon, health, level), exp(exp)//for basic enemy
 	{
 
 	}
-	Enemy(std::string name, weapon* main_weapon, int health, int level, helmet* Helmet, chestplate* Chestplate, boots* Boots, enemy_tier tier) 
-		: Alive_Entity(name, main_weapon, health, level, Helmet, Chestplate, Boots), tier(tier)//for basic enemy with armor
+	Enemy(std::string name, weapon* main_weapon, int health, int level, int exp, helmet* Helmet, chestplate* Chestplate, boots* Boots) 
+		: Alive_Entity(name, main_weapon, health, level, Helmet, Chestplate, Boots), exp(exp)//for basic enemy with armor
 	{
 
 	}
 	
 	virtual std::string name_by_level(const int& level) = 0;
 	virtual int health_by_level(const int& level) = 0;
+	virtual int exp_by_level(const int& level) = 0;
 	virtual helmet* helmet_by_level(const int& level) = 0;
 	virtual chestplate* chestplate_by_level(const int& level) = 0;
 	virtual boots* boots_by_level(const int& level) = 0;
@@ -52,14 +50,18 @@ public:
 			std::cout << "NONE\n";
 		std::cout << "\n";
 	}
+	int get_exp() const
+	{
+		return exp;
+	}
 };
 
 //easy
 class Rat : public Enemy
 {
 public:
-	Rat(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, 
-		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level), enemy_tier::easy) {}
+	Rat(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, exp_by_level(level),
+		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level)) {}
 	virtual std::string name_by_level(const int& level)
 	{
 		switch (level)
@@ -97,6 +99,26 @@ public:
 			break;
 		}
 		return health;
+	}
+	virtual int exp_by_level(const int& level)
+	{
+		int cur;
+		switch (level)
+		{
+		case 1:
+			cur = random(4, 10);
+			break;
+		case 2:
+			cur = random(12, 20);
+			break;
+		case 3:
+			cur = random(35, 45);
+			break;
+		case 4:
+			cur = random(75, 90);
+			break;
+		}
+		return cur;
 	}
 	virtual helmet* helmet_by_level(const int& level)
 	{
@@ -184,8 +206,8 @@ public:
 class Slime : public Enemy
 {
 public:
-	Slime(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, 
-		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level), enemy_tier::easy) {}
+	Slime(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, exp_by_level(level),
+		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level)) {}
 	virtual std::string name_by_level(const int& level)
 	{
 		switch (level)
@@ -217,6 +239,23 @@ public:
 			break;
 		}
 		return health;
+	}
+	virtual int exp_by_level(const int& level)
+	{
+		int cur;
+		switch (level)
+		{
+		case 1:
+			cur = random(5, 14);
+			break;
+		case 2:
+			cur = random(15, 30);
+			break;
+		case 3:
+			cur = random(40, 65);
+			break;
+		}
+		return cur;
 	}
 	virtual helmet* helmet_by_level(const int& level)
 	{
@@ -266,6 +305,8 @@ public:
 		switch (level)
 		{
 		case 1:
+			cur = new broken_slime_shooter();
+			break;
 		case 2:
 			cur = new slime_shooter();
 			break;
@@ -283,8 +324,8 @@ public:
 class Skeleton : public Enemy
 {
 public:
-	Skeleton(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level,
-		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level), enemy_tier::medium){}
+	Skeleton(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, exp_by_level(level),
+		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level)){}
 	virtual std::string name_by_level(const int& level)
 	{
 		switch (level)
@@ -312,6 +353,20 @@ public:
 			break;
 		}
 		return health;
+	}
+	virtual int exp_by_level(const int& level)
+	{
+		int cur;
+		switch (level)
+		{
+		case 1:
+			cur = random(20, 30);
+			break;
+		case 2:
+			cur = random(55, 65);
+			break;
+		}
+		return cur;
 	}
 	virtual helmet* helmet_by_level(const int& level)
 	{
@@ -374,8 +429,8 @@ public:
 class Goblin : public Enemy
 {
 public:
-	Goblin(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, 
-		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level), enemy_tier::medium) {}
+	Goblin(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, exp_by_level(level),
+		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level)) {}
 	virtual std::string name_by_level(const int& level)
 	{
 		return "Goblin";
@@ -393,6 +448,20 @@ public:
 			break;
 		}
 		return health;
+	}
+	virtual int exp_by_level(const int& level)
+	{
+		int cur;
+		switch (level)
+		{
+		case 1:
+			cur = random(25, 35);
+			break;
+		case 2:
+			cur = random(60, 70);
+			break;
+		}
+		return cur;
 	}
 	virtual helmet* helmet_by_level(const int& level)
 	{
@@ -457,8 +526,8 @@ public:
 class Orc : public Enemy
 {
 public:
-	Orc(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, 
-		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level), enemy_tier::hard){}
+	Orc(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, exp_by_level(level),
+		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level)){}
 	virtual std::string name_by_level(const int& level)
 	{
 		return "Orc";
@@ -476,6 +545,20 @@ public:
 			break;
 		}
 		return health;
+	}
+	virtual int exp_by_level(const int& level)
+	{
+		int cur;
+		switch (level)
+		{
+		case 1:
+			cur = random(70, 80);
+			break;
+		case 2:
+			cur = random(85, 105);
+			break;
+		}
+		return cur;
 	}
 	virtual helmet* helmet_by_level(const int& level)
 	{
@@ -561,8 +644,8 @@ public:
 class Phantom_Knight : public Enemy
 {
 public:
-	Phantom_Knight(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, 
-		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level), enemy_tier::very_hard) {}
+	Phantom_Knight(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, exp_by_level(level),
+		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level)) {}
 	virtual std::string name_by_level(const int& level)
 	{
 		return "Phantom Knight";
@@ -577,6 +660,17 @@ public:
 			break;
 		}
 		return health;
+	}
+	virtual int exp_by_level(const int& level)
+	{
+		int cur;
+		switch (level)
+		{
+		case 1:
+			cur = random(150, 200);
+			break;
+		}
+		return cur;
 	}
 	virtual helmet* helmet_by_level(const int& level)
 	{
@@ -639,8 +733,8 @@ public:
 class Dragon : public Enemy
 {
 public:
-	Dragon(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, 
-		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level), enemy_tier::very_hard) {}
+	Dragon(int level) : Enemy(name_by_level(level), weapon_by_level(level), health_by_level(level), level, exp_by_level(level),
+		helmet_by_level(level), chestplate_by_level(level), boots_by_level(level)) {}
 	virtual std::string name_by_level(const int& level)
 	{
 		return "Red Dragon";
@@ -655,6 +749,10 @@ public:
 			break;
 		}
 		return health;
+	}
+	virtual int exp_by_level(const int& level)
+	{
+		return random(500, 600);
 	}
 	virtual helmet* helmet_by_level(const int& level)
 	{

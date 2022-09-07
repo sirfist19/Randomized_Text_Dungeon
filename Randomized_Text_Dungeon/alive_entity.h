@@ -54,6 +54,10 @@ public:
 			health = max_health;
 		}
 	}
+	void heal_to_full()
+	{
+		health = max_health;
+	}
 	void increase_max_health(int& amt)
 	{
 		max_health += amt;
@@ -88,7 +92,7 @@ public:
 	{
 		return level;
 	}
-	void increase_level()
+	virtual void level_up()
 	{
 		level++;
 	}

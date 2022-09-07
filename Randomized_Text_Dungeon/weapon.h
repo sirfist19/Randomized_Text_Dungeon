@@ -75,10 +75,27 @@ public:
 		return new claws(*this);
 	}
 };
+class broken_slime_shooter : public weapon
+{
+public:
+	broken_slime_shooter() : weapon("Broken Slime Shooter", 2, "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process.") {}
+	broken_slime_shooter(const broken_slime_shooter& in) : weapon(in.name, in.damage, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new broken_slime_shooter(*this);
+	}
+	virtual weapon* clone_weapon()
+	{
+		return new broken_slime_shooter(*this);
+	}
+};
 class slime_shooter : public weapon
 {
 public:
-	slime_shooter() : weapon("Slime Shooter", random(2,3), "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process.") {}
+	slime_shooter() : weapon("Slime Shooter", random(3,4), "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process.") {}
 	slime_shooter(const slime_shooter& in) : weapon(in.name, in.damage, in.description)
 	{
 		//copy constructor

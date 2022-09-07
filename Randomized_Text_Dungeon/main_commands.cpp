@@ -136,7 +136,6 @@ void commands::equip()
 		unsigned int i = 0;
 		while(i < inventory.size())
 		{
-			inventory = player->get_inventory();
 			if (inventory.empty())
 				break;
 			std::string identifier = inventory[i]->identify();
@@ -148,6 +147,7 @@ void commands::equip()
 			{
 				equip_weapon(inventory[i]);
 				nothing_to_equip = false;
+				inventory = player->get_inventory();
 				continue;
 			}
 
@@ -163,6 +163,7 @@ void commands::equip()
 				{
 					equip_armor((armor*)inventory[i]);
 					nothing_to_equip = false;
+					inventory = player->get_inventory();
 					continue;
 				}
 			}
@@ -177,6 +178,7 @@ void commands::equip()
 				{
 					equip_armor((armor*)inventory[i]);
 					nothing_to_equip = false;
+					inventory = player->get_inventory();
 					continue;
 				}
 			}
@@ -191,6 +193,7 @@ void commands::equip()
 				{
 					equip_armor((armor*)inventory[i]);
 					nothing_to_equip = false;
+					inventory = player->get_inventory();
 					continue;
 				}
 			}

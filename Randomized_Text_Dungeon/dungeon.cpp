@@ -17,9 +17,9 @@ dungeon::dungeon()
 	
 	temp_room->add_item(new daedric_sword());*/
 	//temp_room->add_item(new common_healing_potion());
-	temp_room->add_item(new sword());
-	temp_room->add_item(new bronze_helmet());
-	temp_room->add_item(new dragon_scale_chestplate());
+	//temp_room->add_item(new sword());
+	//temp_room->add_item(new bronze_helmet());
+	//temp_room->add_item(new dragon_scale_chestplate());
 	rooms.push_back(temp_room);
 	create_new_exits(temp_room, stock_room_descriptions);
 

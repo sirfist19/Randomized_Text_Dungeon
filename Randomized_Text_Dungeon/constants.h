@@ -8,6 +8,8 @@ const int MAX_CHAR_PER_LINE = 120;
 const int CONNECT_ROOMS_CHANCE = 15;
 const int MIN_DEEPEST_DEPTH = 18;
 
+const int RUN_AWAY_CHANCE = 1;
+
 //depth tiers
 const int MIN_NEAR = 1;
 const int MAX_NEAR = 4;

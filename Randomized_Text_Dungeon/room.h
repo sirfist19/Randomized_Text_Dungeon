@@ -374,9 +374,6 @@ class room {
 				}
 			}
 			
-			//std::cout << exits[0] << exits[1] << exits[2] << exits[3];
-
-			//std::cout << "\n";//add a newline before exit infomation is printed 
 			if (num == 1)
 			{
 				std::cout << "There is an exit to the ";
@@ -403,7 +400,7 @@ class room {
 					if (exits[3] > 0)
 						std::cout << " and West";
 				}
-				else if ((exits[3] == 0) && (exits[2] > 0))
+				else if ((exits[3] <= 0) && (exits[2] > 0))
 				{
 					if (exits[0] > 0)
 						std::cout << "North";
@@ -412,7 +409,7 @@ class room {
 					if (exits[2] > 0)
 						std::cout << " and East";
 				}
-				else if ((exits[3] == 0) && (exits[2] == 0))
+				else if ((exits[3] <= 0) && (exits[2] <= 0))
 				{
 					if (exits[0] > 0)
 						std::cout << "North";

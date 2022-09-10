@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="attacking.cpp" />
     <ClCompile Include="commands.cpp" />
     <ClCompile Include="dungeon.cpp" />
     <ClCompile Include="helper_fxns.cpp" />

@@ -6,65 +6,27 @@
 #include <stack>
 #include <cstdlib>
 
-class room_coord //distance to east and north
+struct coord_and_id 
 {
-	private:
-		int x;
-		int y;
-	public:
-		room_coord(int _x, int _y)
-		{
-			x = _x;
-			y = _y;
-		}
-		room_coord()
-		{
-			x = 0;
-			y = 0;
-		}
-		void display()
-		{
-			std::cout << "(" << x << ", " << y << ") ";
-		}
-		room_coord add(room_coord a, room_coord b)
-		{
-			a.x = a.x + b.x;
-			a.y = a.y + b.y;
-			return a;
-		}
-		bool is_equal(room_coord& a, room_coord& b) 
-		{
-			if ((a.x == b.x) && (a.y == b.y))
-				return true;
-			return false;
-		}
+	room_coord* coord;
+	int id;//for rooms is the id, -2 for the exit, -3 for north and south connections, -4 for east and west connections 
+
+	coord_and_id(room_coord* in_coord, int in_id) : coord(in_coord), id(in_id) {}
+	bool equal(coord_and_id* other)
+	{
+		if ((other->id == id) && (coord->is_equal(*coord, *other->coord)))
+			return true;
+		return false;
+	}
 };
 
-class room_info 
-{ //used for the DFS through the maze
-	private:
-		room_coord pos;
-		room* cur_room;
-	public:
-		room_info(room_coord _pos, room* _cur_room) {
-			pos = _pos;
-			cur_room = _cur_room;
-		}
-		room_coord get_pos()
-		{
-			return pos;
-		}
-		room* get_room() {
-			return cur_room;
-		}
-};
-
-
-class dungeon {
+class dungeon 
+{
 	private:
 		std::vector<room*> rooms;
 		std::stack<room*> rooms_to_give_exits;//for dungeon generation
 		room_descriptions* stock_room_descriptions;
+		std::vector<coord_and_id*> sorted_room_coords;//for map making
 	public:
 		dungeon();
 		~dungeon() //destructor
@@ -73,6 +35,11 @@ class dungeon {
 			{
 				delete rooms[i];
 			}
+			for (unsigned int i = 0; i < sorted_room_coords.size(); i++)
+			{
+				delete sorted_room_coords[i];
+			}
+			delete stock_room_descriptions;
 		}
 		int get_size()
 		{
@@ -84,24 +51,21 @@ class dungeon {
 			//rooms[index]->display_room();
 			return rooms[index];
 		}
+		std::vector<coord_and_id*> get_sorted_room_coords() const
+		{
+			return sorted_room_coords;
+		}
 		room* get_start_room()
 		{
 			return rooms[0];
 		}
-		void dfs(std::vector<room_info>& visited, room* cur_room) const;
+		//void dfs() const;
+		void create_sorted_room_coords(bool& print_all_map);
+		void create_sorted_room_coords_basic();
+		bool duplicate_coord_and_id(coord_and_id* posid);
 		void dfs_set_depth() const;
-		bool no_two_rooms_have_same_coord(std::vector<room_info> visited) const; //a debugging fxn
+		bool no_two_rooms_have_same_coord() const; //a debugging fxn
 		room* find_adj_room(int& index, room* cur_room) const; //finds any adjacent non-connected room
-		bool in_visited(std::vector<room_info> visited, int id) const
-		{
-			for (unsigned int i = 0; i < visited.size(); i++)
-			{
-				int cur_id = visited[i].get_room()->get_id();
-				if (cur_id == id)
-					return true;
-			}
-			return false;
-		}
 		bool in_visited(std::vector<room*> visited, int id) const
 		{
 			for (unsigned int i = 0; i < visited.size(); i++)
@@ -115,6 +79,7 @@ class dungeon {
 		room_coord get_coord(int& index) const;
 		void place_dragon_key();
 		int get_deepest_depth();
+		void display_all_rooms_coords();
 		void create_new_exits(room* cur_room, room_descriptions* descriptions);
 		int get_opposite_exit(int exit_num);
 		void display_debug();

@@ -10,7 +10,7 @@
 
 enum verb {
 	go, examine, use, take, drop, drink, quit, clear,
-	open, jump, hello, inventory, help, list, equip, error
+	open, jump, hello, inventory, help, list, equip, map, error
 };
 enum noun {
 	north, south, east, west, pit, _chest, all, error_, un_assigned, _none
@@ -52,6 +52,8 @@ public:
 	void take();
 	void use();
 	void equip();
+	void map(bool& print_all_map);
+	void basic_map();
 	void equip_weapon(object* obj_to_equip);
 	void equip_armor(armor* obj_to_equip);
 	void drink();

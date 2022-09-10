@@ -263,7 +263,7 @@ std::string welcome_screen()
 			invalid_input();
 		}
 	}
-	wait(10);
+	wait(4);
 	clear_();
 	print("Generating the dungeon. Please wait.");
 	return name;

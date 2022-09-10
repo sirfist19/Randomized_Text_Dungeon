@@ -30,6 +30,9 @@
     <ClCompile Include="main_commands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="attacking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dungeon.h">

@@ -11,6 +11,57 @@ enum depth_tier {
 	near, mid, far, very_far, unassigned, start, any
 };
 
+class room_coord //distance to east and north
+{
+private:
+	int x;
+	int y;
+public:
+	room_coord(int _x, int _y)
+	{
+		x = _x;
+		y = _y;
+	}
+	room_coord(const room_coord& in)//copy constructor
+	{
+		x = in.x;
+		y = in.y;
+	}
+	room_coord()
+	{
+		x = 0;
+		y = 0;
+	}
+	void set_coord(int& in_x, int& in_y)
+	{
+		x = in_x;
+		y = in_y;
+	}
+	void display()
+	{
+		std::cout << "(" << x << ", " << y << ") ";
+	}
+	int get_x()
+	{
+		return x;
+	}
+	int get_y()
+	{
+		return y;
+	}
+	room_coord add(room_coord a, room_coord b)
+	{
+		a.x = a.x + b.x;
+		a.y = a.y + b.y;
+		return a;
+	}
+	bool is_equal(room_coord& a, room_coord& b)
+	{
+		if ((a.x == b.x) && (a.y == b.y))
+			return true;
+		return false;
+	}
+};
 
 class room {
 	private:
@@ -18,6 +69,8 @@ class room {
 		int id;//room_id
 		std::string name;
 		std::string description;
+		room_coord* location;
+		bool visited;//has the player visited here before
 		int exits[4];//0 for no exit, other number for room to go to
 		int num_exits;
 		int depth;//smallest number of rooms from the start room to this room
@@ -28,8 +81,12 @@ class room {
 
 	public:
 		room(int id) //an extremely basic constructor ... more details are constructed later in the dungeon constructor
-			:id(id), name("Unnamed Room"), description("It's a cold bare room."), num_exits(0), depth(-1), tier(depth_tier::unassigned), Chest(nullptr)
+			:id(id), name("Unnamed Room"), description("It's a cold bare room."), 
+			num_exits(0), depth(-1), tier(depth_tier::unassigned), Chest(nullptr), visited(false)
+			, location(new room_coord())
 		{
+			if (id == 1)
+				visited = true;
 			for (int i = 0; i < 4; i++)
 			{
 				exits[i] = 0;
@@ -70,15 +127,36 @@ class room {
 			{
 				delete enemies[i];
 			}
+			for (unsigned int i = 0; i < items.size(); i++)
+			{
+				delete items[i];
+			}
+			delete location;
 		}
 		chest* get_chest() const
 		{
 			return Chest;
 		}
+		void visited_cur_room()
+		{
+			visited = true;
+		}
+		bool get_visited_status() const
+		{
+			return visited;
+		}
 		void clear_chests()
 		{
 			//deletes chests in the room if there are any
 			Chest = nullptr;
+		}
+		void set_coord(room_coord* coord)
+		{
+			location = coord;
+		}
+		room_coord* get_coord()
+		{
+			return location;
 		}
 		std::vector<object*> get_items() const 
 		{
@@ -475,7 +553,10 @@ class room {
 		{
 			printUnderscore();
 			std::cout << "Room " <<id<<" - "<<name<< std::endl;
-			std::cout << "Depth: " << depth<<std::endl;
+			std::cout << "Coord: ";
+			location->display();
+			
+			std::cout << "\nDepth: " << depth<<std::endl;
 			std::cout << "Depth Tier: ";
 			switch (tier)
 			{

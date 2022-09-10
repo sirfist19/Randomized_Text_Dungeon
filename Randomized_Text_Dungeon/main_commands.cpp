@@ -278,6 +278,150 @@ void commands::equip_weapon(object* obj_to_equip)
 		std::cout << "You equipped " << obj_to_equip->get_name() << ".\n";
 	}
 }
+void commands::basic_map()
+{
+	std::vector<coord_and_id*> coords = Dungeon->get_sorted_room_coords();
+	//clear_();
+	//player->printTopBar();
+	//player->get_cur_room()->display_room();
+
+	//now draw the map
+	print("DUNGEON MAP:\n");
+	std::vector<std::string> lines;
+	int cursor_x = 0;
+	int cursor_y = 0;
+
+	std::string cur = "";
+	int x, y, id;
+
+	for (unsigned int i = 0; i < coords.size(); i++)
+	{
+		x = coords[i]->coord->get_x();
+		y = coords[i]->coord->get_y();
+		id = coords[i]->id;
+		room* cur_room = Dungeon->get_room(id - 1);
+
+		if ((cursor_y == y) && (cursor_x == x))//we are on the same line
+		{
+			//add the room num
+			if (cur_room->get_visited_status())
+			{
+				if (player->get_cur_room_id() == id)
+					cur += "@";
+				else
+					cur += "o";
+			}
+			else
+			{
+				cur += " ";
+			}
+			
+			//cur += std::to_string(coords[i]->id);//adds the number of the room to the map
+			cursor_x++;
+		}
+		else if ((cursor_y == y) && (cursor_x != x))
+		{
+			cursor_x++;
+			cur += " ";
+			i--;//repeat the same coord
+		}
+		else if (cursor_y != y)
+		{
+			//push the previous line and start a new one
+			lines.push_back(cur);
+			cur = "";
+			cursor_y++;
+			cursor_x = 0;
+			i--;//do the same coord again
+		}
+	}
+	lines.push_back(cur);
+
+	//draw the lines vector to draw the map
+	for (unsigned int i = 0; i < lines.size(); i++)
+	{
+		std::cout << lines[i] << "\n";
+	}
+}
+void commands::map(bool& print_all_map)
+{
+	Dungeon->create_sorted_room_coords(print_all_map);//set the coords again for the map adding the one that was just visited
+	std::vector<coord_and_id*> coords = Dungeon->get_sorted_room_coords();
+
+	//add in the connection characters to the coords vector
+	//clear_();
+	//player->printTopBar();
+	//player->get_cur_room()->display_room();
+
+	//now draw the map
+	print("DUNGEON MAP:\n");
+	std::vector<std::string> lines;
+	int cursor_x = 0;
+	int cursor_y = 0;
+
+	std::string cur = "";
+	int x, y, id;
+
+	for (unsigned int i = 0; i < coords.size(); i++)
+	{
+		x = coords[i]->coord->get_x();
+		y = coords[i]->coord->get_y();
+		id = coords[i]->id;
+		room* cur_room = nullptr;
+
+		if ((id != -3) && (id != -4))
+			cur_room = Dungeon->get_room(id - 1);
+
+		if ((cursor_y == y) && (cursor_x == x))//we are on the same line
+		{
+			if (cur_room == nullptr) //if it is a connection
+			{
+				if(id == -3)
+					cur += "|";
+				if (id == -4)
+					cur += "-";
+			}
+			else 
+			{
+				//cur += std::to_string(cur_room->get_depth());
+
+				if (player->get_cur_room_id() == id)
+					cur += "@";
+				else if (id == 1)//start room
+					cur += "S";
+				else if (cur_room->get_name() == "Dragon's Lair")
+					cur += "D";
+				else
+					cur += "o";
+			}
+
+			//cur += std::to_string(coords[i]->id);//adds the number of the room to the map
+			cursor_x++;
+		}
+		else if ((cursor_y == y) && (cursor_x != x))
+		{
+			cursor_x++;
+			cur += " ";
+			i--;//repeat the same coord
+		}
+		else if (cursor_y != y)
+		{
+			//push the previous line and start a new one
+			lines.push_back(cur);
+			cur = "";
+			cursor_y++;
+			cursor_x = 0;
+			i--;//do the same coord again
+		}
+	}
+	lines.push_back(cur);
+
+	//draw the lines vector to draw the map
+	for (unsigned int i = 0; i < lines.size(); i++)
+	{
+		std::cout << lines[i] << "\n";
+	}
+}
 bool commands::go(int index) //returning true doesn't reprint the room info and top bar, returning false does
 {
 	room* player_cur_room = player->get_cur_room();
@@ -323,8 +467,9 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 			std::cout << "It's a nullptr again!";
 		}
 
-
+		player_next_room->visited_cur_room();
 		player->set_location(player_next_room);
+		
 		std::cout << "Going " << dir_string << "...\n";
 		wait(5);
 		clear_command();

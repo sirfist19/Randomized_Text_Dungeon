@@ -354,7 +354,13 @@ void commands::map(bool& print_all_map)
 	//player->get_cur_room()->display_room();
 
 	//now draw the map
-	print("DUNGEON MAP:\n");
+	print("\t\t\t\t\t\tDUNGEON MAP:");
+	print("\t\t\t\t\t\t\t\t\t\t\tKey: ");
+	print("\t\t\t\t\t\t\t\t\t@ - player's current location, B - boss room");
+	print("\t\t\t\t\t\t\t\t\tS - start room, X - dungeon exit");
+	print("\t\t\t\t\t\t\t\t\tE - live enemy still in room, W - wooden chest");
+	print("\t\t\t\t\t\t\t\t\tG - gold chest, D - dragon chest");
+
 	std::vector<std::string> lines;
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -383,16 +389,39 @@ void commands::map(bool& print_all_map)
 			}
 			else 
 			{
-				//cur += std::to_string(cur_room->get_depth());
+				if((player_input_noun == "depth") || (player_input_noun == "full depth")) //the depth map
+					cur += std::to_string(cur_room->get_depth());
+				else 
+				{
+					int amt_enemies = cur_room->get_enemies().size();
+					bool has_enemies = false;
+					if (amt_enemies != 0)
+						has_enemies = true;
 
-				if (player->get_cur_room_id() == id)
-					cur += "@";
-				else if (id == 1)//start room
-					cur += "S";
-				else if (cur_room->get_name() == "Dragon's Lair")
-					cur += "D";
-				else
-					cur += "o";
+					chest* cur_chest = cur_room->get_chest();
+					std::string chest_name = "";
+					if(cur_chest != nullptr)
+						chest_name = cur_chest->get_name();
+
+
+					if (player->get_cur_room_id() == id)
+						cur += "@";
+					else if (id == 1)//start room
+						cur += "S";
+					else if (cur_room->get_name() == "Dragon's Lair")
+						cur += "B";
+					else if (amt_enemies > 0)
+						cur += "E";
+					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Wooden Chest"))
+						cur += "W";
+					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Gold Chest"))
+						cur += "G";
+					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Dragon Chest"))
+						cur += "D";
+					else
+						cur += "o";
+				}
+				
 			}
 
 			//cur += std::to_string(coords[i]->id);//adds the number of the room to the map
@@ -496,11 +525,12 @@ void commands::help()
 	{
 		print("BASIC COMMANDS: ");
 		print("1. go - Allows the player to move through the dungeon. Need to type a direction (Ex: north or east) as the object.");
-		print("2. quit - Simply quits the game.");
+		print("2. quit - Quits the game to the title screen. Restarts all progress.");
 		print("3. inventory - Shows your health, current weapon, and items.");
-		print("4. open - Opens chests.");
-		print("5. take - Take objects off the ground or from chests.");
-		print("6. equip - Equips items from the inventory into use.");
+		print("4. map - Displays a dungeon map of the areas you have already visited.");
+		print("5. open - Opens chests.");
+		print("6. take - Take objects off the ground or from chests.");
+		print("7. equip - Equips items from the inventory into use.");
 		print();
 		print("- To get a full list of commands type 'list'.");
 		print("- To find out more information about a specific command, type 'help' followed by the command you want to learn more about. Ex: help equip");
@@ -531,7 +561,14 @@ void commands::help()
 	{
 		print("COMMAND: quit");
 		print("Needs Object: No");
-		print("Quits the game.");
+		print("Quits the game to the title screen. Restarts all progress.");
+	}
+	else if (player_input_noun == "map")
+	{
+		print("COMMAND: map");
+		print("Needs Object: No");
+		print("Displays a dungeon map of the areas you have already visited.");
+		print("The @ represents the current position of the player. S is the start room, E is the exit to the dungeon, and B is the boss room.");
 	}
 	else if (player_input_noun == "inventory")
 	{

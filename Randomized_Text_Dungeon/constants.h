@@ -2,14 +2,14 @@
 #define constant_h
 
 const bool DEBUG_MODE = false;
-const int MAX_DUNGEON_SIZE = 45;//45
-const int MIN_DUNGEON_SIZE = 30;//30
+const int MAX_DUNGEON_SIZE = 55;//45
+const int MIN_DUNGEON_SIZE = 40;//30
 const int MAX_CHAR_PER_LINE = 120;
 const int CONNECT_ROOMS_CHANCE = 15;//15
 const int MIN_DEEPEST_DEPTH = 17;//17
 
 const int RUN_AWAY_CHANCE = 50;
-const int BORDER_MAP_SIZE = 5;
+const int BORDER_MAP_SIZE = 45;
 
 //depth tiers
 const int MIN_NEAR = 1;

@@ -64,6 +64,7 @@ class dungeon
 		void create_sorted_room_coords_basic();
 		bool duplicate_coord_and_id(coord_and_id* posid);
 		void dfs_set_depth() const;
+		void bfs_set_depth() const;
 		bool no_two_rooms_have_same_coord() const; //a debugging fxn
 		room* find_adj_room(int& index, room* cur_room) const; //finds any adjacent non-connected room
 		bool in_visited(std::vector<room*> visited, int id) const

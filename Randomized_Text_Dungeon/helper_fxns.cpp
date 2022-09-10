@@ -53,13 +53,49 @@ int random(int start, int end)//picks a random number from the start to the end 
 	a = rand() % range + start;
 	return a;
 }
-void game_Over()
+void game_Over(bool& game_over, bool& quit_to_title_screen)
 {
 	printEquals();
 	std::cout << "GAME OVER!\n";
-	std::cout << "You died. Bye bye, better luck next time.\n";
+	std::cout << "You died. Better luck next time.\n";
 	printEquals();
-	exit(0);
+
+	print("Do you want to restart or quit the game?");
+	print("1. Restart");
+	print("2. Quit");
+
+	std::string in = "";
+	while (in == "")
+	{
+		in = input();
+		if ((in == "1") || (in == "restart"))
+		{
+			game_over = false;
+			quit_to_title_screen = true;
+			printUnderscore();
+			print("Restarting the game...");
+			wait(5);
+			clear_();
+		}
+		else if ((in == "2") || (in == "quit"))
+		{
+			game_over = true;
+			quit_to_title_screen = true;
+			printUnderscore();
+			print("Bye bye! Thanks for playing!");
+			printUnderscore();
+		}
+		else
+		{
+			printUnderscore();
+			print("Invalid input. Please try again.");
+			printUnderscore();
+			in = "";
+		}
+	}
+	
+	
+	//exit(0);
 }
 bool is_number_in_range(const std::string& in, const int& start, const int& end)
 {
@@ -215,13 +251,14 @@ std::string get_player_name()
 std::string welcome_screen()
 {
 	printEquals();
-	print("Welcome to Randomized Text Dungeon!");
+	print("\nWelcome to Randomized Text Dungeon!");
+	print("\t- An adventure game by Aidan Cini");
 	print();
 	print("This is a randomized text dungeon. The rooms, enemies, and items are randomized so every time you play the dungeon will be different.\n");
-	print("You are an explorer that has just found the dungeon that you have been searching for for 10 years. A massive entrance lined with columns stands leads into the depths below. Enter if you dare.");
+	print("You are an explorer that has just found the dungeon that you have been searching for for 14 years. A massive entrance lined with columns stands leads into the depths below. Enter if you dare.");
 	printEquals();
 	print();
-	print("1. Enter");
+	print("\n1. Enter");
 	print("2. Leave");
 	std::string yes_inputs[] = { "1", "start", "enter" };
 	std::string no_inputs[] = { "2", "quit", "leave" };

@@ -31,15 +31,15 @@ private:
 	std::unordered_map<std::string, verb> verb_chart;
 	std::unordered_map<std::string, noun> noun_chart;
 public:
-	void game_loop(commands* game, bool& game_over, bool& first_time_enter);
+	void game_loop(commands* game, bool& game_over, bool& quit_to_title_screen, bool& first_time_enter);
 	
 	commands(std::string player_name);//default constructor
 	~commands();
-	bool parseInputVector(bool& game_over);
+	bool parseInputVector(bool& game_over, bool& quit_to_title_screen);
 	void print_all_commands();
 	void print_all_verbs();
 	void print_all_nouns();
-	void input_loop(bool& loop, bool& game_over);
+	void input_loop(bool& loop, bool& game_over, bool& quit_to_title_screen);
 
 	void fighting(room* cur_room, bool& game_over, Player* player);
 	void fighting_input_loop(bool& game_over, Player* player, Enemy* enemy, bool& ran_away);

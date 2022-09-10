@@ -228,7 +228,7 @@ public:
 	virtual void kill()//kills the entity
 	{
 		health->kill(); 
-		game_Over();
+		//game_Over();
 	}
 	void set_location(room* new_location)
 	{

@@ -29,15 +29,13 @@ void commands::fighting(room* cur_room, bool& game_over, Player* player)
 			bool ran_away = false;
 			fighting_input_loop(game_over, player, enemy, ran_away);
 
+			if (game_over)
+				return;
 			if (ran_away)
 			{
 				break;
 			}
 
-			if (game_over)
-			{
-				game_Over();
-			}
 			if (!enemy->is_alive())
 			{
 				enemies.pop_back();

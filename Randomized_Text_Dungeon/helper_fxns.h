@@ -16,7 +16,7 @@ void wait(long seconds);
 void clear_();
 void printEquals();
 void printUnderscore();
-void game_Over();
+void game_Over(bool& game_over, bool& quit_to_title_screen);
 bool is_number_in_range(const std::string& in, const int& start, const int& end);
 int random(int start, int end);
 std::vector<std::string> prompt();

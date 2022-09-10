@@ -1,6 +1,7 @@
 #include "dungeon.h"
 #include "enemy.h"
 #include <algorithm>
+#include <queue>
 
 dungeon::dungeon() 
 {
@@ -22,7 +23,7 @@ dungeon::dungeon()
 	}
 	
 	//fill the dungeon with stuff
-	dfs_set_depth();
+	bfs_set_depth();
 	for (unsigned int i = 0; i < rooms.size(); i++)
 	{
 		room* cur_room = rooms[i];
@@ -365,6 +366,52 @@ bool dungeon::duplicate_coord_and_id(coord_and_id* posid)
 		}
 	}
 	return false;
+}void dungeon::bfs_set_depth() const
+{
+	//search the maze using DFS
+	std::vector<room*> visited;
+	std::queue<room*> Queue;
+	room* cur_room = rooms[0];//cur_room is the start room
+
+	//for the first room
+	int cur_depth = 0;
+	cur_room->set_depth(cur_depth);
+	visited.push_back(cur_room);
+	int* cur_exits = cur_room->get_exits();
+	cur_depth = 1;//dealing with the rooms next to the first room
+
+	for (int i = 0; i < 4; i++)
+	{
+		int id = cur_exits[i];
+		if ((cur_exits[i] > 0) && (!in_visited(visited, id))) {
+			room* next_room = rooms[id - 1];
+			next_room->set_depth(cur_depth);
+			Queue.push(next_room);//push the next room with its coord to the stack
+		}
+	}
+
+	//go through the stack (set up by the first room)
+	while (!Queue.empty())
+	{
+		cur_room = Queue.front();
+		cur_depth = cur_room->get_depth();
+		int next_depth = cur_depth + 1;
+		Queue.pop();
+		visited.push_back(cur_room);
+
+		int* cur_exits = cur_room->get_exits();
+
+		for (int i = 0; i < 4; i++)
+		{
+			int id = cur_exits[i];
+			if ((cur_exits[i] != 0) && (!in_visited(visited, id))) //is an exit and not already visited
+			{
+				room* next_room = rooms[id - 1];
+				next_room->set_depth(next_depth);
+				Queue.push(next_room);//push the next room with its coord to the stack
+			}
+		}
+	}
 }
 void dungeon::dfs_set_depth() const
 {

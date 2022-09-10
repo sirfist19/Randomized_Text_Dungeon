@@ -2,7 +2,7 @@
 #include "commands.h"
 
 //the main game loop that controls everything
-void commands::game_loop(commands* game, bool& game_over, bool& first_time_enter)
+void commands::game_loop(commands* game, bool& game_over, bool& quit_to_title_screen, bool& first_time_enter)
 {
 	//check to make sure the player is still alive
 	game_over = !(player->is_alive());
@@ -22,7 +22,11 @@ void commands::game_loop(commands* game, bool& game_over, bool& first_time_enter
 	}
 	
 	fighting(cur_room, game_over, player);
-	input_loop(loop, game_over);
+
+	if (game_over)
+		return;
+
+	input_loop(loop, game_over, quit_to_title_screen);
 }
 
 //constructor
@@ -85,7 +89,7 @@ dungeon* commands::get_dungeon()
 }
 
 //input and parsing
-void commands::input_loop(bool& loop, bool& game_over)
+void commands::input_loop(bool& loop, bool& game_over, bool& quit_to_title_screen)
 {
 	if (game_over)
 		return;
@@ -94,13 +98,13 @@ void commands::input_loop(bool& loop, bool& game_over)
 	{
 		cur_player_input = prompt();
 		printUnderscore();
-		loop = parseInputVector(game_over);
+		loop = parseInputVector(game_over, quit_to_title_screen);
 
 		if (loop)
 			printUnderscore();
 	}
 }
-bool commands::parseInputVector(bool& game_over)
+bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 {
 	//set cur_noun and cur_verb based on user input
 	//if not found in the maps then return false and print 
@@ -176,12 +180,14 @@ bool commands::parseInputVector(bool& game_over)
 		use();
 		break;
 	case verb::map:
-		if (player_input_noun == "full")
+		if ((player_input_noun == "full") || (player_input_noun == "full depth"))
 			print_all_map = true;
 		map(print_all_map);
 		break;
 	case verb::jump:
 		jump();
+		if (!player->is_alive())
+			game_over = true;
 		break;
 	case verb::drink:
 		drink();
@@ -190,8 +196,10 @@ bool commands::parseInputVector(bool& game_over)
 		equip();
 		break;
 	case verb::quit:
-		game_over = true;
-		print("\nYou quit the game. Bye bye. See you next time!\n");
+		quit_to_title_screen = true;
+		print("\nYou quit the game and returned to the title screen. Play again or exit the game.\n");
+		wait(5);
+		clear_();
 		return false;
 		break;
 	case verb::open:

@@ -192,7 +192,10 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 	case verb::jump:
 		jump();
 		if (!player->is_alive())
+		{
 			game_over = true;
+			return false;
+		}
 		break;
 	case verb::drink:
 		drink();

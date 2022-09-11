@@ -124,11 +124,21 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 		printUnderscore();
 
 		//player attacks
+		int player_hit_num = random(0, 99);
 		weapon* player_weapon = player->get_weapon();
-		int player_damage = player_weapon->get_damage();
-		player_damage = (player_damage * player_damage) / (player_damage + enemy->get_defense());//takes defense into account
+		int player_damage = 0;
+		if (player_hit_num < player_weapon->get_hit_rate())
+		{
+			player_damage = player_weapon->get_damage();
+			player_damage = (player_damage * player_damage) / (player_damage + enemy->get_defense());//takes defense into account
+			std::cout << player->get_name() << " attacks with " << player_weapon->get_name() << " for " << player_damage << " damage.\n";
+		}
+		else //a miss
+		{
+			std::cout << player->get_name() << " attacks with " << player_weapon->get_name() << " but you miss.\n\n";
+		}
 		enemy->get_health()->damage(player_damage);
-		std::cout << player->get_name() << " attacks with " << player_weapon->get_name() << " for " << player_damage << " damage.\n";
+		
 
 		if (!enemy->is_alive())
 		{
@@ -181,11 +191,21 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 	}
 
 	//enemy attacks
+	int enemy_hit_num = random(0, 99);
 	weapon* enemy_weapon = enemy->get_weapon();
-	int enemy_damage = enemy_weapon->get_damage();
-	enemy_damage = (enemy_damage * enemy_damage) / (enemy_damage + player->get_defense());//takes defense into account
+	int enemy_damage = 0;
+	if (enemy_hit_num < enemy_weapon->get_hit_rate())
+	{
+		enemy_damage = enemy_weapon->get_damage();
+		enemy_damage = (enemy_damage * enemy_damage) / (enemy_damage + player->get_defense());//takes defense into account
+		std::cout << enemy->get_name() << " attacks with " << enemy_weapon->get_name() << " for " << enemy_damage << " damage.\n\n";
+	}
+	else //a miss
+	{
+		std::cout << enemy->get_name() << " attacks with " << enemy_weapon->get_name() << " but misses.\n\n";
+	}
 	player->get_health()->damage(enemy_damage);
-	std::cout << enemy->get_name() << " attacks with " << enemy_weapon->get_name() << " for " << enemy_damage << " damage.\n\n";
+	
 
 	game_over = !(player->is_alive());
 }

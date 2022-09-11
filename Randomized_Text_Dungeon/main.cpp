@@ -12,7 +12,7 @@ int main()
 
 		commands* game = new commands(player_name);
 		dungeon* Dungeon = game->get_dungeon();
-		Player* player = game->get_player();
+		//Player* player = game->get_player();
 
 		bool first_time_enter = true;
 		game->intro_cut_scene();

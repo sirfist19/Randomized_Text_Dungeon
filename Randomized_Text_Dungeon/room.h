@@ -22,6 +22,9 @@ public:
 		x = _x;
 		y = _y;
 	}
+	~room_coord()
+	{
+	}
 	room_coord(const room_coord& in)//copy constructor
 	{
 		x = in.x;
@@ -132,6 +135,7 @@ class room {
 				delete items[i];
 			}
 			delete location;
+			delete Chest;
 		}
 		chest* get_chest() const
 		{
@@ -153,6 +157,10 @@ class room {
 		void set_coord(room_coord* coord)
 		{
 			location = coord;
+		}
+		void set_name(std::string in_name)
+		{
+			name = in_name;
 		}
 		room_coord* get_coord()
 		{

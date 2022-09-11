@@ -12,6 +12,10 @@ struct coord_and_id
 	int id;//for rooms is the id, -2 for the exit, -3 for north and south connections, -4 for east and west connections 
 
 	coord_and_id(room_coord* in_coord, int in_id) : coord(in_coord), id(in_id) {}
+	~coord_and_id()
+	{
+		delete coord;
+	}
 	bool equal(coord_and_id* other)
 	{
 		if ((other->id == id) && (coord->is_equal(*coord, *other->coord)))
@@ -40,6 +44,12 @@ class dungeon
 				delete sorted_room_coords[i];
 			}
 			delete stock_room_descriptions;
+
+			//std::cout << rooms_to_give_exits.size();
+			while(!rooms_to_give_exits.empty())//should be empty but if it is not delete everything
+			{
+				rooms_to_give_exits.pop();
+			}
 		}
 		int get_size()
 		{
@@ -55,9 +65,14 @@ class dungeon
 		{
 			return sorted_room_coords;
 		}
-		room* get_start_room()
+		room* get_start_room() const
 		{
-			return rooms[0];
+			for (unsigned int i = 0; i < rooms.size(); i++)
+			{
+				if (rooms[i]->get_id() == 1)
+					return rooms[i];
+			}
+			return nullptr;
 		}
 		//void dfs() const;
 		void create_sorted_room_coords(bool& print_all_map);

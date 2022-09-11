@@ -63,9 +63,14 @@ commands::commands(std::string player_name)
 	verb_chart["map"] = verb::map;
 
 	noun_chart["north"] = noun::north;
+	noun_chart["n"] = noun::north;
 	noun_chart["south"] = noun::south;
+	noun_chart["s"] = noun::south;
 	noun_chart["east"] = noun::east;
+	noun_chart["e"] = noun::east;
 	noun_chart["west"] = noun::west;
+	noun_chart["w"] = noun::west;
+
 	noun_chart["pit"] = noun::pit;
 	noun_chart["chest"] = noun::_chest;
 	noun_chart["all"] = noun::all;

@@ -61,6 +61,7 @@ public:
 	{
 		
 	}
+	virtual ~object(){}
 	//init a stack of objs
 	object(std::string name, int amt, std::string description) :name(name), description(description), amt(amt)
 	{

@@ -20,8 +20,15 @@ dungeon::dungeon()
 		rooms_to_give_exits.pop();
 
 		create_new_exits(cur_room, stock_room_descriptions);
+		std::cout << "Generated dungeon of size " << rooms.size()<<"\n";
 	}
 	
+	//empty the rooms to give exits stack - its not needed anymore
+	while (!rooms_to_give_exits.empty())
+	{
+		rooms_to_give_exits.pop();
+	}
+
 	//fill the dungeon with stuff
 	bfs_set_depth();
 	for (unsigned int i = 0; i < rooms.size(); i++)
@@ -45,6 +52,14 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 		int* cur_exits = cur_room->get_exits();
 		cur_exits[exit_num] = -2;
 		cur_room->set_exits(cur_exits);
+
+		//create the start room and add its coordinate
+		room* exit_room = new room(-2);
+		room_coord* exit_pos = new room_coord(get_coord(exit_num));
+		exit_room->visited_cur_room();//make the exit room show up on the map
+		exit_room->set_coord(exit_pos);
+		exit_room->set_name("Exit Room");
+		rooms.insert(rooms.begin(), exit_room);//but the exit room as the first room
 
 		//set the remaining exits
 		cur_room->set_num_exits(random(1,3));
@@ -92,7 +107,7 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 			if ((cur_exits[index] == 0) && (adj_room == nullptr))//there is no exit and no adjacent room in the given direction
 			{
 				//create a new room
-				room* temp_room = new room(rooms.size() + 1);
+				room* temp_room = new room(rooms.size());
 
 				//update cur_room's exit
 				cur_exits[index] = temp_room->get_id();
@@ -120,10 +135,11 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 			{
 				//a random chance to connect to that room
 				int chance = random(0,99); //0 to 9
-				if (chance < CONNECT_ROOMS_CHANCE)
+				int adj_room_id = adj_room->get_id();
+				if ((chance < CONNECT_ROOMS_CHANCE) && (adj_room_id != -2)) //do not connect if the adj room is the exit room
 				{
 					//connect the current room
-					cur_exits[index] = adj_room->get_id();
+					cur_exits[index] = adj_room_id;
 
 					//connect the adjacent room
 					int* adj_room_exits = adj_room->get_exits();
@@ -137,7 +153,7 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 }
 void dungeon::display_all_rooms_coords()
 {
-	for (int i = 0; i < sorted_room_coords.size(); i++)
+	for (unsigned int i = 0; i < sorted_room_coords.size(); i++)
 	{
 		std::cout << "Room " << sorted_room_coords[i]->id << " with coord ";
 		sorted_room_coords[i]->coord->display();
@@ -258,31 +274,36 @@ void dungeon::create_sorted_room_coords(bool& print_all_map)
 		 int x = sorted_room_coords[i]->coord->get_x();
 		 int y = sorted_room_coords[i]->coord->get_y();
 
-		 room* cur_room = rooms[id - 1];
+		 room* cur_room = nullptr;
+		 if (id == -2)
+			 cur_room = rooms[0];
+		 else
+			cur_room = rooms[id];
+
 		 int* cur_room_exits = cur_room->get_exits();
 
-		 if (cur_room_exits[0] > 0) //add north exit
+		 if ((cur_room_exits[0] > 0) || (cur_room_exits[0] == -2)) //add north exit
 		 {
 			 room_coord* new_coord = new room_coord(x, y + 1);
 			 coord_and_id* posid = new coord_and_id(new_coord, -3);
 			 if(!duplicate_coord_and_id(posid))
 				sorted_room_coords.push_back(posid);
 		 }
-		 if (cur_room_exits[1] > 0) //add south exit
+		 if ((cur_room_exits[1] > 0) || (cur_room_exits[1] == -2))//add south exit
 		 {
 			 room_coord* new_coord = new room_coord(x, y - 1);
 			 coord_and_id* posid = new coord_and_id(new_coord, -3);
 			 if (!duplicate_coord_and_id(posid))
 				 sorted_room_coords.push_back(posid);
 		 }
-		 if (cur_room_exits[2] > 0) //add east exit
+		 if ((cur_room_exits[2] > 0) || (cur_room_exits[2] == -2))//add east exit
 		 {
 			 room_coord* new_coord = new room_coord(x + 1, y);
 			 coord_and_id* posid = new coord_and_id(new_coord, -4);
 			 if (!duplicate_coord_and_id(posid))
 				 sorted_room_coords.push_back(posid);
 		 }
-		 if (cur_room_exits[3] > 0) //add west exit
+		 if ((cur_room_exits[3] > 0) || (cur_room_exits[3] == -2))//add west exit
 		 {
 			 room_coord* new_coord = new room_coord(x - 1, y);
 			 coord_and_id* posid = new coord_and_id(new_coord, -4);
@@ -371,7 +392,7 @@ bool dungeon::duplicate_coord_and_id(coord_and_id* posid)
 	//search the maze using DFS
 	std::vector<room*> visited;
 	std::queue<room*> Queue;
-	room* cur_room = rooms[0];//cur_room is the start room
+	room* cur_room = get_start_room();//cur_room is the start room
 
 	//for the first room
 	int cur_depth = 0;
@@ -383,10 +404,17 @@ bool dungeon::duplicate_coord_and_id(coord_and_id* posid)
 	for (int i = 0; i < 4; i++)
 	{
 		int id = cur_exits[i];
-		if ((cur_exits[i] > 0) && (!in_visited(visited, id))) {
-			room* next_room = rooms[id - 1];
+		if ((id > 0) && (!in_visited(visited, id))) {
+			room* next_room = rooms[id];
 			next_room->set_depth(cur_depth);
 			Queue.push(next_room);//push the next room with its coord to the stack
+		}
+		else if (id == -2)//deal with the exit room
+		{
+			room* exit_room = rooms[0];
+			int exit_depth = -1;
+			exit_room->set_depth(exit_depth);
+			//don't add to the queue cause no exits
 		}
 	}
 
@@ -406,7 +434,7 @@ bool dungeon::duplicate_coord_and_id(coord_and_id* posid)
 			int id = cur_exits[i];
 			if ((cur_exits[i] != 0) && (!in_visited(visited, id))) //is an exit and not already visited
 			{
-				room* next_room = rooms[id - 1];
+				room* next_room = rooms[id];
 				next_room->set_depth(next_depth);
 				Queue.push(next_room);//push the next room with its coord to the stack
 			}

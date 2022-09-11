@@ -108,6 +108,18 @@ public:
 	{
 		return main_weapon;
 	}
+	helmet* get_helmet() const
+	{
+		return Helmet;
+	}
+	chestplate* get_chestplate() const
+	{
+		return Chestplate;
+	}
+	boots* get_boots() const
+	{
+		return Boots;
+	}
 	void set_weapon(object* new_weapon)
 	{
 		if(new_weapon->identify() == "weapon")
@@ -169,6 +181,14 @@ public:
 	{
 		delete health;
 		delete main_weapon;
+		if(Helmet != nullptr)
+			delete Helmet;
+
+		if(Chestplate != nullptr)
+			delete Chestplate;
+
+		if(Boots != nullptr)
+			delete Boots;
 	}
 };
 #endif

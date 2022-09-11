@@ -84,19 +84,19 @@ void commands::fighting_input_loop(bool& game_over, Player* player, Enemy* enemy
 					int* room_exits = cur_room->get_exits();
 
 					std::string in = input();
-					if ((in == "north") || (in == "go north"))
+					if ((in == "north") || (in == "go north") || (in == "go n") || (in == "n"))
 					{
 						ran_away = !go(0);
 					}
-					else if ((in == "south") || (in == "go south"))
+					else if ((in == "south") || (in == "go south") || (in == "go s") || (in == "s"))
 					{
 						ran_away = !go(1);
 					}
-					else if ((in == "east") || (in == "go east"))
+					else if ((in == "east") || (in == "go east") || (in == "go e") || (in == "e"))
 					{
 						ran_away = !go(2);
 					}
-					else if ((in == "west") || (in == "go west"))
+					else if ((in == "west") || (in == "go west") || (in == "go w") || (in == "w"))
 					{
 						ran_away = !go(3);
 					}
@@ -132,7 +132,41 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 
 		if (!enemy->is_alive())
 		{
+			//enemies dropping their items
+			std::vector<object*> obj_to_drop;
+			weapon* Weapon = enemy->get_weapon();
+			helmet* Helmet = enemy->get_helmet();
+			chestplate * Chestplate = enemy->get_chestplate();
+			boots * Boots = enemy->get_boots();
+
+			if (Weapon != nullptr)
+				obj_to_drop.push_back(Weapon);
+			if (Helmet != nullptr)
+				obj_to_drop.push_back(Helmet);
+			if (Chestplate != nullptr)
+				obj_to_drop.push_back(Chestplate);
+			if (Boots != nullptr)
+				obj_to_drop.push_back(Boots);
+
+			int num = random(1, 100);
+			room* cur_room = player->get_cur_room();
+			object* copy_obj_to_drop = nullptr;
+			if (num < ENEMY_DROP_CHANCE)
+			{
+				int index = random(0, obj_to_drop.size() - 1);
+
+				//drop obj_to_drop[index]
+				object* to_drop = obj_to_drop[index];
+				copy_obj_to_drop = to_drop->clone();//copy the object to the room (while keeping the polymorphism typing!)
+				//copy_obj_to_drop->set_amt(amt_to_drop);//no duplicating items so set the correct amount that are dropping on the floor
+				cur_room->add_item(copy_obj_to_drop);
+			}
+
 			std::cout << "\nYou killed the " << enemy->get_name() << "!\n";
+
+			if(copy_obj_to_drop != nullptr)
+				std::cout << "As it died the " << enemy->get_name() << " dropped its " << copy_obj_to_drop->get_name() << " on the floor.\n";
+
 			int gained_exp = enemy->get_exp();
 			std::cout << "You gained " << gained_exp << "xp points.\n\n";
 			player->increase_exp(gained_exp);

@@ -60,6 +60,11 @@ public:
 		{
 			delete very_far_descriptions[i];
 		}
+		for (unsigned int i = 0; i < any_descriptions.size(); i++)
+		{
+			if(any_descriptions[i] != nullptr)
+				delete any_descriptions[i];
+		}
 	}
 	room_descriptions()
 	{

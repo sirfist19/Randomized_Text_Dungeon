@@ -69,7 +69,7 @@ void commands::drop()
 		int amt_to_drop = 1;
 		if (amt > 1)
 		{
-			std::cout << "Ther are " << amt << " of those in your inventory. How many do you want to drop?";
+			std::cout << "There are " << amt << " of those in your inventory. How many do you want to drop?";
 			std::string answer = "0";
 
 			while (!is_number_in_range(answer, 1, amt))
@@ -375,8 +375,12 @@ void commands::map(bool& print_all_map)
 		id = coords[i]->id;
 		room* cur_room = nullptr;
 
-		if ((id != -3) && (id != -4))
-			cur_room = Dungeon->get_room(id - 1);
+		if ((id != -3) && (id != -4) && (id != -2))
+			cur_room = Dungeon->get_room(id);
+		if (id == -2)
+		{
+			cur_room = Dungeon->get_room(0);
+		}
 
 		if ((cursor_y == y) && (cursor_x == x))//we are on the same line
 		{
@@ -408,6 +412,8 @@ void commands::map(bool& print_all_map)
 						cur += "@";
 					else if (id == 1)//start room
 						cur += "S";
+					else if (id == -2)
+						cur += "X";
 					else if (cur_room->get_name() == "Dragon's Lair")
 						cur += "B";
 					else if (amt_enemies > 0)
@@ -487,7 +493,7 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 	}
 	else
 	{
-		int new_index = new_room_id - 1;
+		int new_index = new_room_id;
 		//std::cout << "New index:" <<new_index;
 		room* player_next_room = Dungeon->get_room(new_index);
 
@@ -554,8 +560,9 @@ void commands::help()
 	{
 		print("COMMAND: go");
 		print("Needs Object: Yes");
-		print("Allows the player to move through the dungeon. Need to type a direction (Ex: north, south, east or west) as the object.");
+		print("Allows the player to move through the dungeon. Need to type a direction (Ex: north (n), south (s), east (e) or west (w)) as the object.");
 		print("Ex: go north");
+		print("Ex: go n");
 	}
 	else if (player_input_noun == "quit")
 	{

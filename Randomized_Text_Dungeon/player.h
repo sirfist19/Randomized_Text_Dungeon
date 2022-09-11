@@ -56,10 +56,10 @@ public:
 		int change_in_health = desired_max_health - cur_max_health;
 		int old_health = health->get_health();
 		health->increase_max_health(change_in_health);
-		health->heal_to_full();
+		health->heal(change_in_health);
 		int new_health = health->get_health();
 		std::cout << "You leveled up to level " << desired_level << " and gained " << change_in_health << " max health points.\n";
-		std::cout << "You were healed by "<<new_health - old_health<<" health points to full health.\n";
+		//std::cout << "You were healed by "<<new_health - old_health<<" health points to full health.\n";
 	}
 	int get_exp() const
 	{

@@ -143,7 +143,7 @@ void commands::equip()
 			//equip if it is a weapon that is different from the current one and does more damage
 			if ((identifier == "weapon") 
 				&& (inventory[i]->get_name() != player->get_weapon()->get_name()) 
-				&& (((weapon*)inventory[i])->get_damage() > player->get_weapon()->get_damage()))
+				&& (((weapon*)inventory[i])->get_light_damage() > player->get_weapon()->get_light_damage()))
 			{
 				equip_weapon(inventory[i]);
 				nothing_to_equip = false;

@@ -89,13 +89,13 @@ public:
 			health = random(1, 3);
 			break;
 		case 2: 
-			health = random(5, 7);
-			break;
-		case 3:
 			health = random(8, 12);
 			break;
+		case 3:
+			health = random(25, 35);
+			break;
 		case 4:
-			health = random(15, 20);
+			health = random(60, 70);
 			break;
 		}
 		return health;
@@ -679,7 +679,7 @@ public:
 		switch (level)
 		{
 		case 1:
-			if (has_helm < 50)
+			if (has_helm < 40)
 			{
 				helm = new dragon_scale_helmet();
 			}
@@ -694,7 +694,7 @@ public:
 		switch (level)
 		{
 		case 1:
-			if (has_chest < 50)
+			if (has_chest < 40)
 			{
 				chest = new dragon_scale_chestplate();
 			}
@@ -709,7 +709,7 @@ public:
 		switch (level)
 		{
 		case 1:
-			if (has_boot < 50)
+			if (has_boot < 40)
 			{
 				boot = new dragon_scale_boots();
 			}

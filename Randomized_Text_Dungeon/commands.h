@@ -43,7 +43,7 @@ public:
 
 	void fighting(room* cur_room, bool& game_over, Player* player);
 	void fighting_input_loop(bool& game_over, Player* player, Enemy* enemy, bool& ran_away);
-	void attack(bool& game_over, Player* player, Enemy* enemy, bool& only_enemy_attacks);
+	void attack(bool& game_over, Player* player, Enemy* enemy, bool& only_enemy_attacks, bool& is_player_heavy_attack);
 	void hello();
 	void stack_objects(std::vector<object*>& in);
 	void jump();

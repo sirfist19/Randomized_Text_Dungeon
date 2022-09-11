@@ -125,7 +125,7 @@ public:
 	{
 		for (unsigned int i = 0; i < 4; i++)
 		{
-			if (cur_room_exits[i] == -1)
+			if (cur_room_exits[i] == -2)
 			{
 				winning_screen();
 			}

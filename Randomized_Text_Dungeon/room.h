@@ -411,7 +411,7 @@ class room {
 						else
 						{
 							if (amt == 1)
-								std::cout << " a" << items[i]->get_name();
+								std::cout << "a " << items[i]->get_name();
 							else
 								std::cout << amt << " " << items[i]->get_name();
 						}

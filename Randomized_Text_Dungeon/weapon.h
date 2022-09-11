@@ -8,7 +8,7 @@ protected:
 	int damage;
 	int hit_rate;
 public:
-	weapon(std::string name, int damage, int hit_rate, std::string description): object(name, description), damage(damage), hit_rate(hit_rate)
+	weapon(std::string name, int damage, int hit_rate, std::string description) : object(name, description), damage(damage), hit_rate(hit_rate)
 	{
 
 	}
@@ -19,27 +19,37 @@ public:
 	virtual weapon* clone_weapon() = 0;
 	virtual void display()
 	{
-		std::cout << "Weapon: " << name<<"\n";
-		std::cout << "\tDamage - " << damage<<"\n";
+		std::cout << "Weapon: " << name << "\n";
+		std::cout << "\tDamage - " << damage << "\n";
 		std::cout << "\tDescription - ";
 		print(description);
 	}
 	virtual void display_chest()
 	{
-		std::cout << name << " (Damage: " << damage << ", Hit Rate: "<<hit_rate<<")\n";
+		std::cout << name << " (Base Damage: " << damage << ", Base Hit Rate: " << hit_rate << ")\n";
 	}
 	std::string identify()
 	{
 		return "weapon";
-	} 
-	int get_damage() const
+	}
+	int get_light_damage() const
 	{
 		return damage;
 	}
-	int get_hit_rate() const 
+	int get_heavy_damage() const
+	{
+		return (int)damage * HEAVY_DAMAGE_MULTIPLIER;
+	}
+	int get_light_hit_rate() const
 	{
 		return hit_rate;
 	}
+	int get_heavy_hit_rate() const
+	{
+		return hit_rate - HEAVY_HIT_RATE_REDUCER;
+	}
+	
+
 	virtual void use()
 	{
 		print("You can't use a weapon like that.");
@@ -66,7 +76,7 @@ public:
 class claws : public weapon
 {
 public:
-	claws() : weapon("Claws", 3, 90, "Razor sharp claws that can tear the skin off of an opponent."){}
+	claws() : weapon("Claws", 3, 80, "Razor sharp claws that can tear the skin off of an opponent."){}
 	claws(const claws& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -83,7 +93,7 @@ public:
 class broken_slime_shooter : public weapon
 {
 public:
-	broken_slime_shooter() : weapon("Broken Slime Shooter", 2, 40, "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process.") {}
+	broken_slime_shooter() : weapon("Broken Slime Shooter", 3, 50, "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process.") {}
 	broken_slime_shooter(const broken_slime_shooter& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -134,7 +144,7 @@ public:
 class bow : public weapon
 {
 public:
-	bow() : weapon("Bow", 8, 75, "Long ranged weapon. Hard to aim however. Without much skill a bowman will miss many shots.") {}
+	bow() : weapon("Bow", 8, 60, "Long ranged weapon. Hard to aim however. Without much skill a bowman will miss many shots.") {}
 	bow(const bow& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -151,7 +161,7 @@ public:
 class shortsword : public weapon
 {
 public:
-	shortsword() : weapon("Shortsword", 7, 95, "A small sword."){}
+	shortsword() : weapon("Shortsword", 6, 95, "A small sword."){}
 	shortsword(const shortsword& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -202,7 +212,7 @@ public:
 class axe : public weapon
 {
 public:
-	axe() : weapon("Axe", 15, 90, "A two-handed axe that needs lots of force to yield.") {}
+	axe() : weapon("Axe", 15, 85, "A two-handed axe that needs lots of force to yield.") {}
 	axe(const axe& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -219,7 +229,7 @@ public:
 class long_axe : public weapon
 {
 public:
-	long_axe() : weapon("Axe", 22, 90, "A two-handed axe that needs lots of force to yield.") {}
+	long_axe() : weapon("Axe", 22, 85, "A two-handed axe that needs lots of force to yield.") {}
 	long_axe(const long_axe& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -236,7 +246,7 @@ public:
 class daedric_sword : public weapon
 {
 public:
-	daedric_sword() : weapon("Daedric Sword", 30, 95, "This legendary blade is made from volcanic magma that has been infused with magical dragon bone. Whoever yields this blade can kill their opponents very quickly.") {}
+	daedric_sword() : weapon("Daedric Sword", 30, 90, "This legendary blade is made from volcanic magma that has been infused with magical dragon bone. Whoever yields this blade can kill their opponents very quickly.") {}
 	daedric_sword(const daedric_sword& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -287,7 +297,7 @@ public:
 class dragon_fire : public weapon
 {
 public:
-	dragon_fire() : weapon("Dragon Fire", 45, 50, "Fire that using the magical power of dragon's can turn anything to dust.") {}
+	dragon_fire() : weapon("Dragon Fire", 45, 70, "Fire that using the magical power of dragon's can turn anything to dust.") {}
 	dragon_fire(const dragon_fire& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -318,8 +328,8 @@ public:
 		rare.push_back(new sword());
 		rare.push_back(new long_bow());
 		legendary.push_back(new daedric_sword());
-		legendary.push_back(new mjolnir());
 		legendary.push_back(new long_axe());
+		legendary.push_back(new mjolnir());
 		legendary.push_back(new excalibur());
 	}
 	~weapon_list()

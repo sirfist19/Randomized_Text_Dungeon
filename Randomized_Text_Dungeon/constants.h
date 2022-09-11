@@ -4,13 +4,18 @@
 const bool DEBUG_MODE = false;
 const int MAX_DUNGEON_SIZE = 50;//45
 const int MIN_DUNGEON_SIZE = 45;//30
-const int MAX_CHAR_PER_LINE = 120;
+const int MAX_CHAR_PER_LINE = 200;//120
 const int CONNECT_ROOMS_CHANCE = 15;//15
 const int MIN_DEEPEST_DEPTH = 20;//17
 
 const int RUN_AWAY_CHANCE = 50;
 const int BORDER_MAP_SIZE = 45;
 const int ENEMY_DROP_CHANCE = 25;
+const int ENEMY_PICKS_HEAVY_ATTACK_CHANCE = 50;
+
+//attacking 
+const double HEAVY_DAMAGE_MULTIPLIER = 1.35;
+const int HEAVY_HIT_RATE_REDUCER = 20;
 
 //depth tiers
 const int MIN_NEAR = 1;
@@ -45,11 +50,11 @@ const int FAR_SPAWN_ORC = 30;
 
 //very far 60
 const int VERY_FAR_SPAWN_RAT = 5;
-const int VERY_FAR_SPAWN_PHANTOM_KNIGHT = 25;
-const int VERY_FAR_SPAWN_ORC = 30;
+const int VERY_FAR_SPAWN_PHANTOM_KNIGHT = 15;
+const int VERY_FAR_SPAWN_ORC = 40;
 
 //chest spawning 
-const int NEAR_SPAWN_WOOD_CHEST = 50;// 30;
+const int NEAR_SPAWN_WOOD_CHEST = 30;// 30;
 const int MID_SPAWN_WOOD_CHEST = 30;//25;
 const int MID_SPAWN_GOLD_CHEST = 5;
 const int FAR_SPAWN_GOLD_CHEST = 40;

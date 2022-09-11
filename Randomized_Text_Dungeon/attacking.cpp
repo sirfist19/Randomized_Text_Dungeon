@@ -22,9 +22,15 @@ void commands::fighting(room* cur_room, bool& game_over, Player* player)
 			enemy->display_attack_info();
 			player->display_attack_info();
 
+			weapon* player_weapon = player->get_weapon();
+			int base_damage = player_weapon->get_light_damage();
+			int base_hit_rate = player_weapon->get_light_hit_rate();
+			int heavy_damage = player_weapon->get_heavy_damage();
+			int heavy_hit_rate = player_weapon->get_heavy_hit_rate();
 			std::cout << "\n";
-			std::cout << "1. Attack\n";
-			std::cout << "2. Run\n";
+			std::cout << "1. Heavy Attack (Base Damage: " << heavy_damage << ", Base Hit Rate: " << heavy_hit_rate << ")\n";
+			std::cout << "2. Light Attack (Base Damage: "<< base_damage<<", Base Hit Rate: "<<base_hit_rate<<")\n";
+			std::cout << "3. Run\n";
 
 			bool ran_away = false;
 			fighting_input_loop(game_over, player, enemy, ran_away);
@@ -56,18 +62,24 @@ void commands::fighting_input_loop(bool& game_over, Player* player, Enemy* enemy
 	//loop = parseInputVector(usr_text, game_over);
 
 	//std::string noun = usr_text[0];
-
-	std::string valid_attack_opt[] = { "1", "attack" };
-	std::string valid_run_opt[] = { "2", "run" };
+	
+	std::string valid_heavy_attack_opt[] = { "1", "heavy attack", "heavy" };
+	std::string valid_light_attack_opt[] = { "2", "light attack", "light" };
+	std::string valid_run_opt[] = { "3", "run" };
 
 	bool valid_input = false;
 	bool only_enemy_attacks = false;
+	bool is_player_heavy_attack = false;
 
 	while (valid_input == false) {
 		std::string usr_text = input();
 
-		if (str_input_accepted(usr_text, valid_attack_opt, 2, valid_input)) {
-			attack(game_over, player, enemy, only_enemy_attacks);
+		if (str_input_accepted(usr_text, valid_heavy_attack_opt, 3, valid_input)) {
+			is_player_heavy_attack = true;
+			attack(game_over, player, enemy, only_enemy_attacks, is_player_heavy_attack);
+		}
+		else if (str_input_accepted(usr_text, valid_light_attack_opt, 3, valid_input)) {
+			attack(game_over, player, enemy, only_enemy_attacks, is_player_heavy_attack);
 		}
 		else if (str_input_accepted(usr_text, valid_run_opt, 2, valid_input)) {
 			//run
@@ -107,7 +119,7 @@ void commands::fighting_input_loop(bool& game_over, Player* player, Enemy* enemy
 			else
 			{
 				only_enemy_attacks = true;
-				attack(game_over, player, enemy, only_enemy_attacks);
+				attack(game_over, player, enemy, only_enemy_attacks, is_player_heavy_attack);
 			}
 		}
 		else
@@ -116,7 +128,7 @@ void commands::fighting_input_loop(bool& game_over, Player* player, Enemy* enemy
 		}
 	}
 }
-void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_enemy_attacks)
+void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_enemy_attacks, bool& is_player_heavy_attack)
 {
 	if (!only_enemy_attacks)
 	{
@@ -127,17 +139,33 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 		int player_hit_num = random(0, 99);
 		weapon* player_weapon = player->get_weapon();
 		int player_damage = 0;
-		if (player_hit_num < player_weapon->get_hit_rate())
+		int player_hit_rate = 0;
+		std::string attack_type = "";
+
+		if (is_player_heavy_attack)
 		{
-			player_damage = player_weapon->get_damage();
+			player_damage = player_weapon->get_heavy_damage();
+			player_hit_rate = player_weapon->get_heavy_hit_rate();
+			attack_type = " uses " + player_weapon->get_name() + "'s heavy attack";
+		}
+		else
+		{
+			player_damage = player_weapon->get_light_damage();
+			player_hit_rate = player_weapon->get_light_hit_rate();
+			attack_type = " uses " + player_weapon->get_name() + "'s light attack";
+		}
+
+		if (player_hit_num < player_hit_rate)
+		{
 			player_damage = (player_damage * player_damage) / (player_damage + enemy->get_defense());//takes defense into account
-			std::cout << player->get_name() << " attacks with " << player_weapon->get_name() << " for " << player_damage << " damage.\n";
+			std::cout << player->get_name() << attack_type << " for " << player_damage << " damage.\n";
+			enemy->get_health()->damage(player_damage);
 		}
 		else //a miss
 		{
-			std::cout << player->get_name() << " attacks with " << player_weapon->get_name() << " but you miss.\n\n";
+			std::cout << player->get_name() << attack_type << " but you miss.\n\n";
 		}
-		enemy->get_health()->damage(player_damage);
+		
 		
 
 		if (!enemy->is_alive())
@@ -191,20 +219,43 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 	}
 
 	//enemy attacks
+	bool is_enemy_heavy_attack = false;
+	int enemy_picks_heavy_attack = random(0, 99);
+
+	if (enemy_picks_heavy_attack < ENEMY_PICKS_HEAVY_ATTACK_CHANCE)
+	{
+		is_enemy_heavy_attack = true;
+	}
+
 	int enemy_hit_num = random(0, 99);
 	weapon* enemy_weapon = enemy->get_weapon();
 	int enemy_damage = 0;
-	if (enemy_hit_num < enemy_weapon->get_hit_rate())
+	int enemy_hit_rate = 0;
+	std::string enemy_attack_type = "";
+
+	if (is_enemy_heavy_attack)
 	{
-		enemy_damage = enemy_weapon->get_damage();
+		enemy_damage = enemy_weapon->get_heavy_damage();
+		enemy_hit_rate = enemy_weapon->get_heavy_hit_rate();
+		enemy_attack_type = " uses " + enemy_weapon->get_name() + "'s heavy attack";
+	}
+	else
+	{
+		enemy_damage = enemy_weapon->get_light_damage();
+		enemy_hit_rate = enemy_weapon->get_light_hit_rate();
+		enemy_attack_type = " uses " + enemy_weapon->get_name() + "'s light attack";
+	}
+	if (enemy_hit_num < enemy_hit_rate)
+	{
 		enemy_damage = (enemy_damage * enemy_damage) / (enemy_damage + player->get_defense());//takes defense into account
-		std::cout << enemy->get_name() << " attacks with " << enemy_weapon->get_name() << " for " << enemy_damage << " damage.\n\n";
+		std::cout << enemy->get_name() << enemy_attack_type << " for " << enemy_damage << " damage.\n\n";
+		player->get_health()->damage(enemy_damage);
 	}
 	else //a miss
 	{
-		std::cout << enemy->get_name() << " attacks with " << enemy_weapon->get_name() << " but misses.\n\n";
+		std::cout << enemy->get_name() << enemy_attack_type << " but misses.\n\n";
 	}
-	player->get_health()->damage(enemy_damage);
+	
 	
 
 	game_over = !(player->is_alive());

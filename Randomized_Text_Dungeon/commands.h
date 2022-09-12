@@ -37,6 +37,7 @@ public:
 	~commands();
 	bool parseInputVector(bool& game_over, bool& quit_to_title_screen);
 	void print_all_commands();
+	
 	void print_all_verbs();
 	void print_all_nouns();
 	void input_loop(bool& loop, bool& game_over, bool& quit_to_title_screen);
@@ -45,7 +46,6 @@ public:
 	void fighting_input_loop(bool& game_over, Player* player, Enemy* enemy, bool& ran_away);
 	void attack(bool& game_over, Player* player, Enemy* enemy, bool& only_enemy_attacks, bool& is_player_heavy_attack);
 	void hello();
-	void stack_objects(std::vector<object*>& in);
 	void jump();
 	void help();
 	void open();

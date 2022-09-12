@@ -87,6 +87,8 @@ void commands::drop()
 	}
 	//std::string identifier = obj_to_equip->identify();
 	room* cur_room = player->get_cur_room();
+	std::string before_string = "You dropped ";
+	std::string after_string = " onto the floor.\n";
 
 	if (cur_noun != noun::all)
 	{
@@ -113,7 +115,7 @@ void commands::drop()
 		cur_room->add_item(copy_obj_to_drop);
 		player->delete_item_from_inventory(obj_to_drop, amt_to_drop);
 
-		std::cout << "You dropped " << amt_to_drop << " " << obj_to_drop->get_name() << " onto the floor.\n";
+		print_item(copy_obj_to_drop, before_string, after_string);
 	}
 	else //cur_noun == noun::all
 	{
@@ -124,20 +126,14 @@ void commands::drop()
 			return;
 		}
 
-		std::string item_names = "";
+		print_items(player_items, before_string, after_string);
+		
 		for (unsigned int i = 0; i < player_items.size(); i++)
 		{
-			item_names += player_items[i]->get_name();
-
-			if (i != player_items.size() - 1)
-				item_names += ", ";
-
 			cur_room->add_item(player_items[i]);
 			player->delete_item_from_inventory_all(player_items[i]);
 		}
-		std::cout << "You dropped " << item_names << " onto the floor.\n";
 	}
-
 }
 void commands::equip()
 {
@@ -257,22 +253,23 @@ void commands::equip()
 void commands::equip_armor(armor* obj_to_equip)
 {
 	std::string identifier = obj_to_equip->identify();
+	armor* clone_obj_to_equip = obj_to_equip->clone_armor();
 	armor* old_armor_piece = nullptr;
 
 	if (identifier == "helmet")
 	{
-		old_armor_piece =player->get_helmet();
-		player->set_helmet((helmet*)obj_to_equip);
+		old_armor_piece = player->get_helmet();
+		player->set_helmet((helmet*)clone_obj_to_equip);
 	}
 	else if (identifier == "chestplate")
 	{
 		old_armor_piece = player->get_chestplate();
-		player->set_chestplate((chestplate*)obj_to_equip);
+		player->set_chestplate((chestplate*)clone_obj_to_equip);
 	}
 	else if (identifier == "boots")
 	{
 		old_armor_piece = player->get_boots();
-		player->set_boots((boots*)obj_to_equip);
+		player->set_boots((boots*)clone_obj_to_equip);
 	}
 	player->delete_item_from_inventory(obj_to_equip, 1);
 	if (old_armor_piece != nullptr)
@@ -768,35 +765,17 @@ void commands::take() //take objects either from the room's items or an open che
 		return;
 	}
 
+	std::string before_str = "You took ";
+	std::string after_chest_str = " from the chest.\n";
+	std::string after_floor_str = " from the floor.\n";
+
 	//TAKING FROM THE ROOM FLOOR
 	//taking only one item or one type of item 
 	if ((obj_to_take_room != nullptr) && (cur_noun != noun::all))
 	{
 		//print what the player took
-		std::string name = obj_to_take_room->get_name();
-		int amt = obj_to_take_room->get_amt();
-		std::cout << "You took ";
-
-		if (amt > 1)
-		{
-			std::cout << amt << " ";
-		}
-		else
-		{
-			switch (name[0])
-			{
-			case 'a':
-			case 'e':
-			case 'i':
-			case 'o':
-			case 'u':
-				std::cout << "an ";
-			default:
-				std::cout << "a ";
-			}
-		}
-
-		std::cout << name << " from the floor.\n";
+		print_item(obj_to_take_room, before_str, after_floor_str);
+		
 
 		//add the item to the player's inventory
 		player->add_item_to_inventory(obj_to_take_room);
@@ -804,42 +783,7 @@ void commands::take() //take objects either from the room's items or an open che
 	//taking all items from the floor
 	else if ((cur_noun == noun::all) && (floor_contents.size() > 0))
 	{
-
-		std::cout << "You took ";
-
-		for (unsigned int i = 0; i < floor_contents.size(); i++)
-		{
-			std::string name = floor_contents[i]->get_name();
-			int amt = floor_contents[i]->get_amt();
-
-			if ((i == floor_contents.size() - 1) && (i != 0))
-				std::cout << "and ";
-
-			if (amt > 1)
-			{
-				std::cout << amt << " ";
-			}
-			else
-			{
-				switch (name[0])
-				{
-				case 'a':
-				case 'e':
-				case 'i':
-				case 'o':
-				case 'u':
-					std::cout << "an ";
-				default:
-					std::cout << "a ";
-				}
-			}
-
-			if ((floor_contents.size() == 1) || (i == floor_contents.size() - 1))
-				std::cout << name;
-			else
-				std::cout << name << ", ";
-		}
-		std::cout << " from the floor.\n";
+		print_items(floor_contents, before_str, after_floor_str);
 		cur_room->clear_items();
 		player->add_items_to_inventory(floor_contents);
 	}
@@ -851,27 +795,7 @@ void commands::take() //take objects either from the room's items or an open che
 		//print what the player took
 		std::string name = obj_to_take_chest->get_name();
 		int amt = obj_to_take_chest->get_amt();
-		std::cout << "You took ";
-
-		if (amt > 1)
-		{
-			std::cout << amt << " ";
-		}
-		else
-		{
-			switch (name[0])
-			{
-			case 'a':
-			case 'e':
-			case 'i':
-			case 'o':
-			case 'u':
-				std::cout << "an ";
-			default:
-				std::cout << "a ";
-			}
-		}
-		std::cout << name << " from the chest.\n";
+		print_item(obj_to_take_chest, before_str, after_chest_str);
 
 		//add the item to the player's inventory
 		player->add_item_to_inventory(obj_to_take_chest);
@@ -884,41 +808,8 @@ void commands::take() //take objects either from the room's items or an open che
 		std::vector<object*> chest_contents = cur_room_chest->get_all_contents();
 		if (chest_contents.size() > 0)
 		{
-			std::cout << "You took ";
-
-			for (unsigned int i = 0; i < chest_contents.size(); i++)
-			{
-				std::string name = chest_contents[i]->get_name();
-				int amt = chest_contents[i]->get_amt();
-
-				if ((i == floor_contents.size() - 1) && (i != 0))
-					std::cout << "and ";
-
-				if (amt > 1)
-				{
-					std::cout << amt << " ";
-				}
-				else
-				{
-					switch (name[0])
-					{
-					case 'a':
-					case 'e':
-					case 'i':
-					case 'o':
-					case 'u':
-						std::cout << "an ";
-					default:
-						std::cout << "a ";
-					}
-				}
-
-				if ((chest_contents.size() == 1) || (i == chest_contents.size() - 1))
-					std::cout << name;
-				else
-					std::cout << name << ", ";
-			}
-			std::cout << " from the chest.\n";
+			
+			print_items(chest_contents, before_str, after_chest_str);
 			cur_room_chest->clear_chest_contents();
 			player->add_items_to_inventory(chest_contents);
 		}

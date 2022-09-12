@@ -5,6 +5,7 @@
 #include <vector>
 
 void print(std::string in);
+void print_no_newline(std::string in);
 void print();
 
 bool str_input_accepted(std::string& to_check, std::string* inputs, int size, bool& valid_input);

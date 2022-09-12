@@ -2,7 +2,12 @@
 #include "constants.h"
 #include <vector>
 
-void print(std::string in) {
+void print(std::string in) 
+{
+	print_no_newline(in);
+	std::cout << std::endl;
+}
+void print_no_newline(std::string in) {
 	//std::cout << in << std::endl;
 
 	std::vector<std::string> text = basic_parse(in);
@@ -26,7 +31,7 @@ void print(std::string in) {
 				std::cout << std::endl;
 				temp_total = 0;
 			}
-			else
+			else if (i != text.size() - 1)
 			{
 				std::cout << " ";
 				temp_total++;
@@ -39,9 +44,7 @@ void print(std::string in) {
 			std::cout << "\n" << text[i] << " ";
 			cur = text[i].size() + 1;
 		}
-
 	}
-	std::cout << std::endl;
 }
 
 int random(int start, int end)//picks a random number from the start to the end number

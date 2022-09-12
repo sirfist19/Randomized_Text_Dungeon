@@ -145,6 +145,7 @@
     <ClCompile Include="helper_fxns.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_commands.cpp" />
+    <ClCompile Include="room.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alive_entity.h" />

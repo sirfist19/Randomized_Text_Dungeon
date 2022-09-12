@@ -298,28 +298,5 @@ void commands::print_all_nouns()
 	}
 }
 
-//stack objects on the floor or in the player's inventory
-void commands::stack_objects(std::vector<object*>& in)
-{
-	//player->display_inventory();
-	//n^2 algo to stack same objects
-	bool combine = false;
-	for (unsigned int i = 0; i < in.size(); i++)
-	{
-		for (unsigned int j = i + 1; j < in.size(); j++)
-		{
-			combine = in[i]->is_same_type_of_object(in[j]);
 
-			if (combine)
-			{
-				//std::cout << "Combining " << in[i]->get_name() << " with " << in[j]->get_name();
-				in[i]->combine(in[j]);//in[j] is now invalid
-
-				//remove in[j]
-				in[j] = in[in.size() - 1];//set in[j] to the last element of the vector
-				in.pop_back();
-			}
-		}
-	}
-}
 

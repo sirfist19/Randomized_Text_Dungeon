@@ -10,6 +10,17 @@ dungeon::dungeon()
 
 	//for the first room
 	room* temp_room = new room(rooms.size() + 1);//sets coord to 0,0
+	/*temp_room->add_item(new lesser_healing_potion());
+	temp_room->add_item(new lesser_healing_potion());
+	temp_room->add_item(new lesser_healing_potion());
+	temp_room->add_item(new lesser_healing_potion());
+	temp_room->add_item(new lesser_healing_potion());
+	temp_room->add_item(new bronze_boots());
+	temp_room->add_item(new bronze_boots());
+	temp_room->add_item(new bronze_helmet());
+	temp_room->add_item(new gold(87));
+	temp_room->add_item(new gold(1));*/
+
 	rooms.push_back(temp_room);
 	create_new_exits(temp_room, stock_room_descriptions);
 
@@ -41,7 +52,6 @@ dungeon::dungeon()
 		cur_room->place_chests();
 	}
 	place_dragon_key();
-	//create_sorted_room_coords();
 }
 void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 {

@@ -4,7 +4,7 @@
 const bool DEBUG_MODE = false;
 const int MAX_DUNGEON_SIZE = 50;//45
 const int MIN_DUNGEON_SIZE = 45;//30
-const int MAX_CHAR_PER_LINE = 200;//120
+const int MAX_CHAR_PER_LINE = 120;//120
 const int CONNECT_ROOMS_CHANCE = 15;//15
 const int MIN_DEEPEST_DEPTH = 20;//17
 

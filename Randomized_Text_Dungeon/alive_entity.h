@@ -125,7 +125,7 @@ public:
 		if(new_weapon->identify() == "weapon")
 			main_weapon = (weapon*) new_weapon;
 	}
-	void display_armor()
+	void display_armor() const
 	{
 		std::cout << "Armor: \n";
 		std::cout << "\tHelmet: ";

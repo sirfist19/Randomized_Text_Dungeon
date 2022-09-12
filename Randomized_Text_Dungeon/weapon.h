@@ -38,7 +38,7 @@ public:
 	}
 	int get_heavy_damage() const
 	{
-		return (int)damage * HEAVY_DAMAGE_MULTIPLIER;
+		return (int)(damage * HEAVY_DAMAGE_MULTIPLIER);
 	}
 	int get_light_hit_rate() const
 	{

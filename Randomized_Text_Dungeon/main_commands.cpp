@@ -10,9 +10,31 @@ void commands::drink()
 {
 	object* obj_to_drink = player->get_matching_object(player_input_noun);
 
+	if (cur_noun == noun::all)
+	{
+		std::vector<healing_potion*> inv_potions = player->get_inventory_healing_potions();
+		if (inv_potions.empty())
+		{
+			print("You don't have any potions to drink.");
+			return;
+		}
+		if (player->get_health()->health_is_full())
+		{
+			print("It won't have any effect.");
+		}
+		int i = 0;
+		while ((!player->get_health()->health_is_full()) && (!inv_potions.empty()))
+		{
+			//drink individual potions
+			healing_potion* cur = player->get_smallest_healing_potion();
+			drink_individual_potion(cur);
+			inv_potions = player->get_inventory_healing_potions();
+		}
+		return;
+	}
 	if (player_input_noun == "")
 	{
-		print("You can't equip nothing.");
+		print("You can't drink nothing.");
 		return;
 	}
 	if (obj_to_drink == nullptr)
@@ -20,6 +42,10 @@ void commands::drink()
 		print("That item is not in your inventory.");
 		return;
 	}
+	drink_individual_potion(obj_to_drink);
+}
+void commands::drink_individual_potion(object* obj_to_drink)
+{
 	std::string identifier = obj_to_drink->identify();
 
 	if (identifier == "healing potion")
@@ -47,7 +73,6 @@ void commands::drink()
 }
 void commands::drop()
 {
-	std::string player_input_noun = get_player_input_noun();
 	object* obj_to_drop = player->get_matching_object(player_input_noun);
 
 	if (player_input_noun == "")
@@ -625,9 +650,10 @@ void commands::help()
 	{
 		print("COMMAND: drink");
 		print("Needs Object: Yes");
-		print("Takes all as an object: Not yet");
-		print("Consumes a potion in the player's inventory and gives the player the effect.");
+		print("Takes all as an object: Yes");
+		print("Consumes a potion in the player's inventory and gives the player the effect. If the command 'drink all' is used, then the smallest healing potions will be drunk first healing the player to full health (if you have enough potions).");
 		print("\nEx: drink greater healing potion");
+		print("\nEx: drink all");
 	}
 	else if (player_input_noun == "jump")
 	{

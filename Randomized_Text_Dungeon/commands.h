@@ -57,6 +57,7 @@ public:
 	void equip_weapon(object* obj_to_equip);
 	void equip_armor(armor* obj_to_equip);
 	void drink();
+	void drink_individual_potion(object* obj_to_drink);
 	void drop();
 	void clear_command();
 	std::string get_player_input_noun() const;

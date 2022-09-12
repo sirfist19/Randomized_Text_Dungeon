@@ -91,9 +91,81 @@ public:
 			exp_to_next_level = 0;
 	}
 	virtual void f() {}
-	void display_inventory()
+	std::vector<weapon*> get_inventory_weapons() const
 	{
-		//printEquals();
+		std::vector<weapon*> weapons;
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			if (inventory[i]->identify() == "weapon")
+			{
+				weapons.push_back((weapon*)inventory[i]);
+			}
+		}
+		return weapons;
+	}
+	std::vector<armor*> get_inventory_armor() const
+	{
+		std::vector<armor*> inv_armor;
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			std::string cur_id = inventory[i]->identify();
+			if ((cur_id == "armor") || (cur_id == "helmet") || (cur_id == "chestplate") || (cur_id == "boots"))
+			{
+				inv_armor.push_back((armor*)inventory[i]);
+			}
+		}
+		return inv_armor;
+	}
+	std::vector<healing_potion*> get_inventory_healing_potions() const
+	{
+		std::vector<healing_potion*> inv_potions;
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			std::string cur_id = inventory[i]->identify();
+			if (cur_id == "healing potion")
+			{
+				inv_potions.push_back((healing_potion*)inventory[i]);
+			}
+		}
+		return inv_potions;
+	}
+	healing_potion* get_smallest_healing_potion()
+	{
+		std::vector<healing_potion*> inv_potions = get_inventory_healing_potions();
+
+		//find the smallest potion
+		healing_potion* smallest_potion = (healing_potion*)inv_potions[0];
+		for (unsigned int j = 1; j < inv_potions.size(); j++)
+		{
+			healing_potion* cur = (healing_potion*)inv_potions[j];
+			if (cur->get_heal_amt() < smallest_potion->get_heal_amt())
+			{
+				smallest_potion = cur;
+			}
+		}
+		return smallest_potion;
+	}
+	int get_amt_gold() const
+	{
+		int gold_amt = 0;
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			std::string cur_id = inventory[i]->identify();
+			if (cur_id == "gold")
+			{
+				gold_amt = inventory[i]->get_amt();
+			}
+		}
+		return gold_amt;
+	}
+	void display_inventory() const
+	{
+		//sort the inventory items into different categories
+		int gold_amt = get_amt_gold();
+		std::vector<weapon*> inventory_weapons = get_inventory_weapons();
+		std::vector<armor*> inventory_armor = get_inventory_armor();
+		std::vector<healing_potion*> inventory_healing_potions = get_inventory_healing_potions();
+
 		std::cout << name << "'s Inventory\n";
 		std::cout << "Level: " << level <<"\n";
 		std::cout << "\tExp till next level: " << exp_to_next_level << "\n";
@@ -104,18 +176,51 @@ public:
 		display_armor();
 		std::cout << "Weapon: ";
 		main_weapon->display_chest();
+		std::cout << "Gold: "<<gold_amt<<"\n";
 		
-		std::cout << "\nGeneral Items: ";
+		std::cout << "\nGeneral Items:\n";
 
 		if (inventory.size() == 0)
-			std::cout << "\n NO ITEMS IN INVENTORY";
-		std::cout << "\n";
-		for (unsigned int i = 0; i < inventory.size(); i++)
 		{
-			std::cout << "\tx";
-			//if(inventory[i]->get_amt() != 1)
-			std::cout << inventory[i]->get_amt() << " - ";
-			inventory[i]->display_chest();
+			std::cout << " NO ITEMS IN INVENTORY\n";
+			return;
+		}
+
+		//print out all of the inventory unorganized
+		//std::cout << "\n";
+		//for (unsigned int i = 0; i < inventory.size(); i++)
+		//{
+		//	std::cout << "\tx";
+		//	std::cout << inventory[i]->get_amt() << " - ";
+		//	inventory[i]->display_chest();
+		//}
+		//std::cout << "\n\n\n";
+		
+		if (!inventory_weapons.empty())
+			std::cout << "\tWeapons:\n";
+		for (unsigned int i = 0; i < inventory_weapons.size(); i++)
+		{
+			std::cout << "\t\tx";
+			std::cout << inventory_weapons[i]->get_amt() << " - ";
+			inventory_weapons[i]->display_chest();
+		}
+		
+		if (!inventory_armor.empty())
+			std::cout << "\tArmor:\n";
+		for (unsigned int i = 0; i < inventory_armor.size(); i++)
+		{
+			std::cout << "\t\tx";
+			std::cout << inventory_armor[i]->get_amt() << " - ";
+			inventory_armor[i]->display_chest();
+		}
+		
+		if (!inventory_healing_potions.empty())
+			std::cout << "\tPotions:\n";
+		for (unsigned int i = 0; i < inventory_healing_potions.size(); i++)
+		{
+			std::cout << "\t\tx";
+			std::cout << inventory_healing_potions[i]->get_amt() << " - ";
+			inventory_healing_potions[i]->display_chest();
 		}
 	}
 	void add_item_to_inventory(object* obj)

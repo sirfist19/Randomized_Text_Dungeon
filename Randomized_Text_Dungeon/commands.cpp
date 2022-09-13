@@ -197,6 +197,9 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 			return false;
 		}
 		break;
+	case verb::examine:
+		examine();
+		break;
 	case verb::drink:
 		drink();
 		break;

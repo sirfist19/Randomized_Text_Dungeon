@@ -50,6 +50,7 @@ public:
 	void help();
 	void open();
 	void take();
+	void examine();
 	void use();
 	void equip();
 	void map(bool& print_all_map);

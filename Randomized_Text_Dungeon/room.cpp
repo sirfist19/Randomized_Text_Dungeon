@@ -72,7 +72,8 @@ void print_items(std::vector<object*>& items, std::string before, std::string af
 void print_item(object* item, std::string before, std::string after) //a wrapper for print_items for one item
 {
 	std::vector<object*> items;
-	items.push_back(item);
+	if(item != nullptr)
+		items.push_back(item);
 	print_items(items, before, after);
 }
 //stack objects on the floor or in the player's inventory
@@ -100,7 +101,7 @@ void stack_objects(std::vector<object*>& in)
 	}
 }
 //room fxns
-object* room::get_matching_object(std::string player_input_noun)
+object* room::get_matching_object_and_delete(std::string player_input_noun)
 {
 	for (unsigned int i = 0; i < items.size(); i++)
 	{
@@ -116,6 +117,20 @@ object* room::get_matching_object(std::string player_input_noun)
 			items[i] = items[items.size() - 1];
 			items.pop_back();
 			return result;
+		}
+	}
+	return nullptr;
+}
+object* room::get_matching_object(std::string player_input_noun)
+{
+	for (unsigned int i = 0; i < items.size(); i++)
+	{
+		std::string cur_name = items[i]->get_name();
+		turn_to_lower_case(cur_name);
+
+		if (player_input_noun == cur_name)
+		{
+			return items[i];
 		}
 	}
 	return nullptr;
@@ -285,10 +300,7 @@ void room::display_room()
 				before_string += ", ";
 			}
 		}
-		if (items.size() != 0)
-		{
-			print_items(items, before_string, after_string);
-		}
+		print_items(items, before_string, after_string);
 	}
 	display_exit_information();
 

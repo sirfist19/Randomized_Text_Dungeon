@@ -18,8 +18,10 @@ dungeon::dungeon()
 	temp_room->add_item(new bronze_boots());
 	temp_room->add_item(new bronze_boots());
 	temp_room->add_item(new bronze_helmet());
+	temp_room->add_item(new sword());
 	temp_room->add_item(new gold(87));
 	temp_room->add_item(new gold(1));*/
+	//temp_room->add_item(new compass());
 
 	rooms.push_back(temp_room);
 	create_new_exits(temp_room, stock_room_descriptions);
@@ -52,6 +54,7 @@ dungeon::dungeon()
 		cur_room->place_chests();
 	}
 	place_dragon_key();
+	place_items();
 }
 void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 {
@@ -397,7 +400,8 @@ bool dungeon::duplicate_coord_and_id(coord_and_id* posid)
 		}
 	}
 	return false;
-}void dungeon::bfs_set_depth() const
+}
+void dungeon::bfs_set_depth() const
 {
 	//search the maze using DFS
 	std::vector<room*> visited;
@@ -560,6 +564,20 @@ void dungeon::place_dragon_key()
 	std::vector<Enemy*> enemies;
 	enemies.push_back(boss);
 	deepest_room->set_enemies(enemies);
+}
+void dungeon::place_items()
+{
+	//place the compass
+	compass* Compass = new compass();
+
+	for (unsigned int i = 0; i < rooms.size(); i++)
+	{
+		if (rooms[i]->get_depth() == COMPASS_SPAWN_DEPTH)
+		{
+			rooms[i]->add_item(Compass);
+			return;
+		}
+	}
 }
 int dungeon::get_deepest_depth()
 {

@@ -114,6 +114,7 @@ class room {
 		
 		//essential fxns
 		object* get_matching_object(std::string player_input_noun);
+		object* get_matching_object_and_delete(std::string player_input_noun);
 		void assign_room_type(depth_tier tier, room_descriptions* descriptions_holder);
 		void set_depth_tier();
 		void spawn_enemies();

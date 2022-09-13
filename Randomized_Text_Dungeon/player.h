@@ -129,6 +129,24 @@ public:
 		}
 		return inv_potions;
 	}
+	std::vector<object*> get_misc_objs() const
+	{
+		std::vector<object*> inv_misc;
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			std::string cur_id = inventory[i]->identify();
+
+			//not equal to anything else
+			if ((cur_id != "healing potion") && (cur_id != "armor") 
+				&& (cur_id != "helmet") && (cur_id != "chestplate") 
+				&& (cur_id != "boots") && (cur_id != "weapon") 
+				&& (cur_id != "gold"))
+			{
+				inv_misc.push_back(inventory[i]);
+			}
+		}
+		return inv_misc;
+	}
 	healing_potion* get_smallest_healing_potion()
 	{
 		std::vector<healing_potion*> inv_potions = get_inventory_healing_potions();
@@ -165,6 +183,7 @@ public:
 		std::vector<weapon*> inventory_weapons = get_inventory_weapons();
 		std::vector<armor*> inventory_armor = get_inventory_armor();
 		std::vector<healing_potion*> inventory_healing_potions = get_inventory_healing_potions();
+		std::vector<object*> inventory_misc_objs = get_misc_objs();
 
 		std::cout << name << "'s Inventory\n";
 		std::cout << "Level: " << level <<"\n";
@@ -172,11 +191,11 @@ public:
 		std::cout << "\tCurrent Exp: " << cur_exp << "\n\n";
 
 		health->display_health_bar();
-		std::cout << "Defense: " << defense << std::endl;
-		display_armor();
+		std::cout << "Gold: " << gold_amt << "\n";
 		std::cout << "Weapon: ";
 		main_weapon->display_chest();
-		std::cout << "Gold: "<<gold_amt<<"\n";
+		std::cout << "Defense: " << defense << std::endl;
+		display_armor();
 		
 		std::cout << "\nGeneral Items:\n";
 
@@ -222,6 +241,15 @@ public:
 			std::cout << inventory_healing_potions[i]->get_amt() << " - ";
 			inventory_healing_potions[i]->display_chest();
 		}
+
+		if (!inventory_misc_objs.empty())
+			std::cout << "\tMiscellaneous Items:\n";
+		for (unsigned int i = 0; i < inventory_misc_objs.size(); i++)
+		{
+			std::cout << "\t\tx";
+			std::cout << inventory_misc_objs[i]->get_amt() << " - ";
+			inventory_misc_objs[i]->display_chest();
+		}
 	}
 	void add_item_to_inventory(object* obj)
 	{
@@ -263,6 +291,31 @@ public:
 	{
 		//to remove the object from the player's inventory move the last vector item to it's place and 
 		//then pop_back()
+
+		if ((obj == main_weapon) && (main_weapon->get_name() != "Fists"))
+		{
+			delete obj;
+			main_weapon = new fists();
+			return;
+		}
+		if (obj == Helmet)
+		{
+			delete Helmet;
+			Helmet = nullptr;
+			return;
+		}
+		if (obj == Chestplate)
+		{
+			delete Chestplate;
+			Chestplate = nullptr;
+			return;
+		}
+		if (obj == Boots)
+		{
+			delete Boots;
+			Boots = nullptr;
+			return;
+		}
 		for (unsigned int i = 0; i < inventory.size(); i++)
 		{
 			if (obj == inventory[i])
@@ -272,12 +325,14 @@ public:
 					obj->decrease_amt(amt_used);
 					if (obj->get_amt() == 0)
 					{
+						delete inventory[i];
 						inventory[i] = inventory[inventory.size() - 1];
 						inventory.pop_back();
 					}
 				}
 				else //amt is only 1 so delete the item
 				{
+					delete inventory[i];
 					inventory[i] = inventory[inventory.size() - 1];
 					inventory.pop_back();
 				}
@@ -307,6 +362,45 @@ public:
 	}
 	object* get_matching_object(std::string player_input_noun) 
 	{
+		std::string weapon_name = main_weapon->get_name();
+		turn_to_lower_case(weapon_name);
+		std::string helmet_name = "";
+		std::string chestplate_name = "";
+		std::string boots_name = "";
+
+		if (Helmet != nullptr) 
+		{
+			helmet_name = Helmet->get_name();
+			turn_to_lower_case(helmet_name);
+		}
+		if (Chestplate != nullptr)
+		{
+			chestplate_name = Chestplate->get_name();
+			turn_to_lower_case(chestplate_name);
+		}
+		if (Boots != nullptr)
+		{
+			boots_name = Boots->get_name();
+			turn_to_lower_case(boots_name);
+		}
+	
+		if (player_input_noun == weapon_name)
+		{
+			return main_weapon;
+		}
+		if ((Helmet != nullptr) && (player_input_noun == helmet_name))
+		{
+			return Helmet;
+		}
+		if ((Chestplate != nullptr) && (player_input_noun == chestplate_name))
+		{
+			return Chestplate;
+		}
+		if ((Boots != nullptr) && (player_input_noun == boots_name))
+		{
+			return Boots;
+		}
+
 		for (unsigned int i = 0; i < inventory.size(); i++)
 		{
 			std::string cur_name = inventory[i]->get_name();
@@ -314,8 +408,7 @@ public:
 
 			if (player_input_noun == cur_name)
 			{
-				object* result = inventory[i];
-				return result;
+				return inventory[i];
 			}
 		}
 		return nullptr;

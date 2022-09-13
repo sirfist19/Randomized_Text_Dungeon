@@ -80,6 +80,11 @@ void commands::drop()
 		print("You can't drop nothing.");
 		return;
 	}
+	if ((obj_to_drop != nullptr) && (obj_to_drop->get_name() == "Fists"))
+	{
+		print("You can't drop your fists! What do you want to do ... cut your arms off or something?!");
+		return;
+	}
 	if ((obj_to_drop == nullptr) && (cur_noun != noun::all))
 	{
 		print("That item is not in your inventory.");
@@ -117,7 +122,7 @@ void commands::drop()
 
 		print_item(copy_obj_to_drop, before_string, after_string);
 	}
-	else //cur_noun == noun::all
+	else //cur_noun == noun::all (doesn't drop equipped items)
 	{
 		std::vector<object*> player_items = player->get_inventory();
 		if (player_items.empty())
@@ -275,29 +280,91 @@ void commands::equip_armor(armor* obj_to_equip)
 	if (old_armor_piece != nullptr)
 	{
 		player->add_item_to_inventory(old_armor_piece);
-		std::cout << "You equipped " << obj_to_equip->get_name() << " and "<<old_armor_piece->get_name()<<" was placed in your inventory.\n";
+		std::cout << "You equipped " << clone_obj_to_equip->get_name() << " and "<<old_armor_piece->get_name()<<" was placed in your inventory.\n";
 	}
 	else
 	{
-		std::cout << "You equipped " << obj_to_equip->get_name() << ".\n";
+		std::cout << "You equipped " << clone_obj_to_equip->get_name() << ".\n";
 	}
 	player->compute_stats();
 }
 void commands::equip_weapon(object* obj_to_equip)
 {
+	std::string obj_to_equip_name = obj_to_equip->get_name();
+	weapon* clone_obj_to_equip = ((weapon*)obj_to_equip)->clone_weapon();
 	weapon* old_weapon = player->get_weapon();
-	player->set_weapon(obj_to_equip);
+	player->set_weapon(clone_obj_to_equip);
 	player->delete_item_from_inventory(obj_to_equip, 1);
 
 	if (old_weapon->get_name() != "Fists")
 	{
 		player->add_item_to_inventory(old_weapon);
-		std::cout << "You equipped " << obj_to_equip->get_name() <<
+		std::cout << "You equipped " << obj_to_equip_name <<
 			" and " << old_weapon->get_name() << " has been placed into you inventory.\n";
 	}
 	else //if the player only had fists before
 	{
-		std::cout << "You equipped " << obj_to_equip->get_name() << ".\n";
+		std::cout << "You equipped " << obj_to_equip_name << ".\n";
+	}
+}
+void commands::examine()
+{
+	//if the object is in the player's inventory or equipped or in the room then...
+	//print the name and description of the object
+	room* cur_room = player->get_cur_room();
+	chest* cur_chest = cur_room->get_chest();
+	std::string chest_name = "";
+	if(cur_chest != nullptr)
+		chest_name = cur_chest->get_name();
+	turn_to_lower_case(chest_name);
+	object* match = nullptr; //the final match
+
+	object* inventory_match = player->get_matching_object(player_input_noun);//from the player inventory (not equipped items yet)
+	object* room_match = cur_room->get_matching_object(player_input_noun);
+	object* chest_match = nullptr;
+	if (cur_chest != nullptr)
+	{
+		chest_match = cur_chest->get_matching_object(player_input_noun);
+	}
+	
+	if ((player_input_noun == "chest") || (player_input_noun == chest_name))
+	{
+		match = cur_chest;
+	}
+	if ((player_input_noun == "pit") && (cur_room->get_name() == "Pit Room"))
+	{
+		print("Pit");
+		print("It's a pitch black giant gaping pit. If it's not bottomless, then it goes down a long ways.");
+		return;
+	}
+	if ((player_input_noun == "pedistal") && (cur_room->get_name() == "Small Room"))
+	{
+		print("Pedistal");
+		print("The pedistal is made out of a black volcanic stone. There is an inscription on it but you cannot read it.");
+		return;
+	}
+
+	if (inventory_match != nullptr)
+	{
+		match = inventory_match;
+	}
+	else if (room_match != nullptr)
+	{
+		match = room_match;
+	}
+	else if (chest_match != nullptr)
+	{
+		match = chest_match;
+	}
+	
+	if (match == nullptr)
+	{
+		print("There's nothing to examine.");
+	}
+	else
+	{
+		print(match->get_name() + ":");
+		print(match->get_description());
 	}
 }
 void commands::basic_map()
@@ -379,9 +446,9 @@ void commands::map(bool& print_all_map)
 	print("\t\t\t\t\t\tDUNGEON MAP:");
 	print("\t\t\t\t\t\t\t\t\t\t\tKey: ");
 	print("\t\t\t\t\t\t\t\t\t@ - player's current location, B - boss room");
-	print("\t\t\t\t\t\t\t\t\tS - start room, X - dungeon exit");
+	print("\t\t\t\t\t\t\t\t\tS - start room, X - dungeon exit, $ - store");
 	print("\t\t\t\t\t\t\t\t\tE - live enemy still in room, W - wooden chest");
-	print("\t\t\t\t\t\t\t\t\tG - gold chest, D - dragon chest");
+	print("\t\t\t\t\t\t\t\t\tG - gold chest, D - dragon chest, C - compass");
 
 	std::vector<std::string> lines;
 	int cursor_x = 0;
@@ -429,6 +496,7 @@ void commands::map(bool& print_all_map)
 					if(cur_chest != nullptr)
 						chest_name = cur_chest->get_name();
 
+					compass* Compass = (compass*)cur_room->get_matching_object("compass");
 
 					if (player->get_cur_room_id() == id)
 						cur += "@";
@@ -438,6 +506,8 @@ void commands::map(bool& print_all_map)
 						cur += "X";
 					else if (cur_room->get_name() == "Dragon's Lair")
 						cur += "B";
+					else if (Compass != nullptr)
+						cur += "C";
 					else if (amt_enemies > 0)
 						cur += "E";
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Wooden Chest"))
@@ -559,6 +629,7 @@ void commands::help()
 		print("5. open - Opens chests.");
 		print("6. take - Take objects off the ground or from chests.");
 		print("7. equip - Equips items from the inventory into use.");
+		print("8. examine - Gives more information on an object in the room, in a chest, or in your inventory.");
 		print();
 		print("- To get a full list of commands type 'list'.");
 		print("- To find out more information about a specific command, type 'help' followed by the command you want to learn more about. Ex: help equip");
@@ -599,6 +670,15 @@ void commands::help()
 		print("Displays a dungeon map of the areas you have already visited.");
 		print("The @ represents the current position of the player. S is the start room, E is the exit to the dungeon, and B is the boss room.");
 	}
+	else if (player_input_noun == "examine")
+	{
+		print("COMMAND: examine");
+		print("Needs Object: Yes");
+		print("Takes all as an object: No");
+		print("Gives more information on an object in the room, in a chest, or in your inventory.");
+		print("Ex: examine chest");
+		print("Ex: examine axe");
+	}
 	else if (player_input_noun == "inventory")
 	{
 		print("COMMAND: inventory");
@@ -608,6 +688,7 @@ void commands::help()
 		print("\t-equip");
 		print("\t-drink");
 		print("\t-use");
+		print("\t-examine");
 	}
 	else if (player_input_noun == "open")
 	{
@@ -739,11 +820,11 @@ void commands::take() //take objects either from the room's items or an open che
 	open_method open_status;
 	std::vector<object*> floor_contents = cur_room->get_items();
 
-	object* obj_to_take_room = cur_room->get_matching_object(player_input_noun);
+	object* obj_to_take_room = cur_room->get_matching_object_and_delete(player_input_noun);
 	object* obj_to_take_chest = nullptr;
 	if (cur_room_chest != nullptr)
 	{
-		obj_to_take_chest = cur_room_chest->get_matching_object(player_input_noun);
+		obj_to_take_chest = cur_room_chest->get_matching_object_and_delete(player_input_noun);
 		open_status = cur_room_chest->get_open_status();
 		chest_content_names = cur_room_chest->get_all_content_names();
 	}
@@ -839,6 +920,23 @@ void commands::use()
 	if (identifier == "key")
 	{
 		obj_to_use->use(player->get_cur_room()->get_exits());
+	}
+	else if (identifier == "compass")
+	{
+		room* boss_room = Dungeon->get_boss_room();
+		bool visited = boss_room->get_visited_status();
+
+		if (!visited)
+		{
+			boss_room->visited_cur_room();
+			print("You used the compass. With a shining light, the location of the boss room appeared on your map!");
+			player->delete_item_from_inventory(obj_to_use, 1);
+			wait(5);
+			print("\nSeconds later, the compass disappeared right out of your hand. It must have server its purpose.");
+		}
+		else {
+			print("The compass doesn't work because you already discovered the boss room.");
+		}
 	}
 	else if ((identifier == "potion") || (identifier == "healing potion"))
 	{

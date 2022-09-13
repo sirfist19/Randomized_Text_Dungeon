@@ -94,6 +94,7 @@ public:
 	}
 	virtual void use(int* cur_room_exits) = 0;
 };
+
 class dragon_key : public key
 {
 public:
@@ -138,7 +139,7 @@ class gold : public object
 protected:
 	
 public:
-	gold(int amt) : object("Gold", amt, "A pile of shining golden coins worth. The front face has a three-headed dragon and the back has a picture of Emperor Septonius III of the Second Dynasty of Helena.")
+	gold(int amt) : object("Gold", amt, "A pile of shining golden coins. Each piece has the front face has a three-headed dragon and the back has a picture of Emperor Septonius III of the Second Dynasty of Helena.")
 	{
 
 	}
@@ -168,6 +169,36 @@ public:
 	void use()
 	{
 		print("Not yet implemented.");
+	}
+};
+class compass : public object
+{
+protected:
+
+public:
+	compass() : object("Compass", 1, "A small metalic compass. It points toward the boss room.")
+	{
+
+	}
+	compass(const compass& in) : object(in.name, in.amt, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new compass(*this);
+	}
+	virtual void display()
+	{
+		std::cout << "Compass\n";
+	}
+	virtual void display_chest()
+	{
+		std::cout << "Compass\n";
+	}
+	std::string identify()
+	{
+		return "compass";
 	}
 };
 

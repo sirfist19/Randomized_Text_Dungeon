@@ -67,7 +67,7 @@ public:
 		turn_to_lower_case(names);
 		return names;
 	}
-	object* get_matching_object(std::string player_input_noun)  
+	object* get_matching_object_and_delete(std::string player_input_noun)  
 	{
 		if (locked == open_method::already_open)
 		{
@@ -87,6 +87,24 @@ public:
 					contents.pop_back();
 
 					return result;
+				}
+			}
+		}
+		return nullptr;
+	}
+	object* get_matching_object(std::string player_input_noun)
+	{
+		if (locked == open_method::already_open)
+		{
+			for (unsigned int i = 0; i < contents.size(); i++)
+			{
+				std::string cur_name = contents[i]->get_name();
+				turn_to_lower_case(cur_name);
+				//std::cout << "Cur Chest obj name: " << cur_name<<"\n";
+
+				if (player_input_noun == cur_name)
+				{
+					return contents[i];
 				}
 			}
 		}

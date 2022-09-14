@@ -127,72 +127,7 @@ public:
 	{
 		contents.clear();
 	}
-	virtual weapon* pick_random_common_weapon()
-	{
-		weapon_list* list = new weapon_list();
-		std::vector<weapon*> common_list = list->get_common_list();
-
-		int rand_num = random(0, common_list.size() - 1);
-		weapon* template_weapon = common_list[rand_num];
-		weapon* chosen_weapon = template_weapon->clone_weapon();//copies the template weapon
-		delete list;
-		return chosen_weapon;
-	}
-	virtual weapon* pick_random_rare_weapon()
-	{
-		weapon_list* list = new weapon_list();
-		std::vector<weapon*> rare_list = list->get_rare_list();
-
-		int rand_num = random(0, rare_list.size() - 1);
-		weapon* template_weapon = rare_list[rand_num];
-		weapon* chosen_weapon = template_weapon->clone_weapon();//copies the template weapon
-		delete list;
-		return chosen_weapon;
-	}
-	virtual weapon* pick_random_legendary_weapon()
-	{
-		weapon_list* list = new weapon_list();
-		std::vector<weapon*> legendary_list = list->get_legendary_list();
-
-		int rand_num = random(0, legendary_list.size() - 1);
-		weapon* template_weapon = legendary_list[rand_num];
-		weapon* chosen_weapon = template_weapon->clone_weapon();//copies the template weapon
-		delete list;
-		return chosen_weapon;
-	}
-	virtual armor* pick_random_common_armor()
-	{
-		armor_list* list = new armor_list();
-		std::vector<armor*> common_list = list->get_common_list();
-
-		int rand_num = random(0, common_list.size() - 1);
-		armor* template_armor = common_list[rand_num];
-		armor* chosen_armor = template_armor->clone_armor();//copies the template weapon
-		delete list;
-		return chosen_armor;
-	}
-	virtual armor* pick_random_rare_armor()
-	{
-		armor_list* list = new armor_list();
-		std::vector<armor*> rare_list = list->get_rare_list();
-
-		int rand_num = random(0, rare_list.size() - 1);
-		armor* template_armor = rare_list[rand_num];
-		armor* chosen_armor = template_armor->clone_armor();//copies the template weapon
-		delete list;
-		return chosen_armor;
-	}
-	virtual armor* pick_random_legendary_armor()
-	{
-		armor_list* list = new armor_list();
-		std::vector<armor*> legendary_list = list->get_legendary_list();
-
-		int rand_num = random(0, legendary_list.size() - 1);
-		armor* template_armor = legendary_list[rand_num];
-		armor* chosen_armor = template_armor->clone_armor();//copies the template weapon
-		delete list;
-		return chosen_armor;
-	}
+	
 	
 	void display_chest_contents()
 	{
@@ -209,8 +144,20 @@ public:
 			contents[i]->display_chest();
 		}
 	}
-	void display_chest()= 0;
-	void display() = 0;
+	virtual void display_chest()
+	{
+		print(name);
+	}
+	virtual std::string get_display_string()
+	{
+		return(name);
+	}
+	virtual void display()
+	{
+		std::cout << name <<"\n";
+		std::cout << "\tDescription: ";
+		print(description);
+	}
 };
 class wooden_chest : public chest //lowest tier of chest
 {
@@ -249,16 +196,7 @@ public:
 			}
 		}
 	}
-	void display_chest()
-	{
-		print(name);
-	}
-	void display()
-	{
-		std::cout << "Chest\n";
-		std::cout << "\tDescription: ";
-		print(description);
-	}
+	
 };
 
 class gold_chest : public chest //mid tier of chest
@@ -304,16 +242,6 @@ public:
 				contents.push_back(pick_random_rare_armor());
 			}
 		}
-	}
-	void display_chest()
-	{
-		print(name);
-	}
-	void display()
-	{
-		std::cout << "Chest\n";
-		std::cout << "\tDescription: ";
-		print(description);
 	}
 };
 
@@ -365,16 +293,6 @@ public:
 				contents.push_back(pick_random_legendary_armor());
 			}
 		}
-	}
-	void display_chest()
-	{
-		print(name);
-	}
-	void display()
-	{
-		std::cout << "Chest\n";
-		std::cout << "\tDescription: ";
-		print(description);
 	}
 };
 

@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="armor.cpp" />
     <ClCompile Include="attacking.cpp" />
     <ClCompile Include="commands.cpp" />
     <ClCompile Include="dungeon.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_commands.cpp" />
     <ClCompile Include="room.cpp" />
+    <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alive_entity.h" />
@@ -161,6 +163,7 @@
     <ClInclude Include="potion.h" />
     <ClInclude Include="room.h" />
     <ClInclude Include="room_descriptons.h" />
+    <ClInclude Include="store.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

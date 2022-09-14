@@ -59,11 +59,11 @@ int random(int start, int end)//picks a random number from the start to the end 
 void game_Over(bool& game_over, bool& quit_to_title_screen)
 {
 	printEquals();
-	std::cout << "GAME OVER!\n";
+	std::cout << "\nGAME OVER!\n";
 	std::cout << "You died. Better luck next time.\n";
 	printEquals();
 
-	print("Do you want to restart or quit the game?");
+	print("\nDo you want to restart or quit the game?");
 	print("1. Restart");
 	print("2. Quit");
 
@@ -100,7 +100,7 @@ void game_Over(bool& game_over, bool& quit_to_title_screen)
 	
 	//exit(0);
 }
-bool is_number_in_range(const std::string& in, const int& start, const int& end)
+bool is_number_in_range(const std::string& in, const int& start, const int& end)//inclusive of both start and end
 {
 	for (unsigned int i = 0; i < in.size(); i++)
 	{
@@ -124,6 +124,32 @@ void print() {
 bool str_input_accepted(std::string& to_check, std::string* inputs, int size, bool& valid_input) {
 	for (int i = 0; i < size; i++) {
 		if (to_check == inputs[i]) {
+			valid_input = true;
+			return true;
+		}
+	}
+	return false;
+}
+bool str_input_accepted(std::string& to_check, std::vector<std::string>& input, bool& valid_input) {
+	for (unsigned int i = 0; i < input.size(); i++) {
+		if (to_check == input[i]) {
+			valid_input = true;
+			return true;
+		}
+	}
+	return false;
+}
+bool str_input_accepted(std::vector<std::string>& to_check, std::string* inputs, int size, bool& valid_input) {
+	
+	std::string res = "";
+	for (unsigned int i = 0; i < to_check.size(); i++)
+	{
+		res += to_check[i];
+		if (i != to_check.size() - 1)
+			res += " ";
+	}
+	for (int i = 0; i < size; i++) {
+		if (res == inputs[i]) {
 			valid_input = true;
 			return true;
 		}
@@ -254,10 +280,12 @@ std::string get_player_name()
 std::string welcome_screen()
 {
 	printEquals();
-	print("\nWelcome to Randomized Text Dungeon!");
+	print();
+	print();
+	print("Welcome to Randomized Text Dungeon!");
 	print("\t- An adventure game by Aidan Cini");
 	print();
-	print("This is a randomized text dungeon. The rooms, enemies, and items are randomized so every time you play the dungeon will be different.\n");
+	print("This is a randomized text dungeon. The rooms, enemies, and items are randomized so every time you play the dungeon will be different. Playing in fullscreen mode is recommended. It's more immersive and looks nicer.\n");
 	print("You are an explorer that has just found the dungeon that you have been searching for for 14 years. A massive entrance lined with columns stands leads into the depths below. Enter if you dare.");
 	printEquals();
 	print();

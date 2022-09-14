@@ -506,6 +506,8 @@ void commands::map(bool& print_all_map)
 						cur += "X";
 					else if (cur_room->get_name() == "Dragon's Lair")
 						cur += "B";
+					else if (cur_room->get_name() == "Store")
+						cur += "$";
 					else if (Compass != nullptr)
 						cur += "C";
 					else if (amt_enemies > 0)
@@ -600,6 +602,7 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 		std::cout << "Going " << dir_string << "...\n";
 		wait(5);
 		clear_command();
+
 		return false;//redisplays the room
 	}
 }
@@ -924,15 +927,17 @@ void commands::use()
 	else if (identifier == "compass")
 	{
 		room* boss_room = Dungeon->get_boss_room();
-		bool visited = boss_room->get_visited_status();
+		room* store_room = Dungeon->get_store_room();
+		bool visited = ((boss_room->get_visited_status()) && (store_room->get_visited_status()));
 
 		if (!visited)
 		{
 			boss_room->visited_cur_room();
-			print("You used the compass. With a shining light, the location of the boss room appeared on your map!");
+			store_room->visited_cur_room();
+			print("You used the compass. With a shining light, the location of the store and boss room appeared on your map!");
 			player->delete_item_from_inventory(obj_to_use, 1);
 			wait(5);
-			print("\nSeconds later, the compass disappeared right out of your hand. It must have server its purpose.");
+			print("\nSeconds later, the compass disappeared right out of your hand. It must have served its purpose.");
 		}
 		else {
 			print("The compass doesn't work because you already discovered the boss room.");

@@ -9,6 +9,8 @@ void print_no_newline(std::string in);
 void print();
 
 bool str_input_accepted(std::string& to_check, std::string* inputs, int size, bool& valid_input);
+bool str_input_accepted(std::vector<std::string>& to_check, std::string* inputs, int size, bool& valid_input);
+bool str_input_accepted(std::string& to_check, std::vector<std::string>& input, bool& valid_input);
 std::string input();
 void Quit();
 void invalid_input();

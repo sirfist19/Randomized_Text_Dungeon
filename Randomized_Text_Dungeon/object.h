@@ -1,6 +1,8 @@
 #ifndef object_h
 #define object_h
 #include "constants.h"
+#include <vector>
+#include "helper_fxns.h"
 
 class object
 {
@@ -28,6 +30,7 @@ public:
 	 
 	virtual std::string identify() { return "object"; }
 	virtual void display() = 0;
+	virtual std::string get_display_string() = 0;
 	virtual void display_chest() = 0;
 	virtual void decrease_amt(const int& _amt)
 	{
@@ -84,6 +87,7 @@ public:
 
 	}
 	virtual void display() = 0;
+	virtual std::string get_display_string() = 0;
 	virtual void display_chest()
 	{
 		std::cout << "Key\n";
@@ -112,7 +116,11 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << "Dragon Key\n";
+		std::cout << "Dragon Key";
+	}
+	virtual std::string get_display_string()
+	{
+		return ("Dragon Key");
 	}
 	virtual void display_chest()
 	{
@@ -153,10 +161,14 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << "Gold x"<<amt<<"\n";
+		std::cout << "Gold x"<<amt;
 		//std::cout << "\tDescription: ";
 		//print(description);
 		//print(description);
+	}
+	virtual std::string get_display_string()
+	{
+		return ("Gold x" + std::to_string(amt));
 	}
 	virtual void display_chest()
 	{
@@ -190,7 +202,11 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << "Compass\n";
+		std::cout << "Compass";
+	}
+	virtual std::string get_display_string()
+	{
+		return ("Compass");
 	}
 	virtual void display_chest()
 	{

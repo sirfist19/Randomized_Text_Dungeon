@@ -83,6 +83,15 @@ class dungeon
 			}
 			return nullptr;
 		}
+		room* get_store_room() const
+		{
+			for (unsigned int i = 0; i < rooms.size(); i++)
+			{
+				if (rooms[i]->get_store() != nullptr)
+					return rooms[i];
+			}
+			return nullptr;
+		}
 		//void dfs() const;
 		void create_sorted_room_coords(bool& print_all_map);
 		void create_sorted_room_coords_basic();
@@ -104,6 +113,7 @@ class dungeon
 		room_coord get_coord(int& index) const;
 		void place_dragon_key();
 		void place_items();
+		void place_store();
 		int get_deepest_depth();
 		void display_all_rooms_coords();
 		void create_new_exits(room* cur_room, room_descriptions* descriptions);

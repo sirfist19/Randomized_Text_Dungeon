@@ -25,6 +25,7 @@ private:
 public:
 	Player(std::string name, room* location) : Alive_Entity(name, new fists(), 5, 1), location(location), cur_exp(0), exp_to_next_level(20)
 	{
+		inventory.push_back(new gold(PLAYER_START_GOLD_AMT));
 		leveling_info.push_back(new level_info(1, 5, 0));//the level, then player's health at that level, then needed xp
 		leveling_info.push_back(new level_info(2, 10, 20));
 		leveling_info.push_back(new level_info(3, 15, 60));
@@ -176,6 +177,20 @@ public:
 		}
 		return gold_amt;
 	}
+	void decrease_gold_amt(int& amt)
+	{
+		object* gold = nullptr;
+		for (unsigned int i = 0; i < inventory.size(); i++)
+		{
+			std::string cur_id = inventory[i]->identify();
+			if (cur_id == "gold")
+			{
+				gold = inventory[i];
+			}
+		}
+		if(gold != nullptr)
+			gold->decrease_amt(amt);
+	}
 	void display_inventory() const
 	{
 		//sort the inventory items into different categories
@@ -199,7 +214,7 @@ public:
 		
 		std::cout << "\nGeneral Items:\n";
 
-		if (inventory.size() == 0)
+		if ((inventory.size() == 0) || ((inventory.size() == 1) && (inventory[0]->get_name() == "Gold")))
 		{
 			std::cout << " NO ITEMS IN INVENTORY\n";
 			return;
@@ -443,8 +458,8 @@ public:
 	void printTopBar()
 	{
 		printEquals();
-		std::cout << "\nPlayer: " + name + "     " + "Room: " << location->get_name()
-			<< "-" << location->get_id();
+		std::cout << "\nPlayer: " + name + "     " + "Room: " << location->get_name();
+			//std::cout<<" - "<< location->get_id();
 		std::cout << "     Health: " << health->get_health() << "/" << health->get_max_health();
 		std::cout<<"\n";
 		printEquals();

@@ -6,6 +6,7 @@
 #include "enemy.h"
 #include "room_descriptons.h"
 #include "chest.h"
+#include "store.h"
 
 
 enum depth_tier {
@@ -71,11 +72,11 @@ public:
 
 class room {
 	private:
-
 		int id;//room_id
 		std::string name;
 		std::string description;
 		room_coord* location;
+		store* Store;
 		bool visited;//has the player visited here before
 		int exits[4];//0 for no exit, other number for room to go to
 		int num_exits;
@@ -89,7 +90,7 @@ class room {
 		room(int id) //an extremely basic constructor ... more details are constructed later in the dungeon constructor
 			:id(id), name("Unnamed Room"), description("It's a cold bare room."), 
 			num_exits(0), depth(-1), tier(depth_tier::unassigned), Chest(nullptr), visited(false)
-			, location(new room_coord())
+			, location(new room_coord()), Store(nullptr)
 		{
 			if (id == 1)
 				visited = true;
@@ -98,7 +99,7 @@ class room {
 				exits[i] = 0;
 			}
 		}
-		~room()
+		virtual ~room()
 		{
 			for (unsigned int i = 0; i < enemies.size(); i++)
 			{
@@ -120,6 +121,7 @@ class room {
 		void spawn_enemies();
 		void place_chests();
 		void display_room();
+		void display_room_store();
 		void display_exit_information() const;
 		void display_room_debug() const;
 		
@@ -131,6 +133,10 @@ class room {
 		int get_num_exits()
 		{
 			return num_exits;
+		}
+		store* get_store()
+		{
+			return Store;
 		}
 		int* get_exits() {
 			return exits;
@@ -181,6 +187,10 @@ class room {
 		void set_coord(room_coord* coord)
 		{
 			location = coord;
+		}
+		void set_store(store* in_store)
+		{
+			Store = in_store;
 		}
 		void set_name(std::string in_name)
 		{

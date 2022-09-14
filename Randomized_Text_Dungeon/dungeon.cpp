@@ -55,6 +55,7 @@ dungeon::dungeon()
 	}
 	place_dragon_key();
 	place_items();
+	place_store();
 }
 void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 {
@@ -578,6 +579,34 @@ void dungeon::place_items()
 			return;
 		}
 	}
+}
+void dungeon::place_store()
+{
+	room* cur_room = nullptr;
+	//select a room to be the store
+	for (unsigned int i = 0; i < rooms.size(); i++)
+	{
+		if (rooms[i]->get_depth() == STORE_SPAWN_DEPTH)
+		{
+			cur_room = rooms[i];
+			break;
+		}
+	}
+
+	if (cur_room == nullptr)
+	{
+		print("Could not find a room of STORE_SPAWN_DEPTH in place_store() in dungeon.cpp");
+		return;
+	}
+	//convert this room to a store
+	std::string store_description = "A small shop that's just set up here. Not sure who buys this stuff, but the business is still here.";
+	cur_room->set_info("Store", store_description);
+	cur_room->clear_chests();//no chests 
+	std::vector<Enemy*> enemies;//no enemies
+	cur_room->set_enemies(enemies);
+
+	cur_room->set_store(new store());
+	return;
 }
 int dungeon::get_deepest_depth()
 {

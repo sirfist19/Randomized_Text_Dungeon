@@ -37,7 +37,7 @@ public:
 	~commands();
 	bool parseInputVector(bool& game_over, bool& quit_to_title_screen);
 	void print_all_commands();
-	
+	bool store_input(std::vector<std::string>& cur_player_input, store* cur_store);
 	void print_all_verbs();
 	void print_all_nouns();
 	void input_loop(bool& loop, bool& game_over, bool& quit_to_title_screen);

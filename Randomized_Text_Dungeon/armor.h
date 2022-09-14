@@ -18,14 +18,16 @@ public:
 	virtual armor* clone_armor() = 0;
 	virtual void display()
 	{
-		std::cout << "Armor: " << name << "\n";
-		std::cout << "\tDefense - " << defense << "\n";
-		std::cout << "\tDescription - ";
-		print(description);
+		std::cout << get_display_string();
+	}
+	virtual std::string get_display_string()
+	{
+		return(name + " (Defense: " + std::to_string(defense) + ")");
 	}
 	virtual void display_chest()
 	{
-		std::cout << name << " (Defense: " << defense << ")\n";
+		display();
+		std::cout << "\n";
 	}
 	std::string identify()
 	{
@@ -285,6 +287,10 @@ public:
 		return new dragon_scale_boots(*this);
 	}
 };
+
+armor* pick_random_common_armor();
+armor* pick_random_rare_armor();
+armor* pick_random_legendary_armor();
 
 class armor_list
 {

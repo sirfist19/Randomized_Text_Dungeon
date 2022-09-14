@@ -19,14 +19,16 @@ public:
 	virtual weapon* clone_weapon() = 0;
 	virtual void display()
 	{
-		std::cout << "Weapon: " << name << "\n";
-		std::cout << "\tDamage - " << damage << "\n";
-		std::cout << "\tDescription - ";
-		print(description);
+		std::cout << get_display_string();
+	}
+	virtual std::string get_display_string()
+	{
+		return(name + " (Base Damage: " + std::to_string(damage) + ", Base Hit Rate: " + std::to_string(hit_rate) + ")");
 	}
 	virtual void display_chest()
 	{
-		std::cout << name << " (Base Damage: " << damage << ", Base Hit Rate: " << hit_rate << ")\n";
+		display();
+		std::cout << "\n";
 	}
 	std::string identify()
 	{
@@ -229,7 +231,7 @@ public:
 class long_axe : public weapon
 {
 public:
-	long_axe() : weapon("Axe", 22, 85, "A two-handed axe that needs lots of force to yield.") {}
+	long_axe() : weapon("Long Axe", 22, 85, "A two-handed axe that needs lots of force to yield.") {}
 	long_axe(const long_axe& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -311,6 +313,10 @@ public:
 		return new dragon_fire(*this);
 	}
 };
+
+weapon* pick_random_common_weapon();
+weapon* pick_random_rare_weapon();
+weapon* pick_random_legendary_weapon();
 
 class weapon_list
 {

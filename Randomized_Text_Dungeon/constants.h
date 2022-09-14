@@ -1,5 +1,6 @@
 #ifndef constants_h
 #define constant_h
+#include "helper_fxns.h"
 
 const bool DEBUG_MODE = false;
 const int MAX_DUNGEON_SIZE = 55;//45
@@ -7,6 +8,7 @@ const int MIN_DUNGEON_SIZE = 40;//30
 const int MAX_CHAR_PER_LINE = 120;//120
 const int CONNECT_ROOMS_CHANCE = 15;//15
 const int MIN_DEEPEST_DEPTH = 17;//17
+const int PLAYER_START_GOLD_AMT = 0;
 
 const int RUN_AWAY_CHANCE = 50;
 const int BORDER_MAP_SIZE = 45;
@@ -14,6 +16,9 @@ const int ENEMY_DROP_CHANCE = 25;
 const int ENEMY_PICKS_HEAVY_ATTACK_CHANCE = 50;
 const int COMPASS_SPAWN_DEPTH = 5;
 
+//Store
+const int STORE_SPAWN_DEPTH = random(7,9);
+const int STORE_NUM_DASHES = 100;
 //attacking 
 const double HEAVY_DAMAGE_MULTIPLIER = 1.35;
 const int HEAVY_HIT_RATE_REDUCER = 20;

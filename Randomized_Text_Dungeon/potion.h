@@ -36,6 +36,18 @@ public:
 	{
 		return heal_amt;
 	}
+	virtual void display()
+	{
+		std::cout << name << " (Heals " << heal_amt << " health)";
+	}
+	virtual std::string get_display_string()
+	{
+		return(name + " (Heals " + std::to_string(heal_amt) + " health)");
+	}
+	virtual void display_chest()
+	{
+		std::cout << name << " (Heals " << heal_amt << " health)\n";
+	}
 };
 
 class lesser_healing_potion : public healing_potion //abstract healing potion class
@@ -53,17 +65,6 @@ public:
 	virtual object* clone()
 	{
 		return new lesser_healing_potion(*this);
-	}
-	virtual void display()
-	{
-		std::cout << "Potion: " << name << "\n";
-		std::cout << "\tHeal Amount - " << heal_amt << "\n";
-		std::cout << "\tDescription - ";
-		std::cout<<description<<"\n";
-	}
-	virtual void display_chest()
-	{
-		std::cout << name << " (Heals " << heal_amt << " health)\n";
 	}
 };
 
@@ -83,17 +84,6 @@ public:
 	{
 		return new common_healing_potion(*this);
 	}
-	virtual void display()
-	{
-		std::cout << "Potion: " << name << "\n";
-		std::cout << "\tHeal Amount - " << heal_amt << "\n";
-		std::cout << "\tDescription - ";
-		std::cout << description << "\n";
-	}
-	virtual void display_chest()
-	{
-		std::cout << name << " (Heals " << heal_amt << " health)\n";
-	}
 };
 
 class greater_healing_potion : public healing_potion //abstract healing potion class
@@ -112,16 +102,6 @@ public:
 	{
 		return new greater_healing_potion(*this);
 	}
-	virtual void display()
-	{
-		std::cout << "Potion: " << name << "\n";
-		std::cout << "\tHeal Amount - " << heal_amt << "\n";
-		std::cout << "\tDescription - ";
-		std::cout << description << "\n";
-	}
-	virtual void display_chest()
-	{
-		std::cout << name << " (Heals " << heal_amt << " health)\n";
-	}
+	
 };
 #endif

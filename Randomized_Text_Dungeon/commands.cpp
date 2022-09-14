@@ -15,6 +15,18 @@ void commands::game_loop(commands* game, bool& game_over, bool& quit_to_title_sc
 	{
 		player->printTopBar();
 		cur_room->display_room();
+		
+		if (cur_room->get_store() != nullptr) //if there is a store
+		{
+			printUnderscore();
+
+			store* cur_store = cur_room->get_store();
+			cur_store->display_inventory();
+			print("\n\nPlayer: " + player->get_name());
+			print("Gold: " + std::to_string(player->get_amt_gold()));
+			print();
+			cur_store->display_options();
+		}
 	}
 	else
 	{
@@ -26,7 +38,7 @@ void commands::game_loop(commands* game, bool& game_over, bool& quit_to_title_sc
 	if (game_over)
 		return;
 
-	input_loop(loop, game_over, quit_to_title_screen);
+	input_loop(loop, game_over, quit_to_title_screen);//handles all input
 }
 
 //constructor
@@ -103,7 +115,15 @@ void commands::input_loop(bool& loop, bool& game_over, bool& quit_to_title_scree
 	{
 		cur_player_input = prompt();
 		printUnderscore();
-		loop = parseInputVector(game_over, quit_to_title_screen);
+
+		bool res = false;
+		store* cur_store = player->get_cur_room()->get_store();
+		if (cur_store != nullptr)
+		{
+			res = store_input(cur_player_input, cur_store);//returns true if input is accepted
+		}
+		if(res == false)
+			loop = parseInputVector(game_over, quit_to_title_screen);
 
 		if (loop)
 			printUnderscore();
@@ -239,6 +259,47 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 		break;
 	}
 	return true;
+}
+bool commands::store_input(std::vector<std::string>& cur_player_input, store* cur_store)
+{
+	//store input
+	std::string valid_buy_opt[] = { "1", "buy" };
+	std::string valid_talk_opt[] = { "2", "talk", "talk with shopkeeper" };
+	std::string valid_normal_commands_opt[] = { "3" };
+
+	bool valid_input = false;
+	if (str_input_accepted(cur_player_input, valid_buy_opt, 2, valid_input)) 
+	{
+		//store buying function
+		int gold_amt = player->get_amt_gold();
+		int spent_amt = 0;
+		std::vector<object*> bought_items = cur_store->buy_items(gold_amt, spent_amt);
+
+		//decrease the money spent from the player's inventory
+		player->decrease_gold_amt(spent_amt);
+
+		
+		//add bought items to the inventory
+		player->add_items_to_inventory(bought_items);
+		printUnderscore();
+		print();
+		cur_store->display_options();
+		return true;
+	}
+	else if (str_input_accepted(cur_player_input, valid_talk_opt, 3, valid_input))
+	{
+		//talk function
+		cur_store->talk_with_shopkeeper();
+		print();
+		cur_store->display_options();
+		return true;
+	}
+	else if (str_input_accepted(cur_player_input, valid_normal_commands_opt, 1, valid_input))
+	{
+		print("Just use normal commands to continue.");
+		return true;
+	}	
+	return false;
 }
 std::string commands::get_player_input_noun() const
 {

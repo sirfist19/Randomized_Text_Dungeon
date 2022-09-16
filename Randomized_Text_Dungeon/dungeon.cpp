@@ -22,6 +22,7 @@ dungeon::dungeon()
 	temp_room->add_item(new gold(87));
 	temp_room->add_item(new gold(1));*/
 	//temp_room->add_item(new compass());
+	//temp_room->add_item(new teleporter());
 
 	rooms.push_back(temp_room);
 	create_new_exits(temp_room, stock_room_descriptions);
@@ -251,7 +252,7 @@ void dungeon::create_sorted_room_coords(bool& print_all_map)
 	{
 		if (!print_all_map) //printing only the part the player has been to
 		{
-			if (rooms[i]->get_visited_status())//only add rooms that have been visited
+			if (rooms[i]->get_visited_status() != visited_types::not_visited)//only add rooms that have been visited or discovered
 			{
 				room_coord* cur_coord = new room_coord(*rooms[i]->get_coord());
 				int cur_id = rooms[i]->get_id();
@@ -568,17 +569,27 @@ void dungeon::place_dragon_key()
 }
 void dungeon::place_items()
 {
-	//place the compass
+	//place the compass and teleporter
 	compass* Compass = new compass();
+	teleporter* Teleporter = new teleporter();
+	bool placed_compass = false;
+	bool placed_teleporter = false;
 
 	for (unsigned int i = 0; i < rooms.size(); i++)
 	{
-		if (rooms[i]->get_depth() == COMPASS_SPAWN_DEPTH)
+		if ((placed_compass == false) && (rooms[i]->get_depth() == COMPASS_SPAWN_DEPTH))
 		{
 			rooms[i]->add_item(Compass);
-			return;
+			placed_compass = true;
+		}
+		if ((placed_teleporter == false) && (rooms[i]->get_depth() == (get_deepest_depth() - TELEPORTER_SPAWN_DEPTH)))
+		{
+			rooms[i]->add_item(Teleporter);
+			placed_teleporter = true;
 		}
 	}
+	
+		
 }
 void dungeon::place_store()
 {

@@ -186,10 +186,12 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 			if (Boots != nullptr)
 				obj_to_drop.push_back(Boots);
 
-			int num = random(1, 100);
+			int item_num = random(1, 100);
+			int gold_num = random(1, 100);
 			room* cur_room = player->get_cur_room();
 			object* copy_obj_to_drop = nullptr;
-			if (num < ENEMY_DROP_CHANCE)
+			object* copy_gold_to_drop = nullptr;
+			if (item_num < ENEMY_DROP_ITEM_CHANCE)
 			{
 				int index = random(0, obj_to_drop.size() - 1);
 
@@ -199,11 +201,23 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 				//copy_obj_to_drop->set_amt(amt_to_drop);//no duplicating items so set the correct amount that are dropping on the floor
 				cur_room->add_item(copy_obj_to_drop);
 			}
+			if (gold_num < ENEMY_DROP_GOLD_CHANCE)
+			{
+				object* to_drop_gold = enemy->get_gold();
+				copy_gold_to_drop = to_drop_gold->clone();
+				cur_room->add_item(copy_gold_to_drop);
+			}
 
 			std::cout << "\nYou killed the " << enemy->get_name() << "!\n";
+			std::vector<object*> to_drop;
+			if (copy_obj_to_drop != nullptr)
+				to_drop.push_back(copy_obj_to_drop);
+			if (copy_gold_to_drop != nullptr)
+				to_drop.push_back(copy_gold_to_drop);
 
-			if(copy_obj_to_drop != nullptr)
-				std::cout << "As it died the " << enemy->get_name() << " dropped its " << copy_obj_to_drop->get_name() << " on the floor.\n";
+			std::string before = "As it died the " + enemy->get_name() + " dropped ";
+			std::string after = " on the floor.\n";
+			print_items(to_drop, before, after);
 
 			int gained_exp = enemy->get_exp();
 			std::cout << "You gained " << gained_exp << "xp points.\n\n";

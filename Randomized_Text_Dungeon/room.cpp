@@ -153,9 +153,13 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 	switch (tier)
 	{
 	case depth_tier::start:
-		name = start_descriptions[0]->name;
-		description = start_descriptions[0]->description;
-		break;
+		if (depth == 0)
+		{
+			name = start_descriptions[0]->name;
+			description = start_descriptions[0]->description;
+			break;
+		}
+		//if has depth 0 then have near room description
 	case depth_tier::near:
 		max_range = near_descriptions.size() - 1;
 		num = random(1, max_range);
@@ -190,8 +194,11 @@ void room::place_chests()
 	int spawn_chest = random(0, 99);
 	switch (tier)
 	{
+	case depth_tier::start:
+		if((depth != 0) && (spawn_chest < START_SPAWN_WOOD_CHEST))
+			Chest = new wooden_chest(open_method::openable);
 	case depth_tier::near:
-		if (spawn_chest < NEAR_SPAWN_WOOD_CHEST)
+		if ((depth != 0) &&(spawn_chest < NEAR_SPAWN_WOOD_CHEST))
 			Chest = new wooden_chest(open_method::openable);
 		break;
 	case depth_tier::mid:
@@ -266,7 +273,7 @@ void room::set_depth_tier()
 {
 	if (DEBUG_MODE)
 		std::cout << "Currently the depth is " << depth << std::endl;
-	if (depth == 0)
+	if ((depth >= MIN_START_AREA) && (depth <= MAX_START_AREA))
 		tier = depth_tier::start;
 	else if ((depth >= MIN_NEAR) && (depth <= MAX_NEAR))
 		tier = depth_tier::near;
@@ -278,6 +285,23 @@ void room::set_depth_tier()
 		tier = depth_tier::very_far;
 	else
 		tier = depth_tier::unassigned;
+}
+std::string room::get_depth_tier_string()
+{
+	switch (tier)
+	{
+	case depth_tier::start:
+	case depth_tier::near:
+		return "Reception Area";
+	case depth_tier::mid:
+		return "Civilization's End";
+	case depth_tier::far:
+		return "Dungeon Depths";
+	case depth_tier::very_far:
+		return "Dungeon Deep";
+	default:
+		return "error";
+	}
 }
 void room::display_room()
 {

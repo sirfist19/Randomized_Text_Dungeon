@@ -13,20 +13,7 @@ void commands::game_loop(commands* game, bool& game_over, bool& quit_to_title_sc
 	room* cur_room = player->get_cur_room();
 	if (!first_time_enter)
 	{
-		player->printTopBar();
-		cur_room->display_room();
-		
-		if (cur_room->get_store() != nullptr) //if there is a store
-		{
-			printUnderscore();
-
-			store* cur_store = cur_room->get_store();
-			cur_store->display_inventory();
-			print("\n\nPlayer: " + player->get_name());
-			print("Gold: " + std::to_string(player->get_amt_gold()));
-			print();
-			cur_store->display_options();
-		}
+		display_cur_room_with_top_bar(cur_room);
 	}
 	else
 	{
@@ -41,6 +28,23 @@ void commands::game_loop(commands* game, bool& game_over, bool& quit_to_title_sc
 	input_loop(loop, game_over, quit_to_title_screen);//handles all input
 }
 
+void commands::display_cur_room_with_top_bar(room* cur_room)
+{
+	player->printTopBar();
+	cur_room->display_room();
+
+	if (cur_room->get_store() != nullptr) //if there is a store
+	{
+		printUnderscore();
+
+		store* cur_store = cur_room->get_store();
+		cur_store->display_inventory();
+		print("\n\nPlayer: " + player->get_name());
+		print("Gold: " + std::to_string(player->get_amt_gold()));
+		print();
+		cur_store->display_options();
+	}
+}
 //constructor
 commands::commands(std::string player_name)
 	:cur_noun(noun::error_), cur_verb(verb::error)
@@ -175,7 +179,7 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 	}
 	bool print_all_map = false;
 
-	switch (cur_verb)//goes to all commands
+	switch (cur_verb)//goes to all commands (returning false reprints the screen)
 	{
 	case verb::go:
 		if (cur_noun == noun::north)
@@ -202,7 +206,7 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 		return false;
 		break;
 	case verb::use:
-		use();
+		return use();
 		break;
 	case verb::map:
 		if ((player_input_noun == "full") || (player_input_noun == "full depth"))

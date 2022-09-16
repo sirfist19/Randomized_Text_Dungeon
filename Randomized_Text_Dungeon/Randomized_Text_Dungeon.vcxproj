@@ -164,6 +164,7 @@
     <ClInclude Include="room.h" />
     <ClInclude Include="room_descriptons.h" />
     <ClInclude Include="store.h" />
+    <ClInclude Include="teleporter.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

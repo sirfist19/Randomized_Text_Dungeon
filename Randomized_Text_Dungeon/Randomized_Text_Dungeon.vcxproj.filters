@@ -89,5 +89,8 @@
     <ClInclude Include="store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="teleporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

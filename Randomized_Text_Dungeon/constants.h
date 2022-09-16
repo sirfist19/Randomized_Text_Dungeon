@@ -3,7 +3,7 @@
 #include "helper_fxns.h"
 
 const bool DEBUG_MODE = false;
-const int MAX_DUNGEON_SIZE = 55;//45
+const int MAX_DUNGEON_SIZE = 50;//45
 const int MIN_DUNGEON_SIZE = 40;//30
 const int MAX_CHAR_PER_LINE = 120;//120
 const int CONNECT_ROOMS_CHANCE = 15;//15
@@ -12,19 +12,24 @@ const int PLAYER_START_GOLD_AMT = 0;
 
 const int RUN_AWAY_CHANCE = 50;
 const int BORDER_MAP_SIZE = 45;
-const int ENEMY_DROP_CHANCE = 25;
+const int ENEMY_DROP_ITEM_CHANCE = 25;
+const int ENEMY_DROP_GOLD_CHANCE = 100;
 const int ENEMY_PICKS_HEAVY_ATTACK_CHANCE = 50;
 const int COMPASS_SPAWN_DEPTH = 5;
+const int TELEPORTER_SPAWN_DEPTH = 5;//x less than the dragon room depth
 
 //Store
 const int STORE_SPAWN_DEPTH = random(7,9);
 const int STORE_NUM_DASHES = 100;
 //attacking 
-const double HEAVY_DAMAGE_MULTIPLIER = 1.35;
-const int HEAVY_HIT_RATE_REDUCER = 20;
+const double HEAVY_DAMAGE_MULTIPLIER = 2;
+const int HEAVY_HIT_RATE_REDUCER = 40;
 
 //depth tiers
-const int MIN_NEAR = 1;
+const int MIN_START_AREA = 0;
+const int MAX_START_AREA = 1;
+
+const int MIN_NEAR = 2;
 const int MAX_NEAR = 4;
 
 const int MIN_MID = 5;
@@ -60,6 +65,8 @@ const int VERY_FAR_SPAWN_PHANTOM_KNIGHT = 15;
 const int VERY_FAR_SPAWN_ORC = 40;
 
 //chest spawning 
+//start (rooms of depth 1)
+const int START_SPAWN_WOOD_CHEST = 75;
 const int NEAR_SPAWN_WOOD_CHEST = 30;// 30;
 const int MID_SPAWN_WOOD_CHEST = 30;//25;
 const int MID_SPAWN_GOLD_CHEST = 5;
@@ -73,7 +80,7 @@ const int CHEST_WEAPON_SPAWN_RATE = 50;
 const int CHEST_ARMOR_SPAWN_RATE = 50;
 
 //wooden chest
-const int WOOD_CHEST_LESSER_HEALING_SPAWN_RATE = 40;
+const int WOOD_CHEST_LESSER_HEALING_SPAWN_RATE = 60;
 const int WOOD_CHEST_SPAWN_GOLD_RATE = 30;
 const int WOOD_CHEST_MAX_GOLD = 7;
 const int WOOD_CHEST_MIN_GOLD = 1;

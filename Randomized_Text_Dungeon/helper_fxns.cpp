@@ -310,7 +310,7 @@ std::string welcome_screen()
 	}
 
 	//getting player name section
-	std::string name;
+	std::string name = "";
 	std::string yes_input[] = { "1", "yes" };
 	std::string no_input[] = { "2", "no" };
 
@@ -324,6 +324,11 @@ std::string welcome_screen()
 			print("Then type your name again. Not sure how you couldn't remember your own name though.");
 			valid_input = false;
 		}
+		else if ((str_input_accepted(answer, yes_input, 2, valid_input)) && (name.size() > 15))
+		{
+			print("That name is too long. There is a maximum name length of 15 characters. Please enter a different name.");
+			valid_input = false;
+		}
 		else if (str_input_accepted(answer, yes_input, 2, valid_input)) {
 			std::cout << "Well then " << name << " welcome to the dungeon! And best of luck.\n\n";
 		}
@@ -331,6 +336,7 @@ std::string welcome_screen()
 			invalid_input();
 		}
 	}
+
 	wait(4);
 	clear_();
 	print("Generating the dungeon. Please wait.");

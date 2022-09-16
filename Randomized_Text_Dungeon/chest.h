@@ -3,6 +3,7 @@
 #include "weapon.h"
 #include "armor.h"
 #include "potion.h"
+#include "teleporter.h"
 #include "helper_fxns.h"
 #include <vector>
 

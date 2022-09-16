@@ -41,7 +41,7 @@ public:
 	void print_all_verbs();
 	void print_all_nouns();
 	void input_loop(bool& loop, bool& game_over, bool& quit_to_title_screen);
-
+	void display_cur_room_with_top_bar(room* cur_room);
 	void fighting(room* cur_room, bool& game_over, Player* player);
 	void fighting_input_loop(bool& game_over, Player* player, Enemy* enemy, bool& ran_away);
 	void attack(bool& game_over, Player* player, Enemy* enemy, bool& only_enemy_attacks, bool& is_player_heavy_attack);
@@ -51,7 +51,7 @@ public:
 	void open();
 	void take();
 	void examine();
-	void use();
+	bool use();
 	void equip();
 	void map(bool& print_all_map);
 	void basic_map();

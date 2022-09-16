@@ -12,6 +12,9 @@
 enum depth_tier {
 	near, mid, far, very_far, unassigned, start, any
 };
+enum visited_types {
+	not_visited, discovered, visited
+};
 
 void print_items(std::vector<object*>& items, std::string before, std::string after);
 void print_item(object* item, std::string before, std::string after);
@@ -77,7 +80,7 @@ class room {
 		std::string description;
 		room_coord* location;
 		store* Store;
-		bool visited;//has the player visited here before
+		visited_types visited;//has the player visited here before
 		int exits[4];//0 for no exit, other number for room to go to
 		int num_exits;
 		int depth;//smallest number of rooms from the start room to this room
@@ -89,11 +92,11 @@ class room {
 	public:
 		room(int id) //an extremely basic constructor ... more details are constructed later in the dungeon constructor
 			:id(id), name("Unnamed Room"), description("It's a cold bare room."), 
-			num_exits(0), depth(-1), tier(depth_tier::unassigned), Chest(nullptr), visited(false)
+			num_exits(0), depth(-1), tier(depth_tier::unassigned), Chest(nullptr), visited(visited_types::not_visited)
 			, location(new room_coord()), Store(nullptr)
 		{
 			if (id == 1)
-				visited = true;
+				visited = visited_types::visited;
 			for (int i = 0; i < 4; i++)
 			{
 				exits[i] = 0;
@@ -126,6 +129,7 @@ class room {
 		void display_room_debug() const;
 		
 		//getters
+		std::string get_depth_tier_string();
 		std::string get_name()
 		{
 			return name;
@@ -149,7 +153,7 @@ class room {
 		{
 			return Chest;
 		}
-		bool get_visited_status() const
+		visited_types get_visited_status() const
 		{
 			return visited;
 		}
@@ -177,7 +181,12 @@ class room {
 		//setters
 		void visited_cur_room()
 		{
-			visited = true;
+			visited = visited_types::visited;
+		}
+		void discovered_cur_room()
+		{
+			if(visited == visited_types::not_visited)
+				visited = visited_types::discovered;
 		}
 		void clear_chests()
 		{

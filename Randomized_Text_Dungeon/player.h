@@ -458,10 +458,58 @@ public:
 	void printTopBar()
 	{
 		printEquals();
-		std::cout << "\nPlayer: " + name + "     " + "Room: " << location->get_name();
-			//std::cout<<" - "<< location->get_id();
-		std::cout << "     Health: " << health->get_health() << "/" << health->get_max_health();
-		std::cout<<"\n";
+		room* cur_room = get_cur_room();
+		std::string spaces = "    ";
+		std::string player_name = "\nPlayer: " + name;
+		std::string room_name = "Room: " + location->get_name();
+		std::string region_name = "Region: " + cur_room->get_depth_tier_string();
+		std::string health_str = "Health: " + std::to_string(health->get_health()) + "/" + std::to_string(health->get_max_health());
+		std::string player_gold = "Gold: " + std::to_string(get_amt_gold());
+		std::string all = player_name + room_name + region_name + health_str + player_gold;
+		//std::cout << all << "\n";
+
+		int room_name_start_pos = 5;//23
+		int region_name_start_pos = 30;//48
+		int health_str_start_pos = 60;//77
+		int player_gold_start_pos = 81;//94
+
+		
+		std::cout<<player_name;
+		int pos = 0;
+
+		while (pos < room_name_start_pos)
+		{
+			std::cout << " ";
+			pos++;
+		}
+		pos += room_name.size();
+		std::cout << room_name;
+
+		while (pos < region_name_start_pos)
+		{
+			std::cout << " ";
+			pos++;
+		}
+		pos += region_name.size();
+		std::cout << region_name;
+
+		while (pos < health_str_start_pos)
+		{
+			std::cout << " ";
+			pos++;
+		}
+		pos += health_str.size();
+		std::cout << health_str;
+
+
+		while (pos < player_gold_start_pos)
+		{
+			std::cout << " ";
+			pos++;
+		}
+		pos += player_gold.size();
+		std::cout << player_gold;
+		std::cout << std::endl;
 		printEquals();
 		std::cout << "\n";
 	}

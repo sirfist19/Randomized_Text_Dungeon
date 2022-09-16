@@ -334,7 +334,7 @@ void commands::examine()
 	if ((player_input_noun == "pit") && (cur_room->get_name() == "Pit Room"))
 	{
 		print("Pit");
-		print("It's a pitch black giant gaping pit. If it's not bottomless, then it goes down a long ways.");
+		print("It's a pitch black giant gaping pit. If it's not bottomless, then it goes down a long way.");
 		return;
 	}
 	if ((player_input_noun == "pedistal") && (cur_room->get_name() == "Small Room"))
@@ -449,6 +449,7 @@ void commands::map(bool& print_all_map)
 	print("\t\t\t\t\t\t\t\t\tS - start room, X - dungeon exit, $ - store");
 	print("\t\t\t\t\t\t\t\t\tE - live enemy still in room, W - wooden chest");
 	print("\t\t\t\t\t\t\t\t\tG - gold chest, D - dragon chest, C - compass");
+	print("\t\t\t\t\t\t\t\t\tT - teleporter");
 
 	std::vector<std::string> lines;
 	int cursor_x = 0;
@@ -497,6 +498,7 @@ void commands::map(bool& print_all_map)
 						chest_name = cur_chest->get_name();
 
 					compass* Compass = (compass*)cur_room->get_matching_object("compass");
+					teleporter* Teleporter = (teleporter*)cur_room->get_matching_object("teleporter");
 
 					if (player->get_cur_room_id() == id)
 						cur += "@";
@@ -510,6 +512,8 @@ void commands::map(bool& print_all_map)
 						cur += "$";
 					else if (Compass != nullptr)
 						cur += "C";
+					else if (Teleporter != nullptr)
+						cur += "T";
 					else if (amt_enemies > 0)
 						cur += "E";
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Wooden Chest"))
@@ -904,19 +908,19 @@ void commands::take() //take objects either from the room's items or an open che
 	stack_objects(inventory);
 	player->set_inventory(inventory);
 }
-void commands::use()
+bool commands::use() //returning false reprints the screen
 {
 	object* obj_to_use = player->get_matching_object(player_input_noun);
 
 	if (player_input_noun == "")
 	{
 		print("You can't equip nothing.");
-		return;
+		return true;
 	}
 	if (obj_to_use == nullptr)
 	{
 		print("That item is not in your inventory.");
-		return;
+		return true;
 	}
 
 	std::string identifier = obj_to_use->identify();
@@ -932,8 +936,8 @@ void commands::use()
 
 		if (!visited)
 		{
-			boss_room->visited_cur_room();
-			store_room->visited_cur_room();
+			boss_room->discovered_cur_room();//make it visible to the map but not the teleporter
+			store_room->discovered_cur_room();
 			print("You used the compass. With a shining light, the location of the store and boss room appeared on your map!");
 			player->delete_item_from_inventory(obj_to_use, 1);
 			wait(5);
@@ -948,8 +952,101 @@ void commands::use()
 		//if a potion is used just drink it
 		drink();
 	}
+	else if (identifier == "teleporter")
+	{
+		print("Where do you want to teleport to?");
+		room* start_room = Dungeon->get_start_room();
+		room* boss_room = Dungeon->get_boss_room();
+		visited_types visited_boss_room = boss_room->get_visited_status();
+		room* store_room = Dungeon->get_store_room();
+		visited_types visited_store = store_room->get_visited_status();
+		
+		std::vector<std::string> accepted_inputs;
+		
+		print("1. Start Room");
+		accepted_inputs.push_back("1");
+		accepted_inputs.push_back("start");
+		accepted_inputs.push_back("start room");
+		int opt_num = 2;
+
+		//used to know which input is which
+		int store_num = 0;
+		int boss_num = 0;
+		int cancel_num = 0;
+		
+		if (visited_store == visited_types::visited)
+		{
+			print(std::to_string(opt_num) + ". Store");
+			accepted_inputs.push_back(std::to_string(opt_num));
+			accepted_inputs.push_back("store");
+			store_num = opt_num;
+			opt_num++;
+		}
+		if (visited_boss_room == visited_types::visited)
+		{
+			print(std::to_string(opt_num) + ". Boss Room");
+			accepted_inputs.push_back(std::to_string(opt_num));
+			accepted_inputs.push_back("boss");
+			accepted_inputs.push_back("boss room");
+			boss_num = opt_num;
+			opt_num++;
+		}
+		print(std::to_string(opt_num) + ". Cancel");
+		accepted_inputs.push_back(std::to_string(opt_num));
+		accepted_inputs.push_back("cancel");
+		cancel_num = opt_num;
+
+		bool valid = false;
+		while (!valid)
+		{
+			std::string player_in = input();
+			valid = str_input_accepted(player_in, accepted_inputs, valid);
+
+			if (!valid)
+			{
+				invalid_input();
+			}
+			else if ((player_in == "1") || (player_in == "start") || (player_in == "start room"))
+			{
+				//teleport to start room
+				player->set_location(start_room);
+				print("The device whirls to life and suddenly you find yourself back in the Entrance Room");
+				wait(5);
+				clear_();
+				return false;
+			}
+			else if ((player_in == std::to_string(store_num)) || (player_in == "store"))
+			{
+				//teleport to store
+				player->set_location(store_room);
+				print("The device whirls to life and suddenly you find yourself back in the Store");
+				wait(5);
+				clear_();
+				return false;
+			}
+			else if ((player_in == std::to_string(boss_num)) || (player_in == "boss") || (player_in == "boss room"))
+			{
+				//teleport to boss
+				player->set_location(boss_room);
+				print("The device whirls to life and suddenly you find yourself back in the Boss Room");
+				wait(5);
+				clear_();
+				return false;
+			}
+			else if ((player_in == std::to_string(cancel_num)) || (player_in == "cancel"))
+			{
+				//don't teleport anywhere
+				print("You turned the device off and didn't go anywhere.");
+			}
+			else
+			{
+				print("Input recognized but not processed.");
+			}
+		}
+	}
 	else
 	{
 		obj_to_use->use();
 	}
+	return true;
 }

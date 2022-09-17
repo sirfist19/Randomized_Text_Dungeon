@@ -157,7 +157,8 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 
 		if (player_hit_num < player_hit_rate)
 		{
-			player_damage = (player_damage * player_damage) / (player_damage + enemy->get_defense());//takes defense into account
+			player_damage = ((double)player_damage * (double)player_damage) 
+				/ (player_damage + (DEFENSE_MULTIPLIER_ATTACK_CALCULATION * enemy->get_defense()));//takes defense into account
 			std::cout << player->get_name() << attack_type << " for " << player_damage << " damage.\n";
 			enemy->get_health()->damage(player_damage);
 		}
@@ -261,7 +262,8 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy, bool& only_
 	}
 	if (enemy_hit_num < enemy_hit_rate)
 	{
-		enemy_damage = (enemy_damage * enemy_damage) / (enemy_damage + player->get_defense());//takes defense into account
+		enemy_damage = ((double)enemy_damage * (double)enemy_damage) 
+			/ (enemy_damage + (DEFENSE_MULTIPLIER_ATTACK_CALCULATION * player->get_defense()));//takes defense into account
 		std::cout << enemy->get_name() << enemy_attack_type << " for " << enemy_damage << " damage.\n\n";
 		player->get_health()->damage(enemy_damage);
 	}

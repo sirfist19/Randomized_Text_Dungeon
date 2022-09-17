@@ -61,6 +61,15 @@ commands::commands(std::string player_name)
 
 	//create the verb and noun charts
 	verb_chart["go"] = verb::go;
+	verb_chart["n"] = verb::go;
+	verb_chart["north"] = verb::go;
+	verb_chart["s"] = verb::go;
+	verb_chart["south"] = verb::go;
+	verb_chart["e"] = verb::go;
+	verb_chart["east"] = verb::go;
+	verb_chart["w"] = verb::go;
+	verb_chart["west"] = verb::go;
+
 	verb_chart["examine"] = verb::examine;
 	verb_chart["use"] = verb::use;
 	verb_chart["take"] = verb::take;
@@ -182,19 +191,19 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 	switch (cur_verb)//goes to all commands (returning false reprints the screen)
 	{
 	case verb::go:
-		if (cur_noun == noun::north)
+		if ((cur_noun == noun::north) || (cur_player_input[0] == "n") || (cur_player_input[0] == "north"))
 		{
 			return go(0);
 		}
-		else if (cur_noun == noun::south)
+		else if ((cur_noun == noun::south) || (cur_player_input[0] == "s") || (cur_player_input[0] == "south"))
 		{
 			return go(1);
 		}
-		else if (cur_noun == noun::east)
+		else if ((cur_noun == noun::east) || (cur_player_input[0] == "e") || (cur_player_input[0] == "east"))
 		{
 			return go(2);
 		}
-		else if (cur_noun == noun::west)
+		else if ((cur_noun == noun::west) || (cur_player_input[0] == "w") || (cur_player_input[0] == "west"))
 		{
 			return go(3);
 		}

@@ -162,25 +162,25 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 		//if has depth 0 then have near room description
 	case depth_tier::near:
 		max_range = near_descriptions.size() - 1;
-		num = random(1, max_range);
+		num = random(0, max_range);
 		name = near_descriptions[num]->name;
 		description = near_descriptions[num]->description;
 		break;
 	case depth_tier::mid:
 		max_range = mid_descriptions.size() - 1;
-		num = random(1, max_range);
+		num = random(0, max_range);
 		name = mid_descriptions[num]->name;
 		description = mid_descriptions[num]->description;
 		break;
 	case depth_tier::far:
 		max_range = far_descriptions.size() - 1;
-		num = random(1, max_range);
+		num = random(0, max_range);
 		name = far_descriptions[num]->name;
 		description = far_descriptions[num]->description;
 		break;
 	case depth_tier::very_far:
 		max_range = very_far_descriptions.size() - 1;
-		num = random(1, max_range);
+		num = random(0, max_range);
 		name = very_far_descriptions[num]->name;
 		description = very_far_descriptions[num]->description;
 		break;

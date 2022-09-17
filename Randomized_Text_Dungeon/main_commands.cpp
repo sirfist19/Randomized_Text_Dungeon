@@ -604,7 +604,7 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 		player->set_location(player_next_room);
 		
 		std::cout << "Going " << dir_string << "...\n";
-		wait(5);
+		wait(2);
 		clear_command();
 
 		return false;//redisplays the room
@@ -954,6 +954,8 @@ bool commands::use() //returning false reprints the screen
 	}
 	else if (identifier == "teleporter")
 	{
+		teleporter* Tele = (teleporter*)obj_to_use;
+
 		print("Where do you want to teleport to?");
 		room* start_room = Dungeon->get_start_room();
 		room* boss_room = Dungeon->get_boss_room();
@@ -962,17 +964,29 @@ bool commands::use() //returning false reprints the screen
 		visited_types visited_store = store_room->get_visited_status();
 		
 		std::vector<std::string> accepted_inputs;
-		
-		print("1. Start Room");
-		accepted_inputs.push_back("1");
-		accepted_inputs.push_back("start");
-		accepted_inputs.push_back("start room");
-		int opt_num = 2;
-
+		int opt_num = 1;
 		//used to know which input is which
+		int start_room_num = 0;
+		int last_tele_num = 0;
 		int store_num = 0;
 		int boss_num = 0;
 		int cancel_num = 0;
+		if (Tele->get_last_teleported_pos() != nullptr)
+		{
+			print(std::to_string(opt_num) + ". Last Teleported Location (" + Tele->get_last_teleported_pos()->get_name() + ")");
+			accepted_inputs.push_back(std::to_string(opt_num));
+			last_tele_num = opt_num;
+			accepted_inputs.push_back("last");
+			accepted_inputs.push_back("last teleported location");
+			opt_num++;
+		}
+
+		print(std::to_string(opt_num) + ". Start Room");
+		start_room_num = opt_num;
+		accepted_inputs.push_back(std::to_string(opt_num));
+		accepted_inputs.push_back("start");
+		accepted_inputs.push_back("start room");
+		opt_num++;
 		
 		if (visited_store == visited_types::visited)
 		{
@@ -1006,11 +1020,23 @@ bool commands::use() //returning false reprints the screen
 			{
 				invalid_input();
 			}
-			else if ((player_in == "1") || (player_in == "start") || (player_in == "start room"))
+			else if ((player_in == std::to_string(start_room_num)) || (player_in == "start") || (player_in == "start room"))
 			{
 				//teleport to start room
+				Tele->set_last_teleported_pos(player->get_cur_room());
 				player->set_location(start_room);
 				print("The device whirls to life and suddenly you find yourself back in the Entrance Room");
+				wait(5);
+				clear_();
+				return false;
+			}
+			else if ((player_in == std::to_string(last_tele_num)) || (player_in == "last") || (player_in == "last teleported location"))
+			{
+				//teleport to start room
+				room* to_go = Tele->get_last_teleported_pos();
+				Tele->set_last_teleported_pos(player->get_cur_room());
+				player->set_location(to_go);
+				print("The device whirls to life and suddenly you find yourself back in the last room you teleported from.");
 				wait(5);
 				clear_();
 				return false;
@@ -1018,6 +1044,7 @@ bool commands::use() //returning false reprints the screen
 			else if ((player_in == std::to_string(store_num)) || (player_in == "store"))
 			{
 				//teleport to store
+				Tele->set_last_teleported_pos(player->get_cur_room());
 				player->set_location(store_room);
 				print("The device whirls to life and suddenly you find yourself back in the Store");
 				wait(5);
@@ -1027,6 +1054,7 @@ bool commands::use() //returning false reprints the screen
 			else if ((player_in == std::to_string(boss_num)) || (player_in == "boss") || (player_in == "boss room"))
 			{
 				//teleport to boss
+				Tele->set_last_teleported_pos(player->get_cur_room());
 				player->set_location(boss_room);
 				print("The device whirls to life and suddenly you find yourself back in the Boss Room");
 				wait(5);

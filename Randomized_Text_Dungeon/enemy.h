@@ -733,7 +733,7 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(30, 40);
+			health = random(40, 60);
 			break;
 		}
 		return health;
@@ -769,6 +769,14 @@ public:
 			{
 				helm = new dragon_scale_helmet();
 			}
+			else if (has_helm < 70)
+			{
+				helm = new silver_helmet();
+			}
+			else
+			{
+				helm = new bronze_helmet();
+			}
 			break;
 		}
 		return helm;
@@ -784,6 +792,14 @@ public:
 			{
 				chest = new dragon_scale_chestplate();
 			}
+			else if (has_chest < 70)
+			{
+				chest = new silver_chestplate();
+			}
+			else
+			{
+				chest = new bronze_chestplate();
+			}
 			break;
 		}
 		return chest;
@@ -798,6 +814,14 @@ public:
 			if (has_boot < 40)
 			{
 				boot = new dragon_scale_boots();
+			}
+			else if (has_boot < 70)
+			{
+				boot = new silver_boots();
+			}
+			else
+			{
+				boot = new bronze_boots();
 			}
 			break;
 		}
@@ -831,7 +855,7 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(55, 65);
+			health = random(90, 100);
 			break;
 		}
 		return health;

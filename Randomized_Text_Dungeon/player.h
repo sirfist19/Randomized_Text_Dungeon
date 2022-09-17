@@ -30,12 +30,12 @@ public:
 		leveling_info.push_back(new level_info(2, 10, 20));
 		leveling_info.push_back(new level_info(3, 15, 60));
 		leveling_info.push_back(new level_info(4, 22, 130));
-		leveling_info.push_back(new level_info(5, 30, 250));
-		leveling_info.push_back(new level_info(6, 40, 450));
-		leveling_info.push_back(new level_info(7, 50, 700));
-		leveling_info.push_back(new level_info(8, 65, 1000));
-		leveling_info.push_back(new level_info(9, 80, 1400));
-		leveling_info.push_back(new level_info(10, 100, 2000));
+		leveling_info.push_back(new level_info(5, 30, 210));
+		leveling_info.push_back(new level_info(6, 40, 300));
+		leveling_info.push_back(new level_info(7, 50, 420));
+		leveling_info.push_back(new level_info(8, 65, 590));
+		leveling_info.push_back(new level_info(9, 80, 750));
+		leveling_info.push_back(new level_info(10, 100, 900));
 	}
 	virtual ~Player()
 	{

@@ -1,6 +1,6 @@
 README - Overview and Main Features, How to Run the game, and How to Play
 
-===============================================================
+===============================================================\n
 OVERVIEW:
 
 Randomized Text Dungeon is a text-based dungeon crawler game inspired by classic text-based games such a Planetfall and Zork as well as more modern games such as 

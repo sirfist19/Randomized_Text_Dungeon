@@ -42,6 +42,9 @@
     <ClCompile Include="armor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dungeon.h">
@@ -90,6 +93,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="teleporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="static_object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="part_of_speech.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,7 +8,7 @@
 #include <vector>
 
 enum open_method {
-	already_open, openable, key
+	already_open, openable, key, open_status_none
 };
 
 class chest : public object //an abc for a general chest
@@ -92,6 +92,18 @@ public:
 			}
 		}
 		return nullptr;
+	}
+	void remove_chest_item(object* obj_to_remove)
+	{
+		for (unsigned int i = 0; i < contents.size(); i++)
+		{
+			if (obj_to_remove == contents[i])
+			{
+				contents[i] = contents[contents.size() - 1];
+				contents.pop_back();
+				return;
+			}
+		}
 	}
 	object* get_matching_object(std::string player_input_noun)
 	{

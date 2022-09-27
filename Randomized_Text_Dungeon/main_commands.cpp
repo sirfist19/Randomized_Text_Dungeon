@@ -2,15 +2,11 @@
 #include "commands.h"
 
 //all the commands themselves in alphabetical order
-void commands::clear_command()
-{
-	clear_();
-}
 void commands::drink()
 {
-	object* obj_to_drink = player->get_matching_object(player_input_noun);
+	object* obj_to_drink = cur_obj;
 
-	if (cur_noun == noun::all)
+	if (cur_noun == noun_type::all)
 	{
 		std::vector<healing_potion*> inv_potions = player->get_inventory_healing_potions();
 		if (inv_potions.empty())
@@ -32,7 +28,7 @@ void commands::drink()
 		}
 		return;
 	}
-	if (player_input_noun == "")
+	if ((cur_noun == noun_type::noun_none) && (obj_to_drink == nullptr))
 	{
 		print("You can't drink nothing.");
 		return;
@@ -73,9 +69,9 @@ void commands::drink_individual_potion(object* obj_to_drink)
 }
 void commands::drop()
 {
-	object* obj_to_drop = player->get_matching_object(player_input_noun);
+	object* obj_to_drop = cur_obj;
 
-	if (player_input_noun == "")
+	if ((cur_noun == noun_type::noun_none) && (obj_to_drop == nullptr))
 	{
 		print("You can't drop nothing.");
 		return;
@@ -85,7 +81,7 @@ void commands::drop()
 		print("You can't drop your fists! What do you want to do ... cut your arms off or something?!");
 		return;
 	}
-	if ((obj_to_drop == nullptr) && (cur_noun != noun::all))
+	if ((obj_to_drop == nullptr) && (cur_noun != noun_type::all))
 	{
 		print("That item is not in your inventory.");
 		return;
@@ -95,7 +91,7 @@ void commands::drop()
 	std::string before_string = "You dropped ";
 	std::string after_string = " onto the floor.\n";
 
-	if (cur_noun != noun::all)
+	if (cur_noun != noun_type::all)
 	{
 		int amt = obj_to_drop->get_amt();
 		int amt_to_drop = 1;
@@ -142,20 +138,20 @@ void commands::drop()
 }
 void commands::equip()
 {
-	object* obj_to_equip = player->get_matching_object(player_input_noun);
+	object* obj_to_equip = cur_obj;
 
-	if (player_input_noun == "")
+	if ((cur_noun == noun_type::noun_none) && (cur_obj == nullptr))
 	{
 		print("You can't equip nothing.");
 		return;
 	}
-	if ((obj_to_equip == nullptr) && (cur_noun != noun::all))
+	if ((obj_to_equip == nullptr) && (cur_noun != noun_type::all))
 	{
 		print("That item is not in your inventory.");
 		return;
 	}
 
-	if (cur_noun == noun::all)
+	if (cur_noun == noun_type::all)
 	{
 		std::vector<object*> inventory = player->get_inventory();
 		bool nothing_to_equip = true;
@@ -311,61 +307,28 @@ void commands::examine()
 {
 	//if the object is in the player's inventory or equipped or in the room then...
 	//print the name and description of the object
-	room* cur_room = player->get_cur_room();
-	chest* cur_chest = cur_room->get_chest();
-	std::string chest_name = "";
-	if(cur_chest != nullptr)
-		chest_name = cur_chest->get_name();
-	turn_to_lower_case(chest_name);
-	object* match = nullptr; //the final match
+	object* match = cur_obj; //the final match
+	std::string identifier = cur_obj->identify();
 
-	object* inventory_match = player->get_matching_object(player_input_noun);//from the player inventory (not equipped items yet)
-	object* room_match = cur_room->get_matching_object(player_input_noun);
-	object* chest_match = nullptr;
-	if (cur_chest != nullptr)
-	{
-		chest_match = cur_chest->get_matching_object(player_input_noun);
-	}
-	
-	if ((player_input_noun == "chest") || (player_input_noun == chest_name))
-	{
-		match = cur_chest;
-	}
-	if ((player_input_noun == "pit") && (cur_room->get_name() == "Pit Room"))
-	{
-		print("Pit");
-		print("It's a pitch black giant gaping pit. If it's not bottomless, then it goes down a long way.");
-		return;
-	}
-	if ((player_input_noun == "pedistal") && (cur_room->get_name() == "Small Room"))
-	{
-		print("Pedistal");
-		print("The pedistal is made out of a black volcanic stone. There is an inscription on it but you cannot read it.");
-		return;
-	}
-
-	if (inventory_match != nullptr)
-	{
-		match = inventory_match;
-	}
-	else if (room_match != nullptr)
-	{
-		match = room_match;
-	}
-	else if (chest_match != nullptr)
-	{
-		match = chest_match;
-	}
-	
 	if (match == nullptr)
 	{
 		print("There's nothing to examine.");
+		return;
 	}
 	else
 	{
+		if (identifier == "static object")
+		{
+			((static_object*)cur_obj)->reveal_encompassed_objects();
+			//update room description
+		}
+
 		print(match->get_name() + ":");
 		print(match->get_description());
 	}
+
+	//if a terrain object, then make enclosed object not hidden
+
 }
 void commands::basic_map()
 {
@@ -483,7 +446,7 @@ void commands::map(bool& print_all_map)
 			}
 			else 
 			{
-				if((player_input_noun == "depth") || (player_input_noun == "full depth")) //the depth map
+				if((cur_noun == noun_type::depth) || (cur_noun == noun_type::full_depth)) //the depth map
 					cur += std::to_string(cur_room->get_depth());
 				else 
 				{
@@ -605,8 +568,7 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 		
 		std::cout << "Going " << dir_string << "...\n";
 		wait(2);
-		clear_command();
-
+		clear_();
 		return false;//redisplays the room
 	}
 }
@@ -626,7 +588,7 @@ void commands::hello()
 }
 void commands::help()
 {
-	if (player_input_noun == "")
+	if (cur_noun == noun_type::noun_none)
 	{
 		print("BASIC COMMANDS: ");
 		print("1. go - Allows the player to move through the dungeon. Need to type a direction (Ex: north or east) as the object.");
@@ -650,11 +612,17 @@ void commands::help()
 		print("Example 2: 'look'");
 		std::cout << "            VERB\n\n";
 	}
-	else if (player_input_noun == "hello")
+	/*else if (player_input_noun == "hello")
 	{
 		print("COMMAND: hello");
 		print("Needs Object: No");
 		print("If you want some company, then use this one. Talk to the narator. ");
+	}
+	else if (player_input_noun == "look")
+	{
+		print("COMMAND: look");
+		print("Needs Object: No");
+		print("Displays the information about the room usually printed at the top of the screen.");
 	}
 	else if (player_input_noun == "go")
 	{
@@ -690,7 +658,7 @@ void commands::help()
 	{
 		print("COMMAND: inventory");
 		print("Needs Object: No");
-		print("Shows your health, current weapon, and items.");
+		print("Can type 'i' as a shortcut. Shows your health, current weapon, and items.");
 		print("\nOther relevant commands for using your inventory are:");
 		print("\t-equip");
 		print("\t-drink");
@@ -779,34 +747,38 @@ void commands::help()
 	else
 	{
 		print("Object not recognized. The object of the help command needs to be a command such as 'go' or 'clear'.");
-	}
+	}*/
 }
 void commands::jump()
 {
-	std::string cur_room_name = player->get_cur_room()->get_name();
-
-	if ((cur_room_name == "Pit Room") && (cur_noun == noun::pit))
+	bool acceptable_preposition = (cur_preposition == preposition_type::in);
+	if ((cur_obj != nullptr) && (cur_obj->get_name() == Pit().get_name()) && (player->get_cur_room()->has_terrain(cur_obj)) && (acceptable_preposition))
 	{
 		print("You jump into the pit. After about 30 seconds of falling you realize it's a bottomless pit and you'll be falling for quite some time. Eventually you hit the bottom long after you reached terminal velocity. Your death happens instantaneously.");
 		player->kill();
 	}
-	else {
+	else if ((cur_noun == noun_type::noun_none ) && (cur_preposition == preposition_type::preposition_none))
+	{
 		std::cout << "You jump high into the air, but nothing happens.\n";
+	}
+	else if (cur_preposition == preposition_type::preposition_none)
+	{
+		print("Please include a preposition. Ex: 'jump into' or 'go through'");
+	}
+	else
+	{
+		print("The object of jump is not recognized.");
 	}
 }
 void commands::open()
 {
 	chest* cur_room_chest = player->get_cur_room()->get_chest();
 
-	if (cur_noun == noun::_none)
+	if ((cur_noun == noun_type::noun_none) && (cur_room_chest != cur_obj))
 	{
 		std::cout << "You can't open nothing. Type an object for the open command.\n";
 	}
-	else if (cur_noun != noun::_chest)
-	{
-		std::cout << "Object not recognized! Please try again.\n";
-	}
-	else if ((cur_room_chest != nullptr) && (cur_noun == noun::_chest))
+	else if ((cur_room_chest != nullptr) && (cur_room_chest == cur_obj))
 	{
 		cur_room_chest->open();
 	}
@@ -814,83 +786,131 @@ void commands::open()
 void commands::take() //take objects either from the room's items or an open chest in the room
 {
 	//the noun is invalid
-	if (cur_noun == noun::_none)
+	if ((cur_noun == noun_type::noun_none) && (cur_obj == nullptr))
 	{
 		std::cout << "You can't take nothing. Type an object for the take command.\n";
 		return;
 	}
 
-	//variables
-	room* cur_room = player->get_cur_room();
-	chest* cur_room_chest = cur_room->get_chest();
-	std::vector<std::string> chest_content_names;
-	open_method open_status;
-	std::vector<object*> floor_contents = cur_room->get_items();
-
-	object* obj_to_take_room = cur_room->get_matching_object_and_delete(player_input_noun);
-	object* obj_to_take_chest = nullptr;
-	if (cur_room_chest != nullptr)
-	{
-		obj_to_take_chest = cur_room_chest->get_matching_object_and_delete(player_input_noun);
-		open_status = cur_room_chest->get_open_status();
-		chest_content_names = cur_room_chest->get_all_content_names();
-	}
-
-
-	//if no object is recognized
-	if ((obj_to_take_chest == nullptr) && (obj_to_take_room == nullptr) && (cur_noun != noun::all))
+	//if there is no obj recognized
+	if ((cur_obj == nullptr) && (cur_noun != noun_type::all))
 	{
 		print("That object is not in this room.");
 		return;
 	}
+
+	//trying to take the terrain from a room
+	if ((cur_obj_orig_location == obj_location::loc_is_terrain) || (cur_obj_orig_location == obj_location::loc_is_chest))
+	{
+		print("You can't take that.");
+		return;
+	}
+
+	//essential variables
+	object* obj_to_take = cur_obj;
+	room* cur_room = player->get_cur_room();
+	chest* cur_room_chest = cur_room->get_chest();
+	open_method open_status = open_method::open_status_none;
+	std::vector<object*> floor_contents = cur_room->get_items();
+
+	//ONLY SUPPORTS ONE terrain object per room at the moment
+	static_object* cur_room_terrain = nullptr;
+	std::vector<object*> terrain_contained_items;
+	std::string cur_room_terrain_name = "";
+	if (!(cur_room->get_terrain_objects()).empty())
+	{
+		cur_room_terrain = cur_room->get_terrain_objects()[0];
+		terrain_contained_items = cur_room_terrain->get_revealed_items();
+		cur_room_terrain_name = cur_room_terrain->get_name();
+	}
+
+	if (cur_room_chest != nullptr)
+	{
+		open_status = cur_room_chest->get_open_status();
+	}
+
 	//if there are no items in the room and all is used
-	bool no_items_to_take = ((cur_noun == noun::all) && (cur_room_chest == nullptr) && (floor_contents.size() == 0))
-		|| ((cur_noun == noun::all) && (floor_contents.size() == 0) && (cur_room_chest != nullptr) && (cur_room_chest->is_empty()))
-		|| ((cur_noun == noun::all) && (floor_contents.size() == 0) && (cur_room_chest != nullptr) && (cur_room_chest->get_open_status() != open_method::already_open));
+	bool no_items_to_take = ((cur_noun == noun_type::all) && (cur_room_chest == nullptr) && (floor_contents.size() == 0))
+		|| ((cur_noun == noun_type::all) && (floor_contents.size() == 0) && (cur_room_chest != nullptr) && (cur_room_chest->is_empty()))
+		|| ((cur_noun == noun_type::all) && (floor_contents.size() == 0) && (cur_room_chest != nullptr) && (cur_room_chest->get_open_status() != open_method::already_open));
 	if (no_items_to_take)
 	{
 		print("There are no items in the room to take.");
 		return;
 	}
 
+	//use where the obj came from to remove it from that location
+	if (cur_obj_orig_location == obj_location::loc_room_floor)
+	{
+		cur_room->remove_room_item(obj_to_take);
+	}
+	else if ((cur_room_chest != nullptr) && (cur_obj_orig_location == obj_location::loc_in_chest))
+	{
+		cur_room_chest->remove_chest_item(obj_to_take);
+	}
+	else if (cur_obj_orig_location == obj_location::loc_inside_terrain)
+	{
+		cur_room->get_terrain_objects()[0]->remove_revealed_item(obj_to_take);
+	}
+
 	std::string before_str = "You took ";
 	std::string after_chest_str = " from the chest.\n";
 	std::string after_floor_str = " from the floor.\n";
+	std::string after_terrain_str = " from the " + cur_room_terrain_name + ".\n";
 
 	//TAKING FROM THE ROOM FLOOR
 	//taking only one item or one type of item 
-	if ((obj_to_take_room != nullptr) && (cur_noun != noun::all))
+	//print("Location: " + cur_obj_orig_location);
+	if ((obj_to_take != nullptr) && (cur_noun != noun_type::all) && (cur_obj_orig_location == obj_location::loc_inventory))
+	{
+		print("You already have that object.");
+	}
+	else if ((obj_to_take != nullptr) && (cur_noun != noun_type::all) && (cur_obj_orig_location == obj_location::loc_room_floor))
 	{
 		//print what the player took
-		print_item(obj_to_take_room, before_str, after_floor_str);
+		print_item(obj_to_take, before_str, after_floor_str);
 		
-
 		//add the item to the player's inventory
-		player->add_item_to_inventory(obj_to_take_room);
+		player->add_item_to_inventory(obj_to_take);
 	}
 	//taking all items from the floor
-	else if ((cur_noun == noun::all) && (floor_contents.size() > 0))
+	else if ((cur_noun == noun_type::all) && (floor_contents.size() > 0))
 	{
 		print_items(floor_contents, before_str, after_floor_str);
 		cur_room->clear_items();
 		player->add_items_to_inventory(floor_contents);
 	}
 
-	//TAKING FROM A CHEST
-	//taking only one item or one type of item
-	if ((obj_to_take_chest != nullptr) && (open_status == open_method::already_open) && (cur_noun != noun::all))
+	//TAKING FROM THE A TERRAIN IN A ROOM
+	//taking only one item or one type of item 
+	if ((obj_to_take != nullptr) && (cur_noun != noun_type::all) && (cur_obj_orig_location == obj_location::loc_inside_terrain))
 	{
 		//print what the player took
-		std::string name = obj_to_take_chest->get_name();
-		int amt = obj_to_take_chest->get_amt();
-		print_item(obj_to_take_chest, before_str, after_chest_str);
+		print_item(obj_to_take, before_str, after_terrain_str);
 
 		//add the item to the player's inventory
-		player->add_item_to_inventory(obj_to_take_chest);
+		player->add_item_to_inventory(obj_to_take);
+	}
+	//taking all items from the floor
+	else if ((cur_noun == noun_type::all) && (terrain_contained_items.size() > 0))
+	{
+		print_items(terrain_contained_items, before_str, after_terrain_str);
+		cur_room->clear_items();
+		player->add_items_to_inventory(terrain_contained_items);
 	}
 
+	//TAKING FROM A CHEST
+	//taking only one item or one type of item
+	if ((obj_to_take != nullptr) && (open_status == open_method::already_open) && (cur_noun != noun_type::all) && (cur_obj_orig_location == obj_location::loc_in_chest))
+	{
+		//print what the player took
+		print_item(obj_to_take, before_str, after_chest_str);
+
+		//add the item to the player's inventory
+		player->add_item_to_inventory(obj_to_take);
+	}
 	//there is a chest and it is open and the noun is all
-	else if ((cur_room_chest != nullptr) && (open_status == open_method::already_open) && (cur_noun == noun::all))
+	else if ((cur_room_chest != nullptr) && (open_status == open_method::already_open) && (cur_noun == noun_type::all))
 	{
 		//taking all chest contents
 		std::vector<object*> chest_contents = cur_room_chest->get_all_contents();
@@ -910,9 +930,9 @@ void commands::take() //take objects either from the room's items or an open che
 }
 bool commands::use() //returning false reprints the screen
 {
-	object* obj_to_use = player->get_matching_object(player_input_noun);
+	object* obj_to_use = cur_obj;
 
-	if (player_input_noun == "")
+	if ((cur_noun == noun_type::noun_none) && (cur_obj == nullptr))
 	{
 		print("You can't equip nothing.");
 		return true;

@@ -3,6 +3,8 @@
 #include "helper_fxns.h"
 
 const bool DEBUG_MODE = false;
+const bool DISABLE_CLEARING_SCREEN = false;
+const bool DISPLAY_PARSED_INFO = false;
 const int MAX_DUNGEON_SIZE = 50;//50
 const int MIN_DUNGEON_SIZE = 40;//40
 const int MAX_CHAR_PER_LINE = 120;//120
@@ -18,6 +20,9 @@ const int ENEMY_PICKS_HEAVY_ATTACK_CHANCE = 50;
 const int COMPASS_SPAWN_DEPTH = 5;
 const int TELEPORTER_SPAWN_DEPTH = 5;//x less than the dragon room depth
 const double DEFENSE_MULTIPLIER_ATTACK_CALCULATION = 2;
+
+const int GOLD_SPAWN_IN_MOSS = 50;
+
 
 //Store
 const int STORE_SPAWN_DEPTH = random(7,9);

@@ -1,81 +1,5 @@
 #include "room.h"
 
-//general functions at the room level
-void print_items(std::vector<object*>& items, std::string before, std::string after)
-{
-	std::string res = before;
-	for (unsigned int i = 0; i < items.size(); i++)
-	{
-		std::string name = items[i]->get_name();
-		std::string identifier = items[i]->identify();
-		int amt = items[i]->get_amt();
-
-		std::string before_string = "";
-		std::string after_string = "";
-
-		if ((i == items.size() - 1) && (i != 0))
-			before_string += "and ";
-
-		if (amt > 1) //many items
-		{
-			if (identifier == "boots")
-			{
-				before_string += (std::to_string(amt) + " pairs of ");
-			}
-			else if (identifier == "gold") 
-			{
-				before_string += (std::to_string(amt) + " ");
-				//no plural
-			}
-			else
-			{
-				before_string += (std::to_string(amt) + " ");
-				after_string += "s";
-			}
-		}
-		else //only one item
-		{
-			if (identifier == "boots")
-			{
-				before_string += "a pair of ";
-			}
-			else if (identifier == "gold")
-			{
-				before_string += "1 ";
-			}
-			else
-			{
-				switch (name[0])
-				{
-					case 'a':
-					case 'e':
-					case 'i':
-					case 'o':
-					case 'u':
-						before_string += "an ";
-					default:
-						before_string += "a ";
-				}
-			}
-		}
-
-		if ((items.size() != 1) && (i != items.size() - 1))
-			after_string += ", ";
-
-		res += (before_string + name + after_string);
-	}
-	res += after;//add on the after string argument made in the previous function that called this one
-	
-	//actually print the items
-	print_no_newline(res);
-}
-void print_item(object* item, std::string before, std::string after) //a wrapper for print_items for one item
-{
-	std::vector<object*> items;
-	if(item != nullptr)
-		items.push_back(item);
-	print_items(items, before, after);
-}
 //stack objects on the floor or in the player's inventory
 void stack_objects(std::vector<object*>& in)
 {
@@ -100,7 +24,20 @@ void stack_objects(std::vector<object*>& in)
 		}
 	}
 }
+
 //room fxns
+void room::remove_room_item(object* obj_to_remove)
+{
+	for (unsigned int i = 0; i < items.size(); i++)
+	{
+		if (obj_to_remove == items[i])
+		{
+			items[i] = items[items.size() - 1];
+			items.pop_back();
+			return;
+		}
+	}
+}
 object* room::get_matching_object_and_delete(std::string player_input_noun)
 {
 	for (unsigned int i = 0; i < items.size(); i++)
@@ -135,6 +72,20 @@ object* room::get_matching_object(std::string player_input_noun)
 	}
 	return nullptr;
 }
+object* room::get_matching_terrain_object(std::string player_input_noun)
+{
+	for (unsigned int i = 0; i < static_items.size(); i++)
+	{
+		std::string cur_name = static_items[i]->get_name();
+		turn_to_lower_case(cur_name);
+
+		if (player_input_noun == cur_name)
+		{
+			return static_items[i];
+		}
+	}
+	return nullptr;
+}
 void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_holder)
 {
 	std::vector<room_description*> start_descriptions =
@@ -149,40 +100,51 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 		descriptions_holder->get_very_far_room_descriptions();
 	int max_range;
 	int num;
+	room_description* cur_description = nullptr;
 
 	switch (tier)
 	{
 	case depth_tier::start:
 		if (depth == 0)
 		{
-			name = start_descriptions[0]->name;
-			description = start_descriptions[0]->description;
+			cur_description = new room_description(*start_descriptions[0]);
+			name = cur_description->name;
+			description = cur_description->description;
+			static_items = cur_description->terrain;
 			break;
 		}
 		//if has depth 0 then have near room description
 	case depth_tier::near:
 		max_range = near_descriptions.size() - 1;
 		num = random(0, max_range);
-		name = near_descriptions[num]->name;
-		description = near_descriptions[num]->description;
+		cur_description = new room_description(*near_descriptions[num]);
+		name = cur_description->name;
+		description = cur_description->description;
+		static_items = cur_description->terrain;
 		break;
 	case depth_tier::mid:
 		max_range = mid_descriptions.size() - 1;
 		num = random(0, max_range);
-		name = mid_descriptions[num]->name;
-		description = mid_descriptions[num]->description;
+		cur_description = new room_description(*mid_descriptions[num]);
+		name = cur_description->name;
+		description = cur_description->description;
+		static_items = cur_description->terrain;
 		break;
 	case depth_tier::far:
 		max_range = far_descriptions.size() - 1;
 		num = random(0, max_range);
-		name = far_descriptions[num]->name;
-		description = far_descriptions[num]->description;
+		cur_description = new room_description(*far_descriptions[num]);
+		name = cur_description->name;
+		description = cur_description->description;
+		static_items = cur_description->terrain;
 		break;
 	case depth_tier::very_far:
 		max_range = very_far_descriptions.size() - 1;
 		num = random(0, max_range);
-		name = very_far_descriptions[num]->name;
-		description = very_far_descriptions[num]->description;
+		cur_description = new room_description(*very_far_descriptions[num]);
+		name = cur_description->name;
+		description = cur_description->description;
+		static_items = cur_description->terrain;
 		break;
 
 	default:
@@ -308,7 +270,20 @@ void room::display_room()
 	stack_objects(items);
 	print(description);
 
+	std::string terrain_items_string = "";
+	for (unsigned int i = 0; i < static_items.size(); i++)
+	{
+		terrain_items_string += static_items[i]->get_revealed_items_description();
+	}
+	
 	std::cout << "\n";
+
+	if (terrain_items_string != "")
+	{
+		print_no_newline(terrain_items_string);
+		std::cout << " ";
+	}
+
 	std::string before_string = "";
 	std::string after_string = ".\n\n";
 	if ((Chest != nullptr) || (items.size() != 0))
@@ -501,6 +476,13 @@ void room::display_room_debug() const
 	{
 		std::cout << items[i]->get_name();
 	}
+	std::cout << "\n\nTERRAIN: ";
+	if (static_items.empty())
+		std::cout << "NONE";
+	for (unsigned int i = 0; i < static_items.size(); i++)
+	{
+		std::cout << static_items[i]->get_name();
+	}
 	std::cout << "\n\nCHESTS: ";
 	if (Chest != nullptr)
 	{
@@ -525,4 +507,13 @@ void room::display_room_debug() const
 	std::cout << "South: " << exits[1] << std::endl;
 	std::cout << "East: " << exits[2] << std::endl;
 	std::cout << "West: " << exits[3] << std::endl << std::endl;
+}
+bool room::has_terrain(object* in)
+{
+	for (unsigned int i = 0; i < static_items.size(); i++)
+	{
+		if (in == static_items[i])
+			return true;
+	}
+	return false;
 }

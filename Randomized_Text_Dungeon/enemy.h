@@ -125,6 +125,7 @@ public:
 			return new gold(random(35, 42));
 			break;
 		}
+		return nullptr;
 	}
 	virtual int exp_by_level(const int& level)
 	{
@@ -280,6 +281,7 @@ public:
 			return new gold(random(25, 35));
 			break;
 		}
+		return nullptr;
 	}
 	virtual int exp_by_level(const int& level)
 	{
@@ -406,6 +408,7 @@ public:
 			return new gold(random(35, 45));
 			break;
 		}
+		return nullptr;
 	}
 	virtual int exp_by_level(const int& level)
 	{
@@ -513,6 +516,7 @@ public:
 			return new gold(random(40, 50));
 			break;
 		}
+		return nullptr;
 	}
 	virtual int exp_by_level(const int& level)
 	{
@@ -622,6 +626,7 @@ public:
 			return new gold(random(75, 95));
 			break;
 		}
+		return nullptr;
 	}
 	virtual int exp_by_level(const int& level)
 	{
@@ -746,6 +751,7 @@ public:
 			return new gold(random(150, 200));
 			break;
 		}
+		return nullptr;
 	}
 	virtual int exp_by_level(const int& level)
 	{
@@ -868,6 +874,7 @@ public:
 			return new gold(random(500, 600));
 			break;
 		}
+		return nullptr;
 	}
 	virtual int exp_by_level(const int& level)
 	{

@@ -5,7 +5,6 @@
 #include "helper_fxns.h"
 #include "enemy.h"
 #include "room_descriptons.h"
-#include "chest.h"
 #include "store.h"
 
 
@@ -16,8 +15,6 @@ enum visited_types {
 	not_visited, discovered, visited
 };
 
-void print_items(std::vector<object*>& items, std::string before, std::string after);
-void print_item(object* item, std::string before, std::string after);
 void stack_objects(std::vector<object*>& in);
 
 class room_coord //distance to east and north
@@ -87,6 +84,7 @@ class room {
 		depth_tier tier;
 		std::vector<Enemy*> enemies;
 		std::vector<object*> items;
+		std::vector<static_object*> static_items;//non-moveable objects part of the room itself
 		chest* Chest;
 
 	public:
@@ -118,7 +116,10 @@ class room {
 		
 		//essential fxns
 		object* get_matching_object(std::string player_input_noun);
+		object* get_matching_terrain_object(std::string player_input_noun);
+		bool has_terrain(object* in);
 		object* get_matching_object_and_delete(std::string player_input_noun);
+		void remove_room_item(object* obj_to_remove);
 		void assign_room_type(depth_tier tier, room_descriptions* descriptions_holder);
 		void set_depth_tier();
 		void spawn_enemies();
@@ -130,15 +131,19 @@ class room {
 		
 		//getters
 		std::string get_depth_tier_string();
-		std::string get_name()
+		std::string get_name() const
 		{
 			return name;
 		}
-		int get_num_exits()
+		std::vector<static_object*> get_terrain_objects() const
+		{
+			return static_items;
+		}
+		int get_num_exits() const
 		{
 			return num_exits;
 		}
-		store* get_store()
+		store* get_store() const
 		{
 			return Store;
 		}

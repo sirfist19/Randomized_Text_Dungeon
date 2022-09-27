@@ -146,6 +146,7 @@
     <ClCompile Include="helper_fxns.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_commands.cpp" />
+    <ClCompile Include="object.cpp" />
     <ClCompile Include="room.cpp" />
     <ClCompile Include="weapon.cpp" />
   </ItemGroup>
@@ -159,10 +160,12 @@
     <ClInclude Include="enemy.h" />
     <ClInclude Include="helper_fxns.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="part_of_speech.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="potion.h" />
     <ClInclude Include="room.h" />
     <ClInclude Include="room_descriptons.h" />
+    <ClInclude Include="static_object.h" />
     <ClInclude Include="store.h" />
     <ClInclude Include="teleporter.h" />
     <ClInclude Include="weapon.h" />

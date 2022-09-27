@@ -28,7 +28,7 @@ dungeon::dungeon()
 		rooms_to_give_exits.pop();
 
 		create_new_exits(cur_room, stock_room_descriptions);
-		std::cout << "Generated dungeon of size " << rooms.size()<<"\n";
+		//std::cout << "Generated dungeon of size " << rooms.size()<<"\n";
 	}
 	
 	//empty the rooms to give exits stack - its not needed anymore
@@ -36,6 +36,8 @@ dungeon::dungeon()
 	{
 		rooms_to_give_exits.pop();
 	}
+
+	print_no_newline(".");//prints a dot per dungeon generated
 
 	//fill the dungeon with stuff
 	bfs_set_depth();
@@ -583,8 +585,6 @@ void dungeon::place_items()
 			placed_teleporter = true;
 		}
 	}
-	
-		
 }
 void dungeon::place_store()
 {
@@ -601,7 +601,8 @@ void dungeon::place_store()
 
 	if (cur_room == nullptr)
 	{
-		print("Could not find a room of STORE_SPAWN_DEPTH in place_store() in dungeon.cpp");
+		//print("Could not find a room of STORE_SPAWN_DEPTH in place_store() in dungeon.cpp");
+		print_no_newline("*");
 		return;
 	}
 	//convert this room to a store

@@ -4,6 +4,8 @@
 #include <vector>
 #include "helper_fxns.h"
 
+
+
 class object
 {
 protected:
@@ -15,7 +17,7 @@ public:
 	{
 		return name;
 	}
-	std::string get_description()
+	virtual std::string get_description()
 	{
 		return description;
 	}
@@ -99,6 +101,11 @@ public:
 	virtual void use(int* cur_room_exits) = 0;
 };
 
+//object level general fxns
+std::string get_items_string(std::vector<object*>& items, std::string before, std::string after);
+void print_items(std::vector<object*>& items, std::string before, std::string after);
+void print_item(object* item, std::string before, std::string after);
+
 class dragon_key : public key
 {
 public:
@@ -148,6 +155,10 @@ protected:
 	
 public:
 	gold(int amt) : object("Gold", amt, "A pile of shining golden coins. Each piece has the front face has a three-headed dragon and the back has a picture of Emperor Septonius III of the Second Dynasty of Helena.")
+	{
+
+	}
+	gold() : object("Gold", 1, "A pile of shining golden coins. Each piece has the front face has a three-headed dragon and the back has a picture of Emperor Septonius III of the Second Dynasty of Helena.")
 	{
 
 	}

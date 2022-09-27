@@ -1,14 +1,47 @@
 #ifndef room_descriptions_h
 #define room_descriptions_h
+#include "chest.h"
+#include "static_object.h"
 
 struct room_description {
 	std::string name;
 	std::string description;
+	std::vector<static_object*> terrain;
 
-	room_description(std::string _name, std::string _description)
+	room_description(std::string _name, std::string _description, std::vector<static_object*> _terrain)
 	{
 		name = _name;
 		description = _description;
+		terrain = _terrain;
+
+		//for (unsigned int i = 0; i < terrain.size(); i++)
+		//{
+		//	print(terrain[i]->get_name());
+		//}
+	}
+	room_description(std::string _name, std::string _description)//no terrain items
+	{
+		name = _name;
+		description = _description;
+	}
+	//copy constructor
+	room_description(const room_description& in)
+	{
+		name = in.name;
+		description = in.description;
+		
+		for (unsigned int i = 0; i < in.terrain.size(); i++)
+		{
+			static_object* cur_terrain = in.terrain[i];
+			terrain.push_back(cur_terrain->clone());
+		}
+	}
+	~room_description()
+	{
+		for (unsigned int i = 0; i < terrain.size(); i++)
+		{
+			delete terrain[i];
+		}
 	}
 };
 class room_descriptions {
@@ -72,14 +105,16 @@ public:
 		start_descriptions.push_back(
 			new room_description(
 				"Entrance Room",
-				"This room is where you entered the dungeon from and is the only way out. The golden doors with the jade dragon carving remain shut. A strip of light comes through from outside."
+				"This room is where you entered the dungeon from and is the only way out. The golden doors with the jade dragon carving remain shut. A strip of light comes through from outside.",
+				std::vector<static_object*> {new Dragon_doors()}
 			));
 
 		//any
 		any_descriptions.push_back(
 			new room_description(
 				"Mossy Room",
-				"The walls are lined with a thick coat of moss that feels wet to the touch. The air is cold and damp."
+				"The walls are lined with a thick coat of moss that feels wet to the touch. The air is cold and damp.",
+				 std::vector<static_object*> {new Moss()}
 			));
 		any_descriptions.push_back(
 			new room_description(
@@ -95,17 +130,20 @@ public:
 			new room_description(
 				"Small Room",
 				"You enter a tiny, cramped room that isn't even big enough to swing a sword. There's a pedistal in the middle of the room."
+				, std::vector<static_object*> {new Pedistal()}
 			));
 
 		//near - still close to the entrance, so civilization and not too interesting
 		near_descriptions.push_back
 		(new room_description(
-			"Pit Room", "A giant circular pit lies at the room's center."
+			"Pit Room", 
+			"A giant circular pit lies at the room's center.",
+			std::vector<static_object*> {new Pit()}
 		));
 		near_descriptions.push_back(
 			new room_description(
 				"Dinning Room",
-				"A long wooden dinning tables surrounded by wooden chairs is in front of you. The table is set with ceramic plates, knives, forks, spoons, and metal platters as if a large feast was just to start. But it seems no one is around."
+				"A long wooden dinning table surrounded by wooden chairs is in front of you. The table is set with ceramic plates, knives, forks, spoons, and metal platters as if a large feast was just to start. But it seems no one is around."
 			));
 
 		//mid - getting more interesting but still civilization (in the depths of civilization)
@@ -128,7 +166,7 @@ public:
 		mid_descriptions.push_back(
 			new room_description(
 				"Statue Hall",
-				"A massive circular hall stands before you. Upon a raised platform at the center of the room, lies a STATUE of a great King sitting in his throne while a Knight, on his knees, pledges fealty to him. The King is illuminated by a bright light coming from the ceiling."
+				"A massive circular hall stands before you. Upon a raised platform at the center of the room, lies a statue of a great King sitting in his throne while a Knight, on his knees, pledges fealty to him. The King is illuminated by a bright light coming from the ceiling."
 			));
 
 		//far
@@ -146,6 +184,7 @@ public:
 			new room_description(
 				"Waterfall",
 				"Water from a river above falls off a shear cliff tumbling down to the floor. The waterfall splits into three portions. Mist comes off of the waterfall turning into fog."
+				, std::vector<static_object*> {new Waterfall()}
 			));
 		//very far - nature 
 		very_far_descriptions.push_back(

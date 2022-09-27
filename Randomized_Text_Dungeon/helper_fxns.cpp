@@ -19,6 +19,7 @@ void print_no_newline(std::string in) {
 		{
 			std::cout << "\n";
 			cur = 0;
+			
 			continue;
 		}
 		int temp_total = text[i].size() + cur;
@@ -194,7 +195,8 @@ void wait(long seconds)
 }
 void clear_()
 {
-	system("cls");
+	if(!DISABLE_CLEARING_SCREEN)
+		system("cls");
 }
 void printEquals()
 {
@@ -223,6 +225,26 @@ std::vector<std::string> prompt()
 		turn_to_lower_case(res);
 	}
 		
+	return res;
+}
+std::vector<std::string> slice_vector(const std::vector<std::string>& in, const int& start_index, const int& end_index) 
+{
+	std::vector<std::string>::const_iterator begin =
+		in.begin() + start_index;
+	std::vector<std::string>::const_iterator last =
+		in.begin() + end_index + 1;
+	std::vector<std::string> verb_vector_to_find(begin, last);
+	return verb_vector_to_find;
+}
+std::string place_parsed_back_together(std::vector<std::string> in)
+{
+	std::string res = "";
+	for (unsigned int i = 0; i < in.size(); i++)
+	{
+		res += in[i];
+		if (i != in.size() - 1)
+			res += " ";
+	}
 	return res;
 }
 std::vector<std::string> basic_parse(std::string& user_input)
@@ -292,13 +314,13 @@ std::string welcome_screen()
 	print("\n1. Enter");
 	print("2. Leave");
 	std::string yes_inputs[] = { "1", "start", "enter" };
-	std::string no_inputs[] = { "2", "quit", "leave" };
+	std::string no_inputs[] = { "2", "quit", "leave", "q" };
 
 	bool valid_input = false;
 	while (valid_input == false) {
 		std::string welcome_input = input();
 
-		if (str_input_accepted(welcome_input, no_inputs, 3, valid_input)) {
+		if (str_input_accepted(welcome_input, no_inputs, 4, valid_input)) {
 			Quit();
 		}
 		else if (str_input_accepted(welcome_input, yes_inputs, 3, valid_input)) {

@@ -1,6 +1,6 @@
 README - Overview and Main Features, How to Run the game, and How to Play
 
-============================================================================================
+===============================================================
 OVERVIEW:
 
 Randomized Text Dungeon is a text-based dungeon crawler game inspired by classic text-based games such a Planetfall and Zork as well as more modern games such as 
@@ -30,7 +30,7 @@ layout is different every time you play.
 · Utilizes OOP in a well-designed and thought-out fashion by using inheritance, polymorphism, and a 
 hierarchy of classes along with the proper destructors needed to reclaim heap memory taken
 
-============================================================================================
+===========================================================
 HOW TO RUN THE GAME:
 Because the game is written in C++, in order to play the game you will need a C++ compiler. 
 
@@ -42,7 +42,7 @@ Using Visual Studio:
 To code the game, I used Visual Studio 2019. Clone the repository, extract the zip file, and then simply double click on the solution file called 
 Randomized_Text_Dungeon.sln. This will open the game in Visual Studio where you can start the game by going to Debug then Start without Debugging.
 
-============================================================================================
+===========================================================
 
 HOW TO PLAY/ TUTORIAL:
 Like old text based games like Zork, Randomized Text Dungeon uses a text parsing system to understand what the player types. The general syntax is 
@@ -169,4 +169,4 @@ help
 		Ex: help
 		Ex: help go
 
-==============================================================================================
+===============================================================

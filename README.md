@@ -86,7 +86,7 @@ go
 
 quit
 
-	Needs Object: No");
+	Needs Object: No
 	Quits the game to the title screen. Restarts all progress.
 
 look
@@ -144,10 +144,10 @@ take/pick up
 drop
 	
 	Needs Object: Yes
-	Takes all as an object: Yes");
+	Takes all as an object: Yes
 	Drops items from the player's inventory onto the current room's floor. Using 'drop all' drops all items in the player's inventory. To drop one item at a 
   	time use the item you want to pick drop's name as the object of this command. If there is more than one object of that type in the player's inventory, 
-        you will be prompted to type the amount you want to drop.");
+        you will be prompted to type the amount you want to drop.
 		Ex: drop all
 		Ex: drop lesser healing potion
 	
@@ -157,7 +157,7 @@ equip
 	Takes all as an object: Yes
 	Moves a weapon or armor from the player's inventory to the player's main weapon or main armor. The previous player's main weapon or armor is placed into 
   	the player's inventory. Using 'equip all' equips all of the weapons and armor in your inventory that do more damage or have more defense than what the 
-        player currently has. In essence, your equipped gear is maximized for damage and defense.");
+        player currently has. In essence, your equipped gear is maximized for damage and defense."
 		Ex: equip all
 		Ex: equip bow
 	
@@ -196,9 +196,9 @@ use
 help
 
 	Needs Object: No (but may be used)
-	Takes all as an object: No (but may take one)");
+	Takes all as an object: No (but may take one)
 	You should already know what this one does because you are using it! Teaches the player how to play the game by showing them new commands. 
-  	To find out more information about a 	specific command, type 'help' followed by the command you want to learn more about.
+  	To find out more information about a specific command, type 'help' followed by the command you want to learn more about.
 		Ex: help
 		Ex: help go
 

@@ -86,6 +86,23 @@ object* room::get_matching_terrain_object(std::string player_input_noun)
 	}
 	return nullptr;
 }
+bool room::can_be_a_hallway()
+{
+	//count the number of zeros
+	int zero_count = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if (exits[i] == 0)
+		{
+			zero_count++;
+		}
+	}
+	if (zero_count == 2)
+	{
+		return true;
+	}
+	return false;
+}
 void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_holder)
 {
 	std::vector<room_description*> start_descriptions =
@@ -101,7 +118,7 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 	int max_range;
 	int num;
 	room_description* cur_description = nullptr;
-
+	bool valid = false; 
 	switch (tier)
 	{
 	case depth_tier::start:
@@ -111,24 +128,41 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 			name = cur_description->name;
 			description = cur_description->description;
 			static_items = cur_description->terrain;
+			cur_description = nullptr;
 			break;
 		}
 		//if has depth 0 then have near room description
 	case depth_tier::near:
-		max_range = near_descriptions.size() - 1;
-		num = random(0, max_range);
-		cur_description = new room_description(*near_descriptions[num]);
+		while (!valid) {
+			max_range = near_descriptions.size() - 1;
+			num = random(0, max_range);
+			cur_description = new room_description(*near_descriptions[num]);
+
+			if ((cur_description->name == "Hallway") && (can_be_a_hallway()))//check for hallways
+				valid = true;
+			else if (cur_description->name != "Hallway")
+				valid = true;
+		}
 		name = cur_description->name;
 		description = cur_description->description;
 		static_items = cur_description->terrain;
+		cur_description = nullptr;
 		break;
 	case depth_tier::mid:
-		max_range = mid_descriptions.size() - 1;
-		num = random(0, max_range);
-		cur_description = new room_description(*mid_descriptions[num]);
+		while (!valid) {
+			max_range = mid_descriptions.size() - 1;
+			num = random(0, max_range);
+			cur_description = new room_description(*mid_descriptions[num]);
+
+			if ((cur_description->name == "Hallway") && (can_be_a_hallway()))//check for hallways
+				valid = true;
+			else if (cur_description->name != "Hallway")
+				valid = true;
+		}
 		name = cur_description->name;
 		description = cur_description->description;
 		static_items = cur_description->terrain;
+		cur_description = nullptr;
 		break;
 	case depth_tier::far:
 		max_range = far_descriptions.size() - 1;
@@ -137,6 +171,7 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 		name = cur_description->name;
 		description = cur_description->description;
 		static_items = cur_description->terrain;
+		cur_description = nullptr;
 		break;
 	case depth_tier::very_far:
 		max_range = very_far_descriptions.size() - 1;
@@ -145,6 +180,7 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 		name = cur_description->name;
 		description = cur_description->description;
 		static_items = cur_description->terrain;
+		cur_description = nullptr;
 		break;
 
 	default:

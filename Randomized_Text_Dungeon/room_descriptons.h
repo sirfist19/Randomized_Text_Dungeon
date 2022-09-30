@@ -62,7 +62,7 @@ public:
 		return near_descriptions;
 	}
 	std::vector<room_description*> get_mid_room_descriptions() {
-		//near_descriptions.insert(mid_descriptions.begin(), any_descriptions.begin(), any_descriptions.end());
+		//mid_descriptions.insert(mid_descriptions.begin(), any_descriptions.begin(), any_descriptions.end());
 		return mid_descriptions;
 	}
 	std::vector<room_description*> get_far_room_descriptions() {
@@ -109,7 +109,7 @@ public:
 				std::vector<static_object*> {new Dragon_doors()}
 			));
 
-		//any
+		//any (near at the moment)
 		any_descriptions.push_back(
 			new room_description(
 				"Mossy Room",
@@ -118,7 +118,7 @@ public:
 			));
 		any_descriptions.push_back(
 			new room_description(
-				"Hallway",
+				"Chamber",
 				"You find nothing of note in this room. Stone cobble lines the floor and walls."
 			));
 		any_descriptions.push_back(
@@ -139,6 +139,12 @@ public:
 			"Pit Room", 
 			"A giant circular pit lies at the room's center.",
 			std::vector<static_object*> {new Pit()}
+		));
+		near_descriptions.push_back
+		(new room_description(
+			"Boulder Room",
+			"A large spherical boulder lies at the room's center."
+			
 		));
 		near_descriptions.push_back(
 			new room_description(
@@ -168,7 +174,21 @@ public:
 				"Statue Hall",
 				"A massive circular hall stands before you. Upon a raised platform at the center of the room, lies a statue of a great King sitting in his throne while a Knight, on his knees, pledges fealty to him. The King is illuminated by a bright light coming from the ceiling."
 			));
-
+		mid_descriptions.push_back(
+			new room_description(
+				"Armory",
+				"Stands for armor lies all around you."
+			));
+		mid_descriptions.push_back(
+			new room_description(
+				"Sparing Room",
+				"The room is filled with racks to hold weapons of all types. Swords, maces, training stick, and axes. But there are no weapons here now. Lots of training must have gone on here ages ago."
+			));
+		mid_descriptions.push_back(
+			new room_description(
+				"Fountain",
+				"A circular fountain lies at the center of the room. Somehow water still is being pumped from the bottom of the fountain to its top. The water gurgles as it trickles down the fountain's four levels."
+			));
 		//far
 		far_descriptions.push_back(
 			new room_description(
@@ -186,6 +206,18 @@ public:
 				"Water from a river above falls off a shear cliff tumbling down to the floor. The waterfall splits into three portions. Mist comes off of the waterfall turning into fog."
 				, std::vector<static_object*> {new Waterfall()}
 			));
+		far_descriptions.push_back(
+			new room_description(
+				"Dragon Skeleton Room",
+				"The skeleton of a long dead dragon lies in the center of the room. The bones are black and a hard as steel. The dragon scales have long since been removed to make dragon scale armor."
+				
+		));
+		far_descriptions.push_back(
+			new room_description(
+				"Overgrown Room",
+				"Even walking around is a challenge. At every step you have to cut the undergrowth away. Ferns, lichen, moss have taken this room over. The heat and humidity are almost unbearable."
+
+			));
 		//very far - nature 
 		very_far_descriptions.push_back(
 			new room_description(
@@ -196,6 +228,16 @@ public:
 			new room_description(
 				"Cavern",
 				"It's pitch black, but you can see that right in front of you is the start of a massive cave. Stalactites and stalagmites line the floor and ceiling."
+			));
+		very_far_descriptions.push_back(
+			new room_description(
+				"Magma Bridge",
+				"A river of lava flows under a narrow black igneous rock bridge lined with spikes as handrails. You must cross to get to the other side."
+			));
+		very_far_descriptions.push_back(
+			new room_description(
+				"Ice Cave",
+				"You enter a cave that is made entirely of thick light-blueish ice. You shiver as it's freezing in here."
 			));
 	}
 };

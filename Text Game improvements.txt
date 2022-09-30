@@ -1,0 +1,107 @@
+Cole's suggestions
+
+-add more rooms
+-temperature - immersion
+-spawn dude that you can sell stuff to (junk dealer)
+	->has a set amt of money that he can use to buy your stuff
+	->has small items
+
+-bow has arrows with the counter down
+	->like bullet seed
+-crits 
+-weapons breaking - damaged, worn, new, lightly used
+	->crafting two same items together would heal the item
+
+-make min gold amt higher 
+-examining stuff in rooms (waterfall)
+-open gold chest, open wooden chest (make it be recognized)
+
+
+-maybe certain enemies can only spawn in certain room (slime 
+-a message saying "You've gone into a new deeper area - be prepared for harder enemies"
+-"still interested" or "still want it?" or "still want em?"
+-stealing from the shopkeeper as an easter egg boss fight
+-open chest when there is no chest - "There is no chest in this room"
+-armored skeleton 
+-puzzles
+
+_____________________________________________________________________________
+
+Mossy room -> moss to examine
+Small room -> pedistal (has an item on top of it, taking the item sometimes triggers a trap)
+Pit room -> pit
+Dinning room -> table and chairs
+Library -> books you can examine
+Jail -> find a non-live skeleton, underneath can find gold and a weapon
+Great Hall -> pillars
+Statue Hall -> statue, bright light
+Lake Room -> swim in the lake to find a key or gold, or something
+River -> a river that you must explicitly cross via 'cross river', you'll need boots of a 	certain type?
+Lava Room -> bridge
+Cavern -> 
+Waterfall -> examine the waterfall and find a potion
+
+
+
+
+
+
+
+
+
+
+-different attack choices
+	-> light and heavy attack 
+		-heavy attack does more damage but misses more, the light attack hits more often
+-status attacks (paralysis, burn)?
+
+-Level up choice between health and some base defense
+-items to give a damage boost to certain types of weapons
+
+-text map feature that maps out the dungeon as you explore it (add a coord system first)
+-seperate dungeons (like level sections)
+-add puzzles?
+-stores - 
+-
+
+
+
+-drawing the map algo
+	-> generate the map everytime the player types the map command
+	-> draw 2 lines at a time (by y-coord)
+	-> sort the coords by y-coord, and then the y-coords by x-coord
+	-> draw line by line, connecting rooms that are connected with - and not connected with a 		space
+
+Raw
+1 (0,0)
+2 (1,0)
+3 (0, -1)
+4 (0, 1)
+5 (0, -2)
+6 (1, -2)
+
+Sorted
+4 (0, 1)
+1 (0,0)
+2 (1,0)
+3 (0, -1)
+5 (0, -2)
+6 (1, -2)
+
+Lowest - largest y val, smallest x-val
+Largest - smallest y val, largest x-val
+
+
+4
+1-2
+3
+5-6
+
+4
+|
+1-2
+|
+3
+|
+5-6
+

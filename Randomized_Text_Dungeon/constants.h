@@ -19,7 +19,7 @@ const int ENEMY_DROP_GOLD_CHANCE = 100;
 const int ENEMY_PICKS_HEAVY_ATTACK_CHANCE = 50;
 const int COMPASS_SPAWN_DEPTH = 5;
 const int TELEPORTER_SPAWN_DEPTH = 5;//x less than the dragon room depth
-const double DEFENSE_MULTIPLIER_ATTACK_CALCULATION = 2;
+const double DEFENSE_MULTIPLIER_ATTACK_CALCULATION = 1.8;
 
 const int GOLD_SPAWN_IN_MOSS = 50;
 
@@ -28,7 +28,7 @@ const int GOLD_SPAWN_IN_MOSS = 50;
 const int STORE_SPAWN_DEPTH = random(7,9);
 const int STORE_NUM_DASHES = 100;
 //attacking 
-const double HEAVY_DAMAGE_MULTIPLIER = 2;
+const double HEAVY_DAMAGE_MULTIPLIER = 1.5;
 const int HEAVY_HIT_RATE_REDUCER = 40;
 
 //depth tiers

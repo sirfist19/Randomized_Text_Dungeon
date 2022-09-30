@@ -80,8 +80,10 @@ class room {
 		visited_types visited;//has the player visited here before
 		int exits[4];//0 for no exit, other number for room to go to
 		int num_exits;
+
 		int depth;//smallest number of rooms from the start room to this room
 		depth_tier tier;
+
 		std::vector<Enemy*> enemies;
 		std::vector<object*> items;
 		std::vector<static_object*> static_items;//non-moveable objects part of the room itself
@@ -118,6 +120,7 @@ class room {
 		object* get_matching_object(std::string player_input_noun);
 		object* get_matching_terrain_object(std::string player_input_noun);
 		bool has_terrain(object* in);
+		bool can_be_a_hallway();
 		object* get_matching_object_and_delete(std::string player_input_noun);
 		void remove_room_item(object* obj_to_remove);
 		void assign_room_type(depth_tier tier, room_descriptions* descriptions_holder);

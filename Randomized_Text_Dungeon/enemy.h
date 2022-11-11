@@ -94,7 +94,7 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(1, 3);
+			health = random(3, 6);
 			break;
 		case 2: 
 			health = random(8, 12);

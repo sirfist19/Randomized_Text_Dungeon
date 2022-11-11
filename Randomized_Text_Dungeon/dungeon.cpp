@@ -2,23 +2,18 @@
 #include "enemy.h"
 #include <algorithm>
 #include <queue>
+#include <assert.h>
 
-dungeon::dungeon() 
+dungeon::dungeon()
 {
 	room_descriptions* stock_room_descriptions = new room_descriptions();
 	srand((unsigned int)time(NULL));//sets random numbers
 
 	//for the first room
 	room* temp_room = new room(rooms.size() + 1);//sets coord to 0,0
-	
-	//temp_room->add_item(new compass());
-	//temp_room->add_item(new teleporter());
-	//temp_room->add_item(new silver_boots());
-	//temp_room->add_item(new silver_helmet());
-	//temp_room->add_item(new dragon_scale_chestplate());
-	//temp_room->add_item(new mjolnir());
 
 	rooms.push_back(temp_room);
+	occupied_coords[*(temp_room->get_coord())] = temp_room->get_id();
 	create_new_exits(temp_room, stock_room_descriptions);
 
 	//create the dungeon as a skeleton model
@@ -28,9 +23,9 @@ dungeon::dungeon()
 		rooms_to_give_exits.pop();
 
 		create_new_exits(cur_room, stock_room_descriptions);
-		//std::cout << "Generated dungeon of size " << rooms.size()<<"\n";
+		std::cout << "Generated dungeon of size " << rooms.size() << "\n";
 	}
-	
+
 	//empty the rooms to give exits stack - its not needed anymore
 	while (!rooms_to_give_exits.empty())
 	{
@@ -44,7 +39,7 @@ dungeon::dungeon()
 	for (unsigned int i = 0; i < rooms.size(); i++)
 	{
 		room* cur_room = rooms[i];
-		
+
 		cur_room->set_depth_tier();
 		cur_room->spawn_enemies();
 		cur_room->assign_room_type(cur_room->get_tier(), stock_room_descriptions);
@@ -52,8 +47,7 @@ dungeon::dungeon()
 	}
 	place_dragon_key();
 	place_items();
-	place_store();
-	//get_boss_room()->visited_cur_room();
+	place_store();  
 }
 void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 {
@@ -72,13 +66,30 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 		exit_room->set_coord(exit_pos);
 		exit_room->set_name("Exit Room");
 		rooms.insert(rooms.begin(), exit_room);//but the exit room as the first room
-
+		occupied_coords[*exit_pos] = exit_room->get_id();
 		//set the remaining exits
-		cur_room->set_num_exits(random(1,3));
+		cur_room->set_num_exits(random(2,3));
 	}
 	else
 	{
-		cur_room->set_num_exits(random(0,3));
+		//0 .25  .05
+		//1 .25 .1
+		//2 .25 .25
+		//3 .25 .6
+		int num_exit_rand = random(0, 99);
+		//0 - 39 -> 3
+		//40 - 49 -> 2
+		int num_rooms;
+		if (num_exit_rand < 20)
+			num_rooms = 3;
+		else if (num_exit_rand < 45)
+			num_rooms = 2;
+		else if (num_exit_rand < 95)
+			num_rooms = 1;
+		else
+			num_rooms = 0;
+
+		cur_room->set_num_exits(num_rooms);//random(0,3)
 	}
 
 	int num_exits = cur_room->get_num_exits();
@@ -96,13 +107,13 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 				if (cur_exits[index] == 0)
 					break;
 				iterations++;
-				if (iterations > 100) //no infinite looping
+				if (iterations > 20) //no infinite looping
 					return;
 			}
 
-			if (DEBUG_MODE)
-			{
-				this->display_debug();
+			//if (DEBUG_MODE)
+			//{
+			//	this->display_debug();
 
 				//std::cout << "---------Displaying a room---------\n";
 				//std::cout << "Current Room: " << cur_room->get_id()<<"\n";
@@ -112,7 +123,7 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 				//else
 				//	std::cout << "Nullptr\n";
 				//std::cout << "-----------------------------------\n";*/
-			}
+			//}
 			room* adj_room = find_adj_room(index, cur_room);
 
 
@@ -139,6 +150,7 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 
 				//add it to the rooms vector
 				rooms.push_back(temp_room);
+				occupied_coords[*new_room_coord] = temp_room->get_id();
 
 				//add it to the room_to_give_exits stack
 				rooms_to_give_exits.push(temp_room);
@@ -403,21 +415,22 @@ bool dungeon::duplicate_coord_and_id(coord_and_id* posid)
 void dungeon::bfs_set_depth() const
 {
 	//search the maze using DFS
-	std::vector<room*> visited;
+	//std::vector<room*> visited;
 	std::queue<room*> Queue;
 	room* cur_room = get_start_room();//cur_room is the start room
 
 	//for the first room
 	int cur_depth = 0;
 	cur_room->set_depth(cur_depth);
-	visited.push_back(cur_room);
+	//visited.push_back(cur_room);
 	int* cur_exits = cur_room->get_exits();
 	cur_depth = 1;//dealing with the rooms next to the first room
 
 	for (int i = 0; i < 4; i++)
 	{
 		int id = cur_exits[i];
-		if ((id > 0) && (!in_visited(visited, id))) {
+		if (id > 0) 
+		{
 			room* next_room = rooms[id];
 			next_room->set_depth(cur_depth);
 			Queue.push(next_room);//push the next room with its coord to the stack
@@ -430,7 +443,7 @@ void dungeon::bfs_set_depth() const
 			//don't add to the queue cause no exits
 		}
 	}
-
+	int k = 0;
 	//go through the stack (set up by the first room)
 	while (!Queue.empty())
 	{
@@ -438,20 +451,26 @@ void dungeon::bfs_set_depth() const
 		cur_depth = cur_room->get_depth();
 		int next_depth = cur_depth + 1;
 		Queue.pop();
-		visited.push_back(cur_room);
 
 		int* cur_exits = cur_room->get_exits();
 
 		for (int i = 0; i < 4; i++)
 		{
 			int id = cur_exits[i];
-			if ((cur_exits[i] != 0) && (!in_visited(visited, id))) //is an exit and not already visited
-			{
-				room* next_room = rooms[id];
+
+			//std::string a = "ID: " + std::to_string(id);
+			//print(a);
+			room* next_room = rooms[id];
+			int next_room_depth = next_room->get_depth();
+			if ((id != 0) && (next_room_depth == -1)) //is an exit and not already visited
+			{ 
 				next_room->set_depth(next_depth);
 				Queue.push(next_room);//push the next room with its coord to the stack
 			}
 		}
+		//print(std::to_string(k));
+		//k++;
+		//print(std::to_string(Queue.size()));
 	}
 }
 void dungeon::dfs_set_depth() const
@@ -511,7 +530,18 @@ room* dungeon::find_adj_room(int& index, room* cur_room) const//finds any adjace
 	room_coord* cur_coord = cur_room->get_coord();
 	room_coord desired_coord = delta_coord.add(*cur_coord, delta_coord);
 
-	//assert to make sure that no two rooms generated on top of each other
+	auto it = occupied_coords.find(desired_coord);
+	if (it == occupied_coords.end()) //if haven't found the coord
+		return nullptr;
+	//print(std::to_string(it->second));
+	int ind = it->second;
+	if (ind == -2)
+		ind = 0; //if the exit room then use index 0
+
+	room* room_to_return = rooms[ind];
+	assert(room_to_return->get_id() == it->second);
+	return room_to_return;
+	/*//assert to make sure that no two rooms generated on top of each other
 	if (!no_two_rooms_have_same_coord())
 	{
 		std::cout << "Two rooms are on top of each other\n";
@@ -539,7 +569,7 @@ room* dungeon::find_adj_room(int& index, room* cur_room) const//finds any adjace
 			return rooms[i];
 		}
 	}
-	return nullptr;
+	return nullptr;*/
 }
 void dungeon::place_dragon_key()
 {
@@ -611,7 +641,6 @@ void dungeon::place_store()
 	cur_room->clear_chests();//no chests 
 	std::vector<Enemy*> enemies;//no enemies
 	cur_room->set_enemies(enemies);
-
 	cur_room->set_store(new store());
 	return;
 }
@@ -663,6 +692,10 @@ void dungeon::display_debug() {
 	{
 		rooms[i]->display_room_debug();
 	}
+}
+void dungeon::display_dungeon_info() {
+	std::string a = "Dungeon Size: " + rooms.size();
+	print(a);
 }
 bool dungeon::no_two_rooms_have_same_coord() const //a debugging fxn
 {

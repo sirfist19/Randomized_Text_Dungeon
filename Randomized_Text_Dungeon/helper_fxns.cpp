@@ -290,7 +290,7 @@ void turn_to_lower_case(std::vector<std::string>& user_input)
 }
 std::string get_player_name()
 {
-	print();
+	std::cout << "\n";
 	std::cout << ">";
 	std::string name;
 	std::getline(std::cin, name);
@@ -302,7 +302,6 @@ std::string get_player_name()
 std::string welcome_screen()
 {
 	printEquals();
-	print();
 	print();
 	print("Welcome to Randomized Text Dungeon!");
 	print("\t- An adventure game by Aidan Cini");

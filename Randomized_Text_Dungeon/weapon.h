@@ -211,6 +211,7 @@ public:
 		return new long_bow(*this);
 	}
 };
+
 class axe : public weapon
 {
 public:
@@ -228,10 +229,53 @@ public:
 		return new axe(*this);
 	}
 };
+
+class nunchucks : public weapon
+{
+public:
+	nunchucks() : weapon(
+		"Nunchucks", 18, 95,
+		"Swing em around and hit your enemies hard!") {}
+	nunchucks(const nunchucks& in) :
+		weapon(in.name, in.damage, in.hit_rate, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new nunchucks(*this);
+	}
+	virtual weapon* clone_weapon()
+	{
+		return new nunchucks(*this);
+	}
+};
+
+class katana : public weapon
+{
+public:
+	katana() : weapon(
+		"Katana", 20, 90,
+		"A blade for a seasoned Samarai, sharp as glass. Cuts deep into your enemies with only the slightest movements.") {}
+	katana(const katana& in) :
+		weapon(in.name, in.damage, in.hit_rate, in.description)
+	{
+		//copy constructor
+	}
+	virtual object* clone()
+	{
+		return new katana(*this);
+	}
+	virtual weapon* clone_weapon()
+	{
+		return new katana(*this);
+	}
+};
 class long_axe : public weapon
 {
 public:
-	long_axe() : weapon("Long Axe", 22, 85, "A two-handed axe that needs lots of force to yield.") {}
+	long_axe() : weapon("Long Axe", 22, 75, 
+		"A two-handed axe that needs lots of force to yield.") {}
 	long_axe(const long_axe& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor
@@ -333,6 +377,8 @@ public:
 		rare.push_back(new axe());
 		rare.push_back(new sword());
 		rare.push_back(new long_bow());
+		rare.push_back(new nunchucks());
+		rare.push_back(new katana());
 		legendary.push_back(new daedric_sword());
 		legendary.push_back(new long_axe());
 		legendary.push_back(new mjolnir());

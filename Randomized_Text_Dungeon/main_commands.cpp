@@ -308,7 +308,6 @@ void commands::examine()
 	//if the object is in the player's inventory or equipped or in the room then...
 	//print the name and description of the object
 	object* match = cur_obj; //the final match
-	std::string identifier = cur_obj->identify();
 
 	if (match == nullptr)
 	{
@@ -317,6 +316,7 @@ void commands::examine()
 	}
 	else
 	{
+		std::string identifier = cur_obj->identify();
 		if (identifier == "static object")
 		{
 			((static_object*)cur_obj)->reveal_encompassed_objects();

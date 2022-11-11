@@ -304,7 +304,9 @@ public:
 		catalog[sword().get_name()] = new ware(new sword(), 40, 6);
 		catalog[long_bow().get_name()] = new ware(new long_bow(), 60, 4);
 		catalog[axe().get_name()] = new ware(new axe(), 80, 10);
-		catalog[long_axe().get_name()] = new ware(new long_axe(), 150, 10);
+		catalog[nunchucks().get_name()] = new ware(new nunchucks(), 160, 4);
+		catalog[katana().get_name()] = new ware(new katana(), 180, 10);
+		catalog[long_axe().get_name()] = new ware(new long_axe(), 120, 10);
 		catalog[daedric_sword().get_name()] = new ware(new daedric_sword(), 200, 3);
 		catalog[mjolnir().get_name()] = new ware(new mjolnir(), 300, 1);
 		catalog[excalibur().get_name()] = new ware(new excalibur(), 500, 1);

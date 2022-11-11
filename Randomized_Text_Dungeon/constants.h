@@ -16,7 +16,7 @@ const int RUN_AWAY_CHANCE = 50;
 const int BORDER_MAP_SIZE = 45;
 const int ENEMY_DROP_ITEM_CHANCE = 25;
 const int ENEMY_DROP_GOLD_CHANCE = 100;
-const int ENEMY_PICKS_HEAVY_ATTACK_CHANCE = 50;
+const int ENEMY_PICKS_HEAVY_ATTACK_CHANCE = 55;
 const int COMPASS_SPAWN_DEPTH = 5;
 const int TELEPORTER_SPAWN_DEPTH = 5;//x less than the dragon room depth
 const double DEFENSE_MULTIPLIER_ATTACK_CALCULATION = 1.8;
@@ -25,7 +25,7 @@ const int GOLD_SPAWN_IN_MOSS = 50;
 
 
 //Store
-const int STORE_SPAWN_DEPTH = random(7,9);
+const int STORE_SPAWN_DEPTH = 12;
 const int STORE_NUM_DASHES = 100;
 //attacking 
 const double HEAVY_DAMAGE_MULTIPLIER = 1.5;
@@ -42,9 +42,9 @@ const int MIN_MID = 5;
 const int MAX_MID = 9;
 
 const int MIN_FAR = 10;
-const int MAX_FAR = 14;
+const int MAX_FAR = 15;
 
-const int MIN_VERY_FAR = 15;
+const int MIN_VERY_FAR = 16;
 const int MAX_VERY_FAR = 100;
 
 //spawn rates (out of 100)
@@ -72,40 +72,40 @@ const int VERY_FAR_SPAWN_ORC = 40;
 
 //chest spawning 
 //start (rooms of depth 1)
-const int START_SPAWN_WOOD_CHEST = 75;
-const int NEAR_SPAWN_WOOD_CHEST = 30;// 30;
-const int MID_SPAWN_WOOD_CHEST = 30;//25;
+const int START_SPAWN_WOOD_CHEST = 90;
+const int NEAR_SPAWN_WOOD_CHEST = 15;// 30;
+const int MID_SPAWN_WOOD_CHEST = 10;//25;
 const int MID_SPAWN_GOLD_CHEST = 5;
-const int FAR_SPAWN_GOLD_CHEST = 40;
-const int VERY_FAR_SPAWN_DRAGON_CHEST = 25;
-const int VERY_FAR_SPAWN_GOLD_CHEST = 10;
+const int FAR_SPAWN_GOLD_CHEST = 15;
+const int VERY_FAR_SPAWN_DRAGON_CHEST = 20;
+const int VERY_FAR_SPAWN_GOLD_CHEST = 2;
 
 
 //chest item spawning (out of 100)
-const int CHEST_WEAPON_SPAWN_RATE = 50;
-const int CHEST_ARMOR_SPAWN_RATE = 50;
+const int CHEST_WEAPON_SPAWN_RATE = 70;
+const int CHEST_ARMOR_SPAWN_RATE = 90;
 
 //wooden chest
 const int WOOD_CHEST_LESSER_HEALING_SPAWN_RATE = 60;
-const int WOOD_CHEST_SPAWN_GOLD_RATE = 30;
+const int WOOD_CHEST_SPAWN_GOLD_RATE = 75;
 const int WOOD_CHEST_MAX_GOLD = 7;
-const int WOOD_CHEST_MIN_GOLD = 1;
+const int WOOD_CHEST_MIN_GOLD = 3;
 
 //gold chest
 //dragon chest
-const int GOLD_CHEST_LESSER_HEALING_SPAWN_RATE = 10;
+const int GOLD_CHEST_LESSER_HEALING_SPAWN_RATE = 20;
 const int GOLD_CHEST_COMMON_HEALING_SPAWN_RATE = 50;
-const int GOLD_CHEST_SPAWN_GOLD_RATE = 60;
+const int GOLD_CHEST_SPAWN_GOLD_RATE = 85;
 const int GOLD_CHEST_MAX_GOLD = 25;
-const int GOLD_CHEST_MIN_GOLD = 10;
+const int GOLD_CHEST_MIN_GOLD = 12;
 
 //dragon chest
 const int DRAGON_CHEST_LESSER_HEALING_SPAWN_RATE = 5;
 const int DRAGON_CHEST_COMMON_HEALING_SPAWN_RATE = 20;
-const int DRAGON_CHEST_GREATER_HEALING_SPAWN_RATE = 50;
-const int DRAGON_CHEST_SPAWN_GOLD_RATE = 90;
+const int DRAGON_CHEST_GREATER_HEALING_SPAWN_RATE = 60;
+const int DRAGON_CHEST_SPAWN_GOLD_RATE = 99;
 const int DRAGON_CHEST_MAX_GOLD = 75;
-const int DRAGON_CHEST_MIN_GOLD = 25;
+const int DRAGON_CHEST_MIN_GOLD = 40;
 
 
 //armor defense

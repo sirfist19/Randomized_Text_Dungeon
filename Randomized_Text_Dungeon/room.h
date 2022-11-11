@@ -34,6 +34,12 @@ public:
 		x = in.x;
 		y = in.y;
 	}
+	bool operator==(const room_coord& other) const //compares two coords, returns true if they are equal
+	{
+		if ((this->get_x() == other.get_x()) && (this->get_y() == other.get_y()))
+			return true;
+		return false;
+	}
 	room_coord()
 	{
 		x = 0;
@@ -48,11 +54,11 @@ public:
 	{
 		std::cout << "(" << x << ", " << y << ") ";
 	}
-	int get_x()
+	int get_x() const
 	{
 		return x;
 	}
-	int get_y()
+	int get_y() const
 	{
 		return y;
 	}
@@ -67,6 +73,15 @@ public:
 		if ((a.x == b.x) && (a.y == b.y))
 			return true;
 		return false;
+	}
+};
+
+struct room_coord_hasher {
+	//defines a hash function over a given room coord
+	std::size_t operator()(const room_coord& key) const
+	{
+		return (key.get_x() << 2) ^ (key.get_y());
+		//left shifts by 2, then xors with the y coord
 	}
 };
 

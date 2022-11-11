@@ -1,0 +1,95 @@
+Regions:
+any: hallway
+ 
+-near regions
+	-start 
+	-mossy room
+	-chamber
+	-small room
+	-bolder room
+
+-living area
+	-dinning room
+	-library
+	-kitchen
+	-bathroom
+	-fountain
+	-well
+
+-prison
+	-jail cells
+	-guard chambers
+	-armory
+	-sparing room
+-temple
+	-Great Hall
+	-Statue Hall
+	-antiroom
+	-sky chamber
+	
+-underwater
+-mining region
+	-iron mine
+	-mining tunnel
+	-
+
+-river area
+	-lake
+	-river
+	-waterfall
+
+-magma volcanic
+	-magma room
+	-magma bridge room
+	-dragon skeleton room
+	-lava tube
+
+-caves/ catacombs
+	-
+-ice caves
+	-ice ravine
+	-ice bridge
+	-frozen lake
+	-glacial bolder
+	-
+-plant overgrowth
+-jungle
+
+
+
+_______________________________________________________________________________________
+Fountain
+	A circular fountain lies at the center of the room. Somehow water still is being pumped from the bottom of the fountain to its top. The water gurgles as it trickles down the fountain's four levels.
+
+Armory
+	Stands for armor lies all around you.
+
+Sparing Room
+	The room is filled with racks to hold weapons of all types. Swords, maces, training stick, and axes. But there are no weapons here now. Lots of training must have gone on here ages ago.
+
+Boulder Room
+	A large spherical boulder lies at the room's center. 
+Hydro Plant
+	
+Magma Bridge
+	A river of lava flows under a narrow black igneous rock bridge lined with spikes as handrails. You must cross to get to the other side.
+
+Different types of mines
+
+Dragon skeleton room
+	The skeleton of a long dead dragon lies in the center of the room. The bones are black and a hard as steel. The dragon scales have long since been removed to make dragon scale armor.
+
+Ice Cave
+You enter a cave that is made entirely of thick light-blueish ice. You shiver as it's freezing in here.
+
+Overgrown Room
+Even walking around is a challenge. At every step you have to cut the undergrowth away. Ferns, lichen, moss have taken this room over. The heat and humidity are almost unbearable.
+
+Temple area
+	-has shrines of some sort
+
+
+
+
+
+

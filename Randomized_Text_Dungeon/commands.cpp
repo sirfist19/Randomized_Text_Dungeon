@@ -80,6 +80,8 @@ commands::commands(std::string player_name)
 	all_object_names.push_back(sword().get_name());
 	all_object_names.push_back(long_bow().get_name());
 	all_object_names.push_back(axe().get_name());
+	all_object_names.push_back(nunchucks().get_name());
+	all_object_names.push_back(katana().get_name());
 	all_object_names.push_back(long_axe().get_name());
 	all_object_names.push_back(daedric_sword().get_name());
 	all_object_names.push_back(mjolnir().get_name());
@@ -215,7 +217,7 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 		if (cur_verb != verb_type::verb_none)
 		{
 			//make everything from start to end index true for isRecognized
-			for (unsigned int i = start_index; i < ending_index; i++)
+			for (int i = start_index; i < ending_index; i++)
 			{
 				isRecognized[i] = true;
 			}
@@ -236,7 +238,7 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 		if (cur_preposition != preposition_type::preposition_none)
 		{
 			//make everything from start to end index true for isRecognized
-			for (unsigned int i = start_index; i < ending_index; i++)
+			for (int i = start_index; i < ending_index; i++)
 			{
 				isRecognized[i] = true;
 			}
@@ -278,7 +280,7 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 		if ((cur_noun != noun_type::noun_none) || (cur_obj != nullptr) || (object_is_an_item_name == true))
 		{
 			//make everything from start to end index true for isRecognized
-			for (unsigned int i = start_index; i < ending_index; i++)
+			for (int i = start_index; i < ending_index; i++)
 			{
 				isRecognized[i] = true;
 			}

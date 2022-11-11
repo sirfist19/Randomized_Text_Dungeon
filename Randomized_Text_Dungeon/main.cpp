@@ -17,7 +17,8 @@ int main()
 		bool first_time_enter = true;
 		game->intro_cut_scene();
 		//Dungeon->display_debug();
-		
+		//Dungeon->display_dungeon_info();
+
 		while (!quit_to_title_screen)
 		{
 			game->game_loop(game, game_over, quit_to_title_screen, first_time_enter);

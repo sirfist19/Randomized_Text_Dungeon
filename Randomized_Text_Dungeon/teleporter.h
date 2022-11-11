@@ -12,7 +12,7 @@ public:
 		object("Teleporter", 1, "A strange high-tech device. If you use it you can instantly be taken to key dungeon points you've been to before!"),
 		last_teleporter_pos(nullptr)
 	{
-
+	
 	}
 	teleporter(const teleporter& in) : object(in.name, in.amt, in.description)
 	{

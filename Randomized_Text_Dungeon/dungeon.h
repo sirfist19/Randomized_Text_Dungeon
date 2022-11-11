@@ -4,6 +4,7 @@
 #include "player.h"
 #include <vector>
 #include <stack>
+#include <unordered_map>
 #include <cstdlib>
 
 struct coord_and_id 
@@ -30,6 +31,7 @@ class dungeon
 		std::vector<room*> rooms;
 		std::stack<room*> rooms_to_give_exits;//for dungeon generation
 		room_descriptions* stock_room_descriptions;
+		std::unordered_map<room_coord, int, room_coord_hasher> occupied_coords;
 		std::vector<coord_and_id*> sorted_room_coords;//for map making
 	public:
 		dungeon();
@@ -119,6 +121,7 @@ class dungeon
 		void create_new_exits(room* cur_room, room_descriptions* descriptions);
 		int get_opposite_exit(int exit_num);
 		void display_debug();
+		void display_dungeon_info();
 };
 #endif 
 

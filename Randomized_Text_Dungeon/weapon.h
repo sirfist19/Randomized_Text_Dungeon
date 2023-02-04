@@ -343,7 +343,7 @@ public:
 class dragon_fire : public weapon
 {
 public:
-	dragon_fire() : weapon("Dragon Fire", 45, 75, "Fire that using the magical power of dragon's can turn anything to dust.") {}
+	dragon_fire() : weapon("Dragon Fire", 32, 70, "Fire that using the magical power of dragon's can turn anything to dust.") {}
 	dragon_fire(const dragon_fire& in) : weapon(in.name, in.damage, in.hit_rate, in.description)
 	{
 		//copy constructor

@@ -194,7 +194,11 @@ public:
 			"The pedistal is made out of a black volcanic stone. There is an inscription on it but you cannot read it."
 		)
 	{
-		encompassed_objects.push_back(new hidden_item(new lesser_healing_potion(), true));
+		int num = random(0, 99);
+		if (num < PEDISTAL_HAS_ITEM)
+		{
+			encompassed_objects.push_back(new hidden_item(new lesser_healing_potion(), true));
+		}
 	}
 	virtual std::string get_description() override
 	{

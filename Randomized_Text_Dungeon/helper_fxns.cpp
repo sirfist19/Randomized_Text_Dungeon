@@ -1,6 +1,7 @@
 #include "helper_fxns.h"
 #include "constants.h"
 #include <vector>
+#include <map>
 
 void print(std::string in) 
 {
@@ -299,6 +300,42 @@ std::string get_player_name()
 	print("2. No");
 	return name;
 }
+std::string encrypt_message(std::string message)
+{
+	std::map<char, char> key;
+	
+	key['a'] = 'j';
+	key['b'] = 'e';
+	key['c'] = 's';
+	key['d'] = 't';
+	key['e'] = 'l';
+	key['f'] = 'p';
+	key['g'] = 'o';
+	key['h'] = 'u';
+	key['i'] = 'z';
+	key['j'] = 'y';
+	key['k'] = 'x';
+	key['l'] = 'a';
+	key['m'] = 'c';
+	key['n'] = 'b';
+	key['o'] = 'i';
+	key['p'] = 'r';
+	key['q'] = 'w';
+	key['r'] = 'v';
+	key['s'] = 'q';
+	key['t'] = 'd';
+	key['u'] = 'f';
+	key['v'] = 'h';
+	key['w'] = 'k';
+	key['x'] = 'm';
+	key['y'] = 'n';
+	key['z'] = 'q';
+	
+	
+
+	return "";
+}
+
 std::string welcome_screen()
 {
 	printEquals();

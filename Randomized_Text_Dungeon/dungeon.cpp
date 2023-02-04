@@ -599,20 +599,28 @@ void dungeon::place_items()
 	//place the compass and teleporter
 	compass* Compass = new compass();
 	teleporter* Teleporter = new teleporter();
+	weapon* Starting_Dagger = new dagger();
+
 	bool placed_compass = false;
 	bool placed_teleporter = false;
+	bool placed_dagger = false;
 
 	for (unsigned int i = 0; i < rooms.size(); i++)
 	{
-		if ((placed_compass == false) && (rooms[i]->get_depth() == COMPASS_SPAWN_DEPTH))
+		if ((!placed_compass) && (rooms[i]->get_depth() == COMPASS_SPAWN_DEPTH))
 		{
 			rooms[i]->add_item(Compass);
 			placed_compass = true;
 		}
-		if ((placed_teleporter == false) && (rooms[i]->get_depth() == (get_deepest_depth() - TELEPORTER_SPAWN_DEPTH)))
+		if ((!placed_teleporter) && (rooms[i]->get_depth() == (get_deepest_depth() - TELEPORTER_SPAWN_DEPTH)))
 		{
 			rooms[i]->add_item(Teleporter);
 			placed_teleporter = true;
+		}
+		if ((!placed_dagger) && (rooms[i]->get_depth() == random(1,2))) //place the starting weapon one or two rooms away from the start
+		{
+			rooms[i]->add_item(Starting_Dagger);
+			placed_dagger = true;
 		}
 	}
 }

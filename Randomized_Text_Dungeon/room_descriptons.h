@@ -182,7 +182,7 @@ public:
 		mid_descriptions.push_back(
 			new room_description(
 				"Sparing Room",
-				"The room is filled with racks to hold weapons of all types. Swords, maces, training stick, and axes. But there are no weapons here now. Lots of training must have gone on here ages ago."
+				"The room is filled with racks to hold weapons of all types. Swords, maces, training sticks, and axes. But there are no weapons here now. Lots of training must have gone on here ages ago."
 			));
 		mid_descriptions.push_back(
 			new room_description(

@@ -22,7 +22,7 @@ const int TELEPORTER_SPAWN_DEPTH = 5;//x less than the dragon room depth
 const double DEFENSE_MULTIPLIER_ATTACK_CALCULATION = 1.8;
 
 const int GOLD_SPAWN_IN_MOSS = 50;
-
+const int PEDISTAL_HAS_ITEM = 50;
 
 //Store
 const int STORE_SPAWN_DEPTH = 12;
@@ -72,11 +72,11 @@ const int VERY_FAR_SPAWN_ORC = 40;
 
 //chest spawning 
 //start (rooms of depth 1)
-const int START_SPAWN_WOOD_CHEST = 90;
-const int NEAR_SPAWN_WOOD_CHEST = 15;// 30;
+const int START_SPAWN_WOOD_CHEST = 30;
+const int NEAR_SPAWN_WOOD_CHEST = 20;// 30;
 const int MID_SPAWN_WOOD_CHEST = 10;//25;
-const int MID_SPAWN_GOLD_CHEST = 5;
-const int FAR_SPAWN_GOLD_CHEST = 15;
+const int MID_SPAWN_GOLD_CHEST = 8;
+const int FAR_SPAWN_GOLD_CHEST = 20;
 const int VERY_FAR_SPAWN_DRAGON_CHEST = 20;
 const int VERY_FAR_SPAWN_GOLD_CHEST = 2;
 

@@ -155,7 +155,7 @@ void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
 				//add it to the room_to_give_exits stack
 				rooms_to_give_exits.push(temp_room);
 			}
-			else if ((cur_exits[index] == 0))//there is no exit, but there is an adjacent room in a given direction
+			else if (cur_exits[index] == 0)//there is no exit, but there is an adjacent room in a given direction
 			{
 				//a random chance to connect to that room
 				int chance = random(0,99); //0 to 9
@@ -673,7 +673,7 @@ void dungeon::display_debug() {
 	}
 }
 void dungeon::display_dungeon_info() {
-	std::string a = "Dungeon Size: " + rooms.size();
+	std::string a = "Dungeon Size: " + std::to_string(rooms.size());
 	print(a);
 }
 bool dungeon::no_two_rooms_have_same_coord() const //a debugging fxn

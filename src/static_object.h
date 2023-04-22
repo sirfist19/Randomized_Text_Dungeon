@@ -212,13 +212,13 @@ public:
 	{
 		//copy constructor
 	}
-	virtual static_object* clone()
+	virtual static_object* clone() override
 	{
 		return new Pedistal(*this);
 	}
 	
-	virtual std::string get_display_string() { return get_name(); };
-	virtual std::string get_revealed_items_description()
+	virtual std::string get_display_string() override { return get_name(); };
+	virtual std::string get_revealed_items_description() override
 	{
 		std::vector<object*> main = static_object::get_revealed_items();
 		std::string before = "There is ";
@@ -251,12 +251,12 @@ public:
 			new_description += (" A few gold coins are hidden in the denser portion of the moss.");
 		return new_description;
 	}
-	virtual std::string get_display_string() { return get_name(); };
+	virtual std::string get_display_string() override { return get_name(); };
 	Moss(const Moss& in) : static_object(in)
 	{
 		//copy constructor
 	}
-	virtual static_object* clone()
+	virtual static_object* clone() override 
 	{
 		return new Moss(*this);
 	}

@@ -231,7 +231,7 @@ std::vector<std::string> prompt()
 	std::string temp = "";
 	std::getline(std::cin, temp);
 	std::vector<std::string> res;
-	if ((temp != "") && (&temp != nullptr)) {
+	if (temp != "") {
 		res = basic_parse(temp);
 		turn_to_lower_case(res);
 	}

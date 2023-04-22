@@ -16,7 +16,7 @@ HOW TO RUN THE GAME:
 To play the games run the following commands:
 1. Clone the repository from GitHub:
    git clone https://github.com/sirfist19/Randomized_Text_Dungeon.git
-2. cd src
+2. cd Randomized_Text_Dungeon/src
 3. make
 4. ./game.exe
 

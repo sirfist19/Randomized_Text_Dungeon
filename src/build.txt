@@ -1,0 +1,1 @@
+g++ -o game.exe armor.cpp attacking.cpp commands.cpp dungeon.cpp helper_fxns.cpp main_commands.cpp main.cpp object.cpp room.cpp weapon.cpp -Wno-c++11-extensions --std=c++17

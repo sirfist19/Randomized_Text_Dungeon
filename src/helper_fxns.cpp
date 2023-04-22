@@ -196,8 +196,18 @@ void wait(long seconds)
 }
 void clear_()
 {
-	if(!DISABLE_CLEARING_SCREEN)
-		system("cls");
+	if(!DISABLE_CLEARING_SCREEN) {
+		#ifdef _WIN32
+    		// Clear screen for Windows
+    		system("cls");
+		#elif defined(__APPLE__) || defined(__linux__)
+    		// Clear screen for Mac and Linux
+    		system("clear");
+		#else
+    	// Unsupported operating system
+    	std::cout << "Clearing screen not supported on this operating system." << std::endl;
+		#endif
+	}
 }
 void printEquals()
 {

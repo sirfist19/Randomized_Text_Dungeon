@@ -399,7 +399,11 @@ void commands::map(bool& print_all_map)
 {
 	Dungeon->create_sorted_room_coords(print_all_map);//set the coords again for the map adding the one that was just visited
 	std::vector<coord_and_id*> coords = Dungeon->get_sorted_room_coords();
-
+	//std::cout<<coords.size()<<"\n";
+	//for (coord_and_id* coord : coords) {
+	//	coord->coord->display();
+	//	std::cout<<"coord_id: "<<coord->id;
+	//}
 	//add in the connection characters to the coords vector
 	//clear_();
 	//player->printTopBar();
@@ -423,14 +427,17 @@ void commands::map(bool& print_all_map)
 
 	for (unsigned int i = 0; i < coords.size(); i++)
 	{
+		
 		x = coords[i]->coord->get_x();
 		y = coords[i]->coord->get_y();
 		id = coords[i]->id;
 		room* cur_room = nullptr;
+		//std::cout<<"i: "<<i<<"\n";
+		//std::cout<<"C_x: "<<cursor_x<<", C_y: "<<cursor_y<<", x: "<<x<<", y: "<<y<<"\n";
 
-		if ((id != -3) && (id != -4) && (id != -2))
+		if ((id != -3) && (id != -4) && (id != -2)) // not a connection and not the exit room
 			cur_room = Dungeon->get_room(id);
-		if (id == -2)
+		if (id == -2) // for the exit room
 		{
 			cur_room = Dungeon->get_room(0);
 		}

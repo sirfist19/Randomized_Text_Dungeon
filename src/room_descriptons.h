@@ -102,19 +102,23 @@ public:
 	room_descriptions()
 	{
 		//start
+		std::vector<static_object*> objects;
+		objects.push_back(new Dragon_doors);
 		start_descriptions.push_back(
 			new room_description(
 				"Entrance Room",
 				"This room is where you entered the dungeon from and is the only way out. The golden doors with the jade dragon carving remain shut. A strip of light comes through from outside.",
-				std::vector<static_object*> {new Dragon_doors()}
+				objects
 			));
 
 		//any (near at the moment)
+		objects.clear(); // reset the vector for the next rooms
+		objects.push_back(new Moss());
 		any_descriptions.push_back(
 			new room_description(
 				"Mossy Room",
 				"The walls are lined with a thick coat of moss that feels wet to the touch. The air is cold and damp.",
-				 std::vector<static_object*> {new Moss()}
+				objects
 			));
 		any_descriptions.push_back(
 			new room_description(
@@ -126,19 +130,23 @@ public:
 				"Hallway",
 				"A short narrow hallway greets you. The only light filters in from the rooms behind and in front of you."
 			));
+		objects.clear(); // reset the vector for the next rooms
+		objects.push_back(new Pedistal());
 		any_descriptions.push_back(
 			new room_description(
 				"Small Room",
-				"You enter a tiny, cramped room that isn't even big enough to swing a sword. There's a pedistal in the middle of the room."
-				, std::vector<static_object*> {new Pedistal()}
+				"You enter a tiny, cramped room that isn't even big enough to swing a sword. There's a pedistal in the middle of the room.",
+				objects
 			));
 
 		//near - still close to the entrance, so civilization and not too interesting
+		objects.clear(); // reset the vector for the next rooms
+		objects.push_back(new Pit());
 		near_descriptions.push_back
 		(new room_description(
 			"Pit Room", 
 			"A giant circular pit lies at the room's center.",
-			std::vector<static_object*> {new Pit()}
+			objects
 		));
 		near_descriptions.push_back
 		(new room_description(
@@ -200,11 +208,13 @@ public:
 				"River",
 				"A river gushes through at high speed. You will need to step into the river in order to cross."
 			));
+		objects.clear(); // reset the vector for the next rooms
+		objects.push_back(new Waterfall());
 		far_descriptions.push_back(
 			new room_description(
 				"Waterfall",
-				"Water from a river above falls off a shear cliff tumbling down to the floor. The waterfall splits into three portions. Mist comes off of the waterfall turning into fog."
-				, std::vector<static_object*> {new Waterfall()}
+				"Water from a river above falls off a shear cliff tumbling down to the floor. The waterfall splits into three portions. Mist comes off of the waterfall turning into fog.",
+				objects
 			));
 		far_descriptions.push_back(
 			new room_description(

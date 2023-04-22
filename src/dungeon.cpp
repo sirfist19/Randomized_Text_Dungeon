@@ -184,6 +184,8 @@ void dungeon::display_all_rooms_coords()
 		std::cout << "\n";
 	}
 }
+/*
+//depricated
 void dungeon::create_sorted_room_coords_basic()
 {
 	//create the vector
@@ -194,37 +196,20 @@ void dungeon::create_sorted_room_coords_basic()
 		coord_and_id* cur = new coord_and_id(cur_coord, cur_id);
 		sorted_room_coords.push_back(cur);
 	}
-
+	
 	//sort the vector
-	std::sort(sorted_room_coords.begin(), sorted_room_coords.end(), [](coord_and_id* a, coord_and_id* b) {
-		// sort by x
-		//return a->get_x() > b->get_x();
-		// sort by y
-		//return a->get_y() > b->get_y();
-
-		//we want to return true if a > b
+	std::sort(sorted_room_coords.begin(), sorted_room_coords.end(), 
+	[] (coord_and_id* a, coord_and_id* b){
 		int a_x = a->coord->get_x();
 		int a_y = a->coord->get_y();
 		int b_x = b->coord->get_x();
 		int b_y = b->coord->get_y();
-
-		//a = (0, -1) smaller
-		//b = (0, 2) larger
-
-		//a = (1, -1) larger
-		//b = (0, -1) smaller
-
-		if (b_y < a_y)
-			return true;
-		else if (b_y > a_y)
-			return false;
-		else //if they are equal
-		{
-			if (a_x < b_x)
-				return true;
+		return (
+			(b_y < a_y) || 
+			((b_y == a_y) && (a_x < b_x))
+		);
 		}
-		return false;
-	});
+	);
 
 	//do a transformation to make the coords easy to process
 	int minX = INT_MAX;
@@ -252,6 +237,7 @@ void dungeon::create_sorted_room_coords_basic()
 		sorted_room_coords[i]->coord->set_coord(x, y);
 	}
 }
+*/
 void dungeon::create_sorted_room_coords(bool& print_all_map)
 {
 	//create the vector
@@ -288,6 +274,8 @@ void dungeon::create_sorted_room_coords(bool& print_all_map)
 	}
 
 	//add in connections
+	// id is -3 for north or south connection, -4 for east west connect
+	// id -1 is the exit room, 1 is the start room
 	for (unsigned int i = 0; i < sorted_room_coords.size(); i++)
 	{
 		 int id = sorted_room_coords[i]->id;
@@ -371,35 +359,18 @@ void dungeon::create_sorted_room_coords(bool& print_all_map)
 	}
 
 	//sort the vector
-	std::sort(sorted_room_coords.begin(), sorted_room_coords.end(), [](coord_and_id* a, coord_and_id* b) {
-		// sort by x
-		//return a->get_x() > b->get_x();
-		// sort by y
-		//return a->get_y() > b->get_y();
-
-		//we want to return true if a > b
+	std::sort(sorted_room_coords.begin(), sorted_room_coords.end(), 
+	[] (coord_and_id* a, coord_and_id* b){ // smallest y and smallest x come first
 		int a_x = a->coord->get_x();
 		int a_y = a->coord->get_y();
 		int b_x = b->coord->get_x();
 		int b_y = b->coord->get_y();
-
-		//a = (0, -1) smaller
-		//b = (0, 2) larger
-
-		//a = (1, -1) larger
-		//b = (0, -1) smaller
-
-		if (b_y > a_y)
-			return true;
-		else if (b_y < a_y)
-			return false;
-		else //if they are equal
-		{
-			if (a_x < b_x)
-				return true;
+		return ( 
+			(a_y < b_y) || 
+			((b_y == a_y) && (a_x < b_x))
+		);
 		}
-		return false;
-	});
+	);
 }
 bool dungeon::duplicate_coord_and_id(coord_and_id* posid)
 {

@@ -24,6 +24,7 @@ struct coord_and_id
 		return false;
 	}
 };
+bool sort_coords_function (coord_and_id* a, coord_and_id* b);
 
 class dungeon 
 {

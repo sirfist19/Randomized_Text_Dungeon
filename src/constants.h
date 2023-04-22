@@ -1,5 +1,5 @@
 #ifndef constants_h
-#define constant_h
+#define constants_h
 #include "helper_fxns.h"
 
 const bool DEBUG_MODE = false;

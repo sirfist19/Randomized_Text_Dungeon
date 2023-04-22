@@ -9,6 +9,18 @@ The Legend of Zelda, and Metroid (specifically Zelda dungeons, and Metroid based
 
 The game is written entirely in C++ and coded by Aidan Cini. 
 
+==============================================================
+
+HOW TO RUN THE GAME:
+
+To play the games run the following commands:
+1. Clone the repository from GitHub:
+   git clone https://github.com/sirfist19/Randomized_Text_Dungeon.git
+2. cd src
+3. make
+4. ./game.exe
+
+==============================================================
 MAIN FEATURES:
 
 · Randomly generates an explorable text-based dungeon. The algorithm creates the start and exit rooms, then randomly picks an exit in a cardinal direction and 
@@ -40,22 +52,6 @@ layout is different every time you play.
 
 · Utilizes OOP in a well-designed and thought-out fashion by using inheritance, polymorphism, and a 
 hierarchy of classes along with the proper destructors needed to reclaim heap memory taken
-
-===========================================================
-
-HOW TO RUN THE GAME:
-
-Because the game is written in C++, in order to play the game you will need a C++ compiler. 
-
-Using gcc:
-
-Downloading the .h and .cpp files and using a compiler such as gcc will allow you to play the game. Simply run the main.cpp file and be sure to copy all the 
-.h and .cpp files.
-
-Using Visual Studio:
-
-To code the game, I used Visual Studio 2019. Clone the repository, extract the zip file, and then simply double click on the solution file called 
-Randomized_Text_Dungeon.sln. This will open the game in Visual Studio where you can start the game by going to Debug then Start without Debugging.
 
 ===========================================================
 

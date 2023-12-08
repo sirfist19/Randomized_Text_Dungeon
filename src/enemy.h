@@ -32,7 +32,9 @@ public:
 	virtual void display_attack_info() {
 		std::cout << "Enemy: " << name << "   Level: "<<level<<"\n";
 		health->display_health_bar();
-		std::cout << "Weapon: " << main_weapon->get_name() << "\n";
+		std::cout << "Status effect: " << status_effect->get_display_str() << "\n";
+		std::cout << "Weapon: " << main_weapon->get_name() 
+				  << " " << main_weapon->get_enchantment_str() << "\n";
 		std::cout << "Defense: " << defense << std::endl;
 		std::cout << "Armor:\n";
 		if (Helmet != nullptr)
@@ -226,6 +228,7 @@ public:
 			cur = new axe();
 			break;
 		}
+		cur->add_random_enchantment();
 		return cur;
 	}
 	virtual void f() {}
@@ -357,6 +360,7 @@ public:
 			cur = new sword();
 			break;
 		}
+		cur->add_random_enchantment();
 		return cur;
 	}
 	virtual void f() {};
@@ -478,6 +482,7 @@ public:
 			cur = new long_bow();
 			break;
 		}
+		cur->add_random_enchantment();
 		return cur;
 	}
 	virtual void f() {};
@@ -586,6 +591,7 @@ public:
 			cur = new sword();
 			break;
 		}
+		cur->add_random_enchantment();
 		return cur;
 	}
 	virtual void f() {};
@@ -717,6 +723,7 @@ public:
 			cur = new long_axe();
 			break;
 		}
+		cur->add_random_enchantment();
 		return cur;
 	}
 	virtual void f() {};
@@ -842,6 +849,7 @@ public:
 			cur = new daedric_sword();
 			break;
 		}
+		cur->add_random_enchantment();
 		return cur;
 	}
 	virtual void f() {};

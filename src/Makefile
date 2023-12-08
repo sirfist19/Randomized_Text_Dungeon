@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wno-c++11-extensions --std=c++17
+CXXFLAGS = -Wno-c++11-extensions --std=c++17 -Wall
 
 # Source files
 SRC = armor.cpp \

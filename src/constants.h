@@ -24,6 +24,12 @@ const double DEFENSE_MULTIPLIER_ATTACK_CALCULATION = 1.8;
 const int GOLD_SPAWN_IN_MOSS = 50;
 const int PEDISTAL_HAS_ITEM = 50;
 
+// status effects
+const int UNFREEZE_CHANCE = 30;
+const int PARALYSIS_NOT_MOVE_CHANCE = 50;
+const int BURN_HEALTH_PERCENTAGE = 10;
+const int FIRST_TURN_POISON_PERCENTAGE = 10;
+
 //Store
 const int STORE_SPAWN_DEPTH = 12;
 const int STORE_NUM_DASHES = 100;
@@ -124,5 +130,9 @@ const int SILVER_BOOTS_DEFENSE = 6;
 const int DRAGON_SCALE_HELMET_DEFENSE = 10;
 const int DRAGON_SCALE_CHESTPLATE_DEFENSE = 15;
 const int DRAGON_SCALE_BOOTS_DEFENSE = 13;
+
+// enchantment chances
+// weapons
+
 
 #endif

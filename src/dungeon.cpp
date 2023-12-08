@@ -12,6 +12,10 @@ dungeon::dungeon()
 	//for the first room
 	room* temp_room = new room(rooms.size() + 1);//sets coord to 0,0
 
+	//temp_room->add_item(pick_random_common_weapon());
+	//temp_room->add_item(pick_random_rare_weapon());
+	//temp_room->add_item(pick_random_legendary_weapon());
+
 	rooms.push_back(temp_room);
 	occupied_coords[*(temp_room->get_coord())] = temp_room->get_id();
 	create_new_exits(temp_room, stock_room_descriptions);

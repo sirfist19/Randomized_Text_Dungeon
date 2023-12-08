@@ -431,9 +431,11 @@ public:
 	virtual void display_attack_info() 
 	{
 		std::cout << "Player: " << name << "    Level: "<<level<<"\n";
+		std::cout << "Status effect: " << status_effect->get_display_str() << "\n";
 		health->display_health_bar();
 		std::cout << "Defense: " << defense << std::endl;
-		std::cout << "Weapon: " << main_weapon->get_name()<<"\n";
+		std::cout << "Weapon: " << main_weapon->get_name() 
+				  << " " << main_weapon->get_enchantment_str() << "\n";
 	}
 	room* get_cur_room() {
 		return location;

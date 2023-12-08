@@ -63,18 +63,97 @@ public:
 		max_health += amt;
 	}
 };
+
+enum Status_Effect_Type {
+	BURN,
+	POISON_,
+	FROZEN,
+	PARALYSIS,
+	NONE_
+};
+
+class Status_Effect {
+private: 
+	Status_Effect_Type type;
+	int turns_since_inflicted;
+
+public:
+	Status_Effect(Status_Effect_Type type) 
+	: type(type), turns_since_inflicted(0)
+	{
+
+	}
+	void increase_turns_since_inflicted()
+	{
+		turns_since_inflicted++;
+	}
+	int get_turns_since_inflicted()
+	{
+		return turns_since_inflicted;
+	}
+	void reset_status_effect() 
+	{
+		type = Status_Effect_Type::NONE_;
+		turns_since_inflicted = 0;
+	}
+	bool attempt_unfreeze() {
+		int chance = turns_since_inflicted * random(1,35);
+		if (chance > UNFREEZE_CHANCE) 
+			return true;
+		return false;
+	}
+	bool attempt_paralysis_move() {
+		int chance = random(0,100);
+		if (chance < PARALYSIS_NOT_MOVE_CHANCE) 
+			return true;
+		return false;
+	}
+	std::string get_display_str()
+	{
+		switch(type) {
+			case Status_Effect_Type::BURN:
+				return "Burn";
+			case Status_Effect_Type::POISON_:
+				return "Poisoned";
+			case Status_Effect_Type::PARALYSIS:
+				return "Paralyzed";
+			case Status_Effect_Type::FROZEN:
+				return "Frozen";
+			case Status_Effect_Type::NONE_:
+				return "None";
+			default:
+				return "Unrecognized status type";
+		}
+	}
+	Status_Effect_Type get_status_effect_type()
+	{
+		return type;
+	}
+	bool already_has_status_effect()
+	{
+		return type != Status_Effect_Type::NONE_;
+	}
+};
+
 class Alive_Entity {
 protected:
 	std::string name;
 	health_bar* health;
+	bool alive;
+
 	int level;
 	int defense;
+
+	// armor
 	helmet* Helmet;
 	chestplate* Chestplate;
 	boots* Boots;
 
+	// weapons
 	weapon* main_weapon;
-	bool alive;
+	
+	// status condition
+	Status_Effect* status_effect;
 
 public:
 	bool is_alive()
@@ -120,6 +199,13 @@ public:
 	{
 		return Boots;
 	}
+	Status_Effect* get_status_effect()
+	{
+		return status_effect;
+	}
+	void set_status(Status_Effect_Type type) {
+		status_effect = new Status_Effect(type);
+	}
 	void set_weapon(object* new_weapon)
 	{
 		if(new_weapon->identify() == "weapon")
@@ -164,16 +250,19 @@ public:
 	Alive_Entity(std::string name, weapon* main_weapon, int health, int level) //constructor for no armor
 		: name(name), alive(true), health(new health_bar(health)), main_weapon(main_weapon)
 		, defense(0), Helmet(nullptr), Chestplate(nullptr), Boots(nullptr), level(level)
+		, status_effect(new Status_Effect(Status_Effect_Type::NONE_))
 	{
 
 	}
 	Alive_Entity(std::string name, weapon* main_weapon, int health, int level, helmet* Helmet, chestplate* Chestplate, boots* Boots)
 		: name(name), alive(true), health(new health_bar(health)), main_weapon(main_weapon)
 		, defense(0), Helmet(Helmet), Chestplate(Chestplate), Boots(Boots), level(level)
+		, status_effect(new Status_Effect(Status_Effect_Type::NONE_))
 	{
 		compute_stats();//calculate the defense based on new armor
 	}
-	Alive_Entity() :name(""), alive(false), health(new health_bar(10)), main_weapon(nullptr)
+	Alive_Entity() :name(""), alive(false), health(new health_bar(10))
+		, main_weapon(nullptr), status_effect(new Status_Effect(Status_Effect_Type::NONE_))
 	{
 
 	}
@@ -181,6 +270,7 @@ public:
 	{
 		delete health;
 		delete main_weapon;
+		delete status_effect;
 		if(Helmet != nullptr)
 			delete Helmet;
 

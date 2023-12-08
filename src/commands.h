@@ -50,7 +50,8 @@ public:
 	void display_cur_room_with_top_bar(room* cur_room);
 	void display_cur_room_without_top_bar(room* cur_room);
 	void fighting(room* cur_room, bool& game_over, Player* player);
-	void fighting_input_loop(bool& game_over, Player* player, Enemy* enemy, bool& ran_away);
+	void fighting_input_loop(bool& game_over, Player* player, 
+		Enemy* enemy, bool& ran_away, room* cur_room);
 	void attack(bool& game_over, Player* player, Enemy* enemy, bool& only_enemy_attacks, bool& is_player_heavy_attack);
 	void hello();
 	void jump();

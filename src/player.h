@@ -23,19 +23,19 @@ private:
 	int exp_to_next_level;
 
 public:
-	Player(std::string name, room* location) : Alive_Entity(name, new fists(), 5, 1), location(location), cur_exp(0), exp_to_next_level(20)
+	Player(std::string name, room* location) : Alive_Entity(name, new fists(), 10, 1), location(location), cur_exp(0), exp_to_next_level(20)
 	{
 		inventory.push_back(new gold(PLAYER_START_GOLD_AMT));
-		leveling_info.push_back(new level_info(1, 5, 0));//the level, then player's health at that level, then needed xp
-		leveling_info.push_back(new level_info(2, 10, 20));
-		leveling_info.push_back(new level_info(3, 15, 60));
-		leveling_info.push_back(new level_info(4, 22, 130));
-		leveling_info.push_back(new level_info(5, 30, 210));
-		leveling_info.push_back(new level_info(6, 40, 300));
-		leveling_info.push_back(new level_info(7, 50, 420));
-		leveling_info.push_back(new level_info(8, 65, 590));
-		leveling_info.push_back(new level_info(9, 80, 750));
-		leveling_info.push_back(new level_info(10, 100, 900));
+		leveling_info.push_back(new level_info(1, 10, 0));//the level, then player's health at that level, then needed xp
+		leveling_info.push_back(new level_info(2, 15, 20));
+		leveling_info.push_back(new level_info(3, 22, 60));
+		leveling_info.push_back(new level_info(4, 30, 130));
+		leveling_info.push_back(new level_info(5, 40, 210));
+		leveling_info.push_back(new level_info(6, 55, 300));
+		leveling_info.push_back(new level_info(7, 75, 420));
+		leveling_info.push_back(new level_info(8, 100, 590));
+		leveling_info.push_back(new level_info(9, 140, 750));
+		leveling_info.push_back(new level_info(10, 200, 900));
 	}
 	virtual ~Player()
 	{

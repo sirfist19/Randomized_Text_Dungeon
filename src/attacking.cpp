@@ -130,7 +130,13 @@ void commands::fighting_input_loop(bool& game_over, Player* player,
 						ran_away = !go(3);
 					}
 					else
+					{
 						std::cout << "Direction not not recognized.\n";
+						return;
+					}
+					display_cur_room_with_top_bar(player->get_cur_room());
+					printEquals();
+					print();	
 				}
 			}
 			else
@@ -268,8 +274,15 @@ void attacks(Player* player, Enemy* enemy, bool is_heavy_attack, bool player_att
 	// Damage the opposing entity
 	if (hit_num < hit_rate)
 	{
+		
 		damage = ((double)damage * (double)damage) 
 				/ ((double)damage + (double)(DEFENSE_MULTIPLIER_ATTACK_CALCULATION * defending_entity->get_defense()));//takes defense into account
+		
+		bool is_crit = try_crit(attacking_entity);
+		if (is_crit)
+		{
+			damage *= CRIT_MULTIPLIER;
+		}
 		print_attack(player_attacks, enemy, player, damage, is_heavy_attack, false); // player_attacking, enemy, player, damage, is_heavy_attack, missed
 		inflict_status(enemy, player, player_attacks);
 
@@ -279,6 +292,17 @@ void attacks(Player* player, Enemy* enemy, bool is_heavy_attack, bool player_att
 	{
 		print_attack(player_attacks, enemy, player, 0, is_heavy_attack, true); // player_attacking, enemy, player, damage, is_heavy_attack, missed
 	}
+}
+bool try_crit(Alive_Entity* attacking_entity)
+{
+	weapon* wp = attacking_entity->get_weapon();
+	if (wp->hasEnchantment() && wp->get_enchantment().get_effect() == Weapon_Effect::CRIT)
+	{
+		int rand_int = random(0,99);
+		float chance = wp->get_enchantment().get_chance();
+
+	}
+	return false;
 }
 bool before_turn_status_effect_processing(Player* player, Enemy* enemy, Alive_Entity* attacking_entity)
 {

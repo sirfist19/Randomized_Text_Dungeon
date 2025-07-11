@@ -26,6 +26,24 @@ class Weapon_Enchantment {
 		{
 
 		}
+		bool are_same_enchantment(Weapon_Enchantment other) const 
+		{
+			return (effect == other.get_effect() 
+			&& chance == other.get_chance()
+			&& multiplier == other.get_multiplier());
+		}
+		Weapon_Effect get_effect() const
+		{
+			return effect;
+		}
+		float get_chance() const 
+		{
+			return chance;
+		}
+		float get_multiplier() const
+		{
+			return multiplier;
+		}
 		virtual std::string get_display_str() 
 		{
 			// cut off extra decimals for the multiplier
@@ -40,7 +58,7 @@ class Weapon_Enchantment {
 				case Weapon_Effect::CRIT:
 					return "Crit " + std::to_string(int(chance*100)) + "% chance";
 				case Weapon_Effect::DAMAGE_BOOST:
-					return "Damage boosted";
+					return "Damage boosted " + stream.str();
 				case Weapon_Effect::POISON:
 					return "POISON " + std::to_string(int(chance*100)) + "% chance";
 				case Weapon_Effect::ELECTRIFIED:
@@ -95,7 +113,7 @@ public:
 	: object(name, description), damage(damage), hit_rate(hit_rate), 
 		enchantment(enchantment) // chance, then multiplier
 	{
-
+		
 	}
 	weapon(const weapon& in) : object(in.name, in.amt, in.description)
 	, damage(in.damage), enchantment(in.enchantment)
@@ -152,14 +170,44 @@ public:
 	{
 		return enchantment.use();
 	}
+	Weapon_Enchantment get_enchantment() const 
+	{
+		return enchantment;
+	}
+	bool have_same_enchantment(weapon* other) 
+	{	
+		return enchantment.are_same_enchantment(other->get_enchantment());
+	}
 	void add_enchantment(Weapon_Effect effect, float chance, float multiplier) 
 	{
 		enchantment = Weapon_Enchantment(effect, chance, multiplier);
+		update_stats_from_enchantment();
+	}
+	virtual bool is_same_type_of_object(object* other)
+	{
+		bool same_names = name == other->get_name();
+		bool same_descriptions = description == other->get_description();
+		bool same_types = (this->identify() == other->identify());
+
+		// check to see if the objects are weapons
+		std::string type = this->identify();
+		if ((type == "weapon") && same_types) 
+		{
+			bool same_enchantments = this->have_same_enchantment((weapon*)other);
+			if (same_names && same_descriptions
+			&& same_enchantments
+			)
+				return true;
+			return false;
+		}
+
+		// else call the base version
+		return object::is_same_type_of_object(other);
 	}
 	void add_random_enchantment() 
 	{
 		// randomly add enchantment here!
-		int ENCHANT_CHANCE = 45;
+		
 		int rand_enchant = random(0, 99);
 
 		if (rand_enchant < ENCHANT_CHANCE) 
@@ -177,6 +225,23 @@ public:
 			//float chance = 1;
 			//std::cout<<"Mult:"<<multiplier<<"Chance"<<chance<<std::endl;
 			this->add_enchantment(effect, chance, multiplier);
+		}
+		update_stats_from_enchantment();
+	}
+	void update_stats_from_enchantment()
+	{
+		// update the damage and accuracy if needed
+		if (enchantment.get_effect() == Weapon_Effect::DAMAGE_BOOST) 
+		{
+			damage *= enchantment.get_multiplier();
+		}
+		else if (enchantment.get_effect() == Weapon_Effect::ACCURACY_BOOST)
+		{
+			hit_rate *= enchantment.get_multiplier();
+			if (hit_rate > 100)
+			{
+				hit_rate = 100;
+			}
 		}
 	}
 	virtual void use()

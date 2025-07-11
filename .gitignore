@@ -338,3 +338,30 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# Ignore object files and build artifacts
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+*.dll
+*.dylib
+
+# Ignore editor and OS files
+.DS_Store
+.vscode/
+
+# Ignore other possible build directories
+build/
+dist/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore user-specific files
+*.user
+*.swp
+*.swo

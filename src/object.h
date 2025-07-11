@@ -40,9 +40,14 @@ public:
 		if (amt < 0)
 			amt = 0;
 	}
-	bool is_same_type_of_object(object* other)
+	virtual bool is_same_type_of_object(object* other)
 	{
-		if ((name == other->get_name()) && (description == other->get_description()))
+		bool same_names = name == other->get_name();
+		bool same_descriptions = description == other->get_description();
+		bool same_types = (this->identify() == other->identify());
+
+		// for default objects
+		if (same_names && same_descriptions && same_types)
 			return true;
 		return false;
 	}

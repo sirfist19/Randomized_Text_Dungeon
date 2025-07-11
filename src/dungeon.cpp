@@ -12,6 +12,14 @@ dungeon::dungeon()
 	//for the first room
 	room* temp_room = new room(rooms.size() + 1);//sets coord to 0,0
 
+	temp_room->add_item(new dagger());
+	dagger* enchanted_dagger_damage = new dagger();
+	enchanted_dagger_damage->add_enchantment(Weapon_Effect::DAMAGE_BOOST, 0, 1.5);
+	temp_room->add_item(enchanted_dagger_damage);
+
+	dagger* enchanted_dagger_acc = new dagger();
+	enchanted_dagger_acc->add_enchantment(Weapon_Effect::ACCURACY_BOOST, 0, 1.5);
+	temp_room->add_item(enchanted_dagger_acc);
 	//temp_room->add_item(pick_random_common_weapon());
 	//temp_room->add_item(pick_random_rare_weapon());
 	//temp_room->add_item(pick_random_legendary_weapon());

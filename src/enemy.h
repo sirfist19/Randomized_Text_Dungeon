@@ -96,10 +96,10 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(3, 6);
+			health = random(5, 8);
 			break;
 		case 2: 
-			health = random(8, 12);
+			health = random(12, 18);
 			break;
 		case 3:
 			health = random(25, 35);
@@ -259,13 +259,13 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(3, 5);
+			health = random(8, 12);
 			break;
 		case 2:
-			health = random(6, 8);
+			health = random(15, 22);
 			break;
 		case 3:
-			health = random(8, 12);
+			health = random(30, 40);
 			break;
 		}
 		return health;
@@ -393,10 +393,10 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(6, 10);
+			health = random(15, 20);
 			break;
 		case 2:
-			health = random(11, 16);
+			health = random(30, 45);
 			break;
 		}
 		return health;
@@ -502,10 +502,10 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(10, 14);
+			health = random(18, 25);
 			break;
 		case 2:
-			health = random(15, 20);
+			health = random(40, 50);
 			break;
 		}
 		return health;
@@ -745,7 +745,7 @@ public:
 		switch (level)
 		{
 		case 1:
-			health = random(40, 60);
+			health = random(50, 70);
 			break;
 		}
 		return health;

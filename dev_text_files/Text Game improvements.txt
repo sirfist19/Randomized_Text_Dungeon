@@ -1,3 +1,13 @@
+FIX endless frozen
+Add crit chance
+	-> make sure that the crit and status effects fucntion on a chance before_turn_status_effect_processing
+FIX paralysis possibly not working
+
+
+
+
+
+
 Cole's suggestions
 
 -add more rooms

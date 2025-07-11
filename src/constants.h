@@ -24,6 +24,7 @@ const double DEFENSE_MULTIPLIER_ATTACK_CALCULATION = 1.8;
 const int GOLD_SPAWN_IN_MOSS = 50;
 const int PEDISTAL_HAS_ITEM = 50;
 
+const int CRIT_MULTIPLIER = 2;
 // status effects
 const int UNFREEZE_CHANCE = 30;
 const int PARALYSIS_NOT_MOVE_CHANCE = 50;
@@ -132,6 +133,8 @@ const int DRAGON_SCALE_CHESTPLATE_DEFENSE = 15;
 const int DRAGON_SCALE_BOOTS_DEFENSE = 13;
 
 // enchantment chances
+const int ENCHANT_CHANCE = 60;
+
 // weapons
 
 

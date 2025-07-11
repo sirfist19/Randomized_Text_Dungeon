@@ -203,7 +203,9 @@ public:
 
 			//armor
 			int spawn_armor = random(1, 100);
-			if (spawn_armor < CHEST_ARMOR_SPAWN_RATE)
+			if ((spawn_armor < CHEST_ARMOR_SPAWN_RATE) 
+			|| (spawn_armor > CHEST_ARMOR_SPAWN_RATE && spawn_weapon > CHEST_WEAPON_SPAWN_RATE) // if neither weapons and armor spawns, spawn armor so the loot doesn't suck
+			)
 			{
 				contents.push_back(pick_random_common_armor());
 			}

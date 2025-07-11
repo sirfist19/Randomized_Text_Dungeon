@@ -6,6 +6,7 @@ void attacks(Player* player, Enemy* enemy, bool is_heavy_attack, bool player_att
 void inflict_status(Enemy* enemy, Player* player, bool player_turn);
 bool before_turn_status_effect_processing(Player* player, Enemy* enemy, Alive_Entity* attacking_entity);
 void after_turn_status_effect_processing(Player* player, Enemy* enemy);
+bool try_crit(Alive_Entity* attacking_entity);
 
 const int ATTACK_WAIT_SECONDS = 5;
 

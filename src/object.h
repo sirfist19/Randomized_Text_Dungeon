@@ -204,7 +204,7 @@ class compass : public object
 protected:
 
 public:
-	compass() : object("Compass", 1, "A small metalic compass. It points toward the boss room.")
+	compass() : object("Compass", 1, "A small metallic compass. It points toward the boss room and the store.")
 	{
 
 	}

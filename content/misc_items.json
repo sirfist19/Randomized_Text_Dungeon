@@ -1,0 +1,21 @@
+{
+    "item.compass": {
+        "name": "Compass",
+        "description": "A small metallic compass. It points toward the boss room and the store."
+    },
+    "item.teleporter": {
+        "name": "Teleporter",
+        "description": "A strange high-tech device. If you use it you can instantly be taken to key dungeon points you've been to before!"
+    },
+    "item.dragon_key": {
+        "name": "Dragon Key",
+        "description": "A bright golden key with an engraving of a fire breathing dragon on its handle. This is the key to open the Golden Dragon door in the entrance room. It's your way out!",
+        "messages": {
+            "use_wrong_location": "The dragon key doesn't do anything here."
+        }
+    },
+    "item.gold": {
+        "name": "Gold",
+        "description": "A pile of shining golden coins. Each piece has the front face has a three-headed dragon and the back has a picture of Emperor Septonius III of the Second Dynasty of Helena."
+    }
+}

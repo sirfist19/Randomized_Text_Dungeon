@@ -188,7 +188,7 @@ public:
 class silver_helmet : public helmet
 {
 public:
-	silver_helmet() : helmet("Silver Helmet", SILVER_HELMET_DEFENSE, "A silver helmet that has shines in the light.") {}
+	silver_helmet() : helmet("Silver Helmet", SILVER_HELMET_DEFENSE, "A silver helmet that shines in the light.") {}
 	silver_helmet(const silver_helmet& in) : helmet(in.name, in.defense, in.description)
 	{
 		//copy constructor
@@ -205,7 +205,7 @@ public:
 class silver_chestplate : public chestplate
 {
 public:
-	silver_chestplate() : chestplate("Silver Chestplate", SILVER_CHESTPLATE_DEFENSE, "A silver chestplate that has shines in the light.") {}
+	silver_chestplate() : chestplate("Silver Chestplate", SILVER_CHESTPLATE_DEFENSE, "A silver chestplate that shines in the light.") {}
 	silver_chestplate(const silver_chestplate& in) : chestplate(in.name, in.defense, in.description)
 	{
 		//copy constructor
@@ -222,7 +222,7 @@ public:
 class silver_boots : public boots
 {
 public:
-	silver_boots() : boots("Silver Boots", SILVER_BOOTS_DEFENSE, "A pair of silver boots that has shines in the light.") {}
+	silver_boots() : boots("Silver Boots", SILVER_BOOTS_DEFENSE, "A pair of silver boots that shines in the light.") {}
 	silver_boots(const silver_boots& in) : boots(in.name, in.defense, in.description)
 	{
 		//copy constructor
@@ -239,7 +239,7 @@ public:
 class dragon_scale_helmet : public helmet
 {
 public:
-	dragon_scale_helmet() : helmet("Dragon Scale Helmet", DRAGON_SCALE_HELMET_DEFENSE, "A dragon_scale helmet that has shines in the light.") {}
+	dragon_scale_helmet() : helmet("Dragon Scale Helmet", DRAGON_SCALE_HELMET_DEFENSE, "A dragon scale helmet that shines in the light.") {}
 	dragon_scale_helmet(const dragon_scale_helmet& in) : helmet(in.name, in.defense, in.description)
 	{
 		//copy constructor
@@ -256,7 +256,7 @@ public:
 class dragon_scale_chestplate : public chestplate
 {
 public:
-	dragon_scale_chestplate() : chestplate("Dragon Scale Chestplate", DRAGON_SCALE_CHESTPLATE_DEFENSE, "A dragon_scale chestplate that has shines in the light.") {}
+	dragon_scale_chestplate() : chestplate("Dragon Scale Chestplate", DRAGON_SCALE_CHESTPLATE_DEFENSE, "A dragon scale chestplate that shines in the light.") {}
 	dragon_scale_chestplate(const dragon_scale_chestplate& in) : chestplate(in.name, in.defense, in.description)
 	{
 		//copy constructor
@@ -273,7 +273,7 @@ public:
 class dragon_scale_boots : public boots
 {
 public:
-	dragon_scale_boots() : boots("Dragon Scale Boots", DRAGON_SCALE_BOOTS_DEFENSE, "A pair of Dragon Scale boots that has shines in the light.") {}
+	dragon_scale_boots() : boots("Dragon Scale Boots", DRAGON_SCALE_BOOTS_DEFENSE, "A pair of Dragon Scale boots that shines in the light.") {}
 	dragon_scale_boots(const dragon_scale_boots& in) : boots(in.name, in.defense, in.description)
 	{
 		//copy constructor

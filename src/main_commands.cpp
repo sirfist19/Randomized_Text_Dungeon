@@ -597,6 +597,7 @@ void commands::help()
 {
 	if (cur_noun == noun_type::noun_none)
 	{
+		
 		print("BASIC COMMANDS: ");
 		print("1. go - Allows the player to move through the dungeon. Need to type a direction (Ex: north or east) as the object.");
 		print("2. quit - Quits the game to the title screen. Restarts all progress.");

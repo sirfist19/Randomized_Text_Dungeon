@@ -1,0 +1,104 @@
+{
+    "weapon.fists": {
+        "name": "Fists",
+        "base_damage": 1,
+        "base_hit_rate": 95,
+        "description": "Just you, your fists and the world."
+    },
+    "weapon.claws": {
+        "name": "Claws",
+        "base_damage": 3,
+        "base_hit_rate": 80,
+        "description": "Razor sharp claws that can tear the skin off of an opponent."
+    },
+    "weapon.broken_slime_shooter": {
+        "name": "Broken Slime Shooter",
+        "base_damage": 3,
+        "base_hit_rate": 50,
+        "description": "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process."
+    },
+    "weapon.slime_shooter": {
+        "name": "Slime Shooter",
+        "base_damage": 4,
+        "base_hit_rate": 70,
+        "description": "Slimes attack their enemies by shooting out a small ball of slime at their targets. They may hurt themselves in the process."
+    },
+    "weapon.dagger": {
+        "name": "Dagger",
+        "base_damage": 5,
+        "base_hit_rate": 90,
+        "description": "A small iron dagger. Not very effective but better than your fists."
+    },
+    "weapon.bow": {
+        "name": "Bow",
+        "base_damage": 8,
+        "base_hit_rate": 60,
+        "description": "Long ranged weapon. Hard to aim however. Without much skill a bowman will miss many shots."
+    },
+    "weapon.shortsword": {
+        "name": "Shortsword",
+        "base_damage": 6,
+        "base_hit_rate": 95,
+        "description": "A small sword."
+    },
+    "weapon.sword": {
+        "name": "Sword",
+        "base_damage": 10,
+        "base_hit_rate": 100,
+        "description": "A typical iron sword with a bronze hilt."
+    },
+    "weapon.long_bow": {
+        "name": "Long Bow",
+        "base_damage": 12,
+        "base_hit_rate": 80,
+        "description": "Long ranged weapon. Hard to aim however. Without much skill a bowman will miss many shots."
+    },
+    "weapon.axe": {
+        "name": "Axe",
+        "base_damage": 15,
+        "base_hit_rate": 85,
+        "description": "A two-handed axe that needs lots of force to yield."
+    },
+    "weapon.nunchucks": {
+        "name": "Nunchucks",
+        "base_damage": 18,
+        "base_hit_rate": 95,
+        "description": "Swing em around and hit your enemies hard!"
+    },
+    "weapon.katana": {
+        "name": "Katana",
+        "base_damage": 20,
+        "base_hit_rate": 90,
+        "description": "A blade for a seasoned Samurai, sharp as glass. Cuts deep into your enemies with only the slightest movements."
+    },
+    "weapon.long_axe": {
+        "name": "Long Axe",
+        "base_damage": 22,
+        "base_hit_rate": 75,
+        "description": "A two-handed axe that needs lots of force to yield."
+    },
+    "weapon.daedric_sword": {
+        "name": "Daedric Sword",
+        "base_damage": 30,
+        "base_hit_rate": 90,
+        "description": "This legendary blade is made from volcanic magma that has been infused with magical dragon bone. Whoever wields this blade can kill their opponents very quickly."
+    },
+    "weapon.mjolnir": {
+        "name": "Mjolnir",
+        "base_damage": 35,
+        "base_hit_rate": 90,
+        "description": "The legendary hammer of the Norse god of thunder Thor."
+    },
+    "weapon.excalibur": {
+        "name": "Excalibur",
+        "base_damage": 40,
+        "base_hit_rate": 100,
+        "description": "The legendary sword in the stone."
+    },
+    "weapon.dragon_fire": {
+        "name": "Dragon Fire",
+        "base_damage": 32,
+        "base_hit_rate": 70,
+        "description": "Fire that, using the magical power of dragons, can turn anything to dust."
+    }
+}

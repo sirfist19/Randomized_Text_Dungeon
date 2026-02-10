@@ -353,7 +353,7 @@ std::string welcome_screen()
 	print("Welcome to Randomized Text Dungeon!");
 	print("\t- An adventure game by Aidan Cini");
 	print();
-	print("This is a randomized text dungeon. The rooms, enemies, and items are randomized so every time you play the dungeon will be different. Playing in fullscreen mode is recommended. It's more immersive and looks nicer.\n");
+	print("This is a randomized text dungeon. The rooms, enemies, and items are randomized so every time you play, the dungeon will be different. Playing in fullscreen mode is recommended. It's more immersive and looks nicer.\n");
 	print("You are an explorer that has just found the dungeon that you have been searching for for 14 years. A massive entrance lined with columns stands leads into the depths below. Enter if you dare.");
 	printEquals();
 	print();

@@ -1,0 +1,72 @@
+{
+    "messages": {
+        "open_success": "With a creaking sound, the chest opens.",
+        "already_open": "The chest is already open.",
+        "locked_need_key": "The chest is locked. You'll need a key to open it."
+    },
+    "spawn_by_tier": {
+        "start": {
+            "wood_chest": 30
+        },
+        "near": {
+            "wood_chest": 20
+        },
+        "mid": {
+            "wood_chest": 10,
+            "gold_chest": 8
+        },
+        "far": {
+            "gold_chest": 20
+        },
+        "very_far": {
+            "dragon_chest": 20,
+            "gold_chest": 2
+        }
+    },
+    "item_category_spawn": {
+        "weapon_threshold": 70,
+        "armor_threshold": 90,
+        "notes": "Roll 0-99. If roll < weapon_threshold -> weapon. Else if roll < armor_threshold -> armor. Else -> other/consumable/gold-only depending on chest logic."
+    },
+    "chest_types": {
+        "wood_chest": {
+            "name": "Wooden Chest",
+            "description": "A wooden chest with a steel lining.",
+            "healing_spawn_thresholds": {
+                "lesser_healing": 60
+            },
+            "gold": {
+                "spawn_threshold": 75,
+                "min": 3,
+                "max": 7
+            }
+        },
+        "gold_chest": {
+            "name": "Gold Chest",
+            "description": "A golden chest that sparkles with light. It has a silver lining.",
+            "healing_spawn_thresholds": {
+                "lesser_healing": 20,
+                "common_healing": 50
+            },
+            "gold": {
+                "spawn_threshold": 85,
+                "min": 12,
+                "max": 25
+            }
+        },
+        "dragon_chest": {
+            "name": "Dragon Chest",
+            "description": "A dark red chest with a black lining made out of dragon bone, blood, and fire.",
+            "healing_spawn_thresholds": {
+                "lesser_healing": 5,
+                "common_healing": 20,
+                "greater_healing": 60
+            },
+            "gold": {
+                "spawn_threshold": 99,
+                "min": 40,
+                "max": 75
+            }
+        }
+    }
+}

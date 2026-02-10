@@ -1,0 +1,74 @@
+{
+    "armor.chainmail_helmet": {
+        "name": "Chainmail Helmet",
+        "defense": 1,
+        "description": "A helmet made of chainmail. It's a little flimsy.",
+        "slot": "helmet"
+    },
+    "armor.chainmail_chestplate": {
+        "name": "Chainmail Chestplate",
+        "defense": 2,
+        "description": "A chestplate made of chainmail. It's a little flimsy.",
+        "slot": "chestplate"
+    },
+    "armor.chainmail_boots": {
+        "name": "Chainmail Boots",
+        "defense": 1,
+        "description": "A pair of boots made of chainmail. It's a little flimsy.",
+        "slot": "boots"
+    },
+    "armor.bronze_helmet": {
+        "name": "Bronze Helmet",
+        "defense": 3,
+        "description": "A bronze helmet that has a dull brown and green color.",
+        "slot": "helmet"
+    },
+    "armor.bronze_chestplate": {
+        "name": "Bronze Chestplate",
+        "defense": 5,
+        "description": "A bronze chestplate that has a dull brown and green color.",
+        "slot": "chestplate"
+    },
+    "armor.bronze_boots": {
+        "name": "Bronze Boots",
+        "defense": 4,
+        "description": "A pair of bronze boots that has a dull brown and green color.",
+        "slot": "boots"
+    },
+    "armor.silver_helmet": {
+        "name": "Silver Helmet",
+        "defense": 5,
+        "description": "A silver helmet that shines in the light.",
+        "slot": "helmet"
+    },
+    "armor.silver_chestplate": {
+        "name": "Silver Chestplate",
+        "defense": 7,
+        "description": "A silver chestplate that shines in the light.",
+        "slot": "chestplate"
+    },
+    "armor.silver_boots": {
+        "name": "Silver Boots",
+        "defense": 6,
+        "description": "A pair of silver boots that shines in the light.",
+        "slot": "boots"
+    },
+    "armor.dragon_scale_helmet": {
+        "name": "Dragon Scale Helmet",
+        "defense": 10,
+        "description": "A dragon scale helmet that shines in the light.",
+        "slot": "helmet"
+    },
+    "armor.dragon_scale_chestplate": {
+        "name": "Dragon Scale Chestplate",
+        "defense": 15,
+        "description": "A dragon scale chestplate that shines in the light.",
+        "slot": "chestplate"
+    },
+    "armor.dragon_scale_boots": {
+        "name": "Dragon Scale Boots",
+        "defense": 13,
+        "description": "A pair of Dragon Scale boots that shines in the light.",
+        "slot": "boots"
+    }
+}

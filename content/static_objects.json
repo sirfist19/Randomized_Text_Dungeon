@@ -1,0 +1,31 @@
+{
+    "static.dragon_doors": {
+        "name": "Dragon Doors",
+        "description": "Two giant golden doors stand in front of you. There is a jade carving of a dragon breathing fire that was created with the finest craftsmanship. There is a slot for a special kind of dragon key. Perhaps if you find the dragon key, you can unlock these doors."
+    },
+    "static.waterfall": {
+        "name": "Waterfall",
+        "description": "The water crashes down at immense speeds. Going through could really hurt without a good helmet."
+    },
+    "static.pit": {
+        "name": "Pit",
+        "description": "It's a pitch black, giant gaping pit. If it's not bottomless, then it goes down a long way.",
+        "messages": {
+            "jump_death": "You jump into the pit. After about 30 seconds of falling you realize it's a bottomless pit and you'll be falling for quite some time. Eventually you hit the bottom long after you reached terminal velocity. Your death happens instantaneously."
+        }
+    },
+    "static.pedestal": {
+        "name": "Pedestal",
+        "description": "The pedestal is made out of a black volcanic stone. There is an inscription on it but you cannot read it.",
+        "messages": {
+            "item_on_pedestal": "There is {item} sitting on the pedestal."
+        }
+    },
+    "static.moss": {
+        "name": "Moss",
+        "description": "The moss covers the wall in patches in some spots but is very dense in others. You touch the moss and get your hands all wet!",
+        "messages": {
+            "hidden_gold_found": "A few gold coins are hidden in the denser portion of the moss."
+        }
+    }
+}

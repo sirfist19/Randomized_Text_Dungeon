@@ -204,7 +204,7 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 	{
 		if (ending_index == cur_player_input.size())
 		{
-			print("Command not recognized! Please try again.");
+			print("Command not recognized! Please try again. If you are confused, type 'help' for more information.");
 			return true; // loops and doesn't reprint screen
 		}
 		//create a new vector of only the words to search

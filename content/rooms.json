@@ -1,146 +1,170 @@
 {
     "room.entrance": {
         "name": "Entrance Room",
-        "description": "This room is where you entered the dungeon from and is the only way out. The golden doors with the jade dragon carving remain shut. A strip of light comes through from outside.",
+        "description": "This room is where you entered the dungeon from and is the only way out. The dragon doors made of shining gold with a jade dragon carving remain shut. A strip of light comes through from outside.",
         "tier": "start",
-        "biomes": []
+        "biome": "any",
+        "objects": ["static.dragon_doors"]
     },
     "room.mossy": {
         "name": "Mossy Room",
         "description": "The walls are lined with a thick coat of moss that feels wet to the touch. The air is cold and damp.",
         "tier": "any",
-        "biomes": []
+        "biome": "any",
+        "objects": ["static.moss"]
     },
     "room.chamber": {
         "name": "Chamber",
         "description": "You find nothing of note in this room. Stone cobble lines the floor and walls.",
         "tier": "any",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.hallway": {
         "name": "Hallway",
         "description": "A short narrow hallway greets you. The only light filters in from the rooms behind and in front of you.",
         "tier": "any",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.small": {
         "name": "Small Room",
         "description": "You enter a tiny, cramped room that isn't even big enough to swing a sword. There's a pedestal in the middle of the room.",
         "tier": "any",
-        "biomes": []
+        "biome": "any",
+        "objects": ["static.pedestal"]
     },
     "room.pit": {
         "name": "Pit Room",
         "description": "A giant circular pit lies at the room's center.",
         "tier": "near",
-        "biomes": []
+        "biome": "any",
+        "objects": ["static.pit"]
     },
     "room.boulder": {
         "name": "Boulder Room",
         "description": "A large spherical boulder lies at the room's center.",
         "tier": "near",
-        "biomes": []
+        "biome": "any",
+        "objects": ["static.boulder"]
     },
     "room.dining": {
         "name": "Dining Room",
         "description": "A long wooden dining table surrounded by wooden chairs is in front of you. The table is set with ceramic plates, knives, forks, spoons, and metal platters as if a large feast was just about to start. But it seems no one is around.",
         "tier": "near",
-        "biomes": []
+        "biome": "any",
+        "objects": ["static.dining_table"]
     },
     "room.library": {
         "name": "Library",
         "description": "In front of you lie shelves upon shelves of books going on as far as you can see. The books go so high up that you'd need a tall ladder to reach the top books. Perhaps there is great knowledge to be gained here.",
         "tier": "mid",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.jail": {
         "name": "Jail",
         "description": "You walk into a room lined with small steel cellrooms. Most of the doors are locked but a few are left wide open. This room feels like people lived many years and died here. A few of the cells have scattered bones all over the floor.",
         "tier": "mid",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.great_hall": {
         "name": "Great Hall",
         "description": "You enter a chamber filled with massive columns as far as you can see. The columns are light gray, made out of marble, and are so thick that it makes you wonder what exactly the pillars need to hold up.",
         "tier": "mid",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.statue_hall": {
         "name": "Statue Hall",
         "description": "A massive circular hall stands before you. Upon a raised platform at the center of the room lies a statue of a great King sitting on his throne while a Knight, on his knees, pledges fealty to him. The King is illuminated by a bright light coming from the ceiling.",
         "tier": "mid",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.armory": {
         "name": "Armory",
         "description": "Stands for armor lie all around you.",
         "tier": "mid",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.sparring": {
         "name": "Sparring Room",
         "description": "The room is filled with racks to hold weapons of all types—swords, maces, training sticks, and axes. But there are no weapons here now. Lots of training must have gone on here ages ago.",
         "tier": "mid",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.fountain": {
         "name": "Fountain",
         "description": "A circular fountain lies at the center of the room. Somehow water is still being pumped from the bottom of the fountain to its top. The water gurgles as it trickles down the fountain's four levels.",
         "tier": "mid",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.lake": {
         "name": "Lake Room",
         "description": "A lake lies ahead of you. The water is completely still, but almost freezing. Swimming won't be an option. Who knows how deep the lake goes...",
         "tier": "far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.river": {
         "name": "River",
         "description": "A river gushes through at high speed. You will need to step into the river in order to cross.",
         "tier": "far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.waterfall": {
         "name": "Waterfall",
         "description": "Water from a river above falls off a sheer cliff, tumbling down to the floor. The waterfall splits into three portions. Mist comes off of the waterfall, turning into fog.",
         "tier": "far",
-        "biomes": []
+        "biome": "any",
+        "objects": ["static.waterfall"]
     },
     "room.dragon_skeleton": {
         "name": "Dragon Skeleton Room",
         "description": "The skeleton of a long-dead dragon lies in the center of the room. The bones are black and as hard as steel. The dragon scales have long since been removed to make dragon scale armor.",
         "tier": "far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.overgrown": {
         "name": "Overgrown Room",
         "description": "Even walking around is a challenge. At every step you have to cut the undergrowth away. Ferns, lichen, and moss have taken this room over. The heat and humidity are almost unbearable.",
         "tier": "far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.lava": {
         "name": "Lava Room",
         "description": "A small bridge leads over a river of glowing orange, steaming magma. You hope the bridge is sturdy, because falling would surely result in death.",
         "tier": "very_far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.cavern": {
         "name": "Cavern",
         "description": "It's pitch black, but you can see that right in front of you is the start of a massive cave. Stalactites and stalagmites line the floor and ceiling.",
         "tier": "very_far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.magma_bridge": {
         "name": "Magma Bridge",
         "description": "A river of lava flows under a narrow black igneous rock bridge lined with spikes as handrails. You must cross to get to the other side.",
         "tier": "very_far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     },
     "room.ice_cave": {
         "name": "Ice Cave",
         "description": "You enter a cave that is made entirely of thick light-bluish ice. You shiver as it's freezing in here.",
         "tier": "very_far",
-        "biomes": []
+        "biome": "any",
+        "objects": []
     }
 }

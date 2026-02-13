@@ -6,7 +6,6 @@
 
 dungeon::dungeon()
 {
-	room_descriptions* stock_room_descriptions = new room_descriptions();
 	srand((unsigned int)time(NULL));//sets random numbers
 
 	//for the first room
@@ -29,7 +28,7 @@ dungeon::dungeon()
 
 	rooms.push_back(temp_room);
 	occupied_coords[*(temp_room->get_coord())] = temp_room->get_id();
-	create_new_exits(temp_room, stock_room_descriptions);
+	create_new_exits(temp_room);
 
 	//create the dungeon as a skeleton model
 	while ((rooms.size() < MAX_DUNGEON_SIZE) && (!rooms_to_give_exits.empty()))
@@ -37,7 +36,7 @@ dungeon::dungeon()
 		room* cur_room = rooms_to_give_exits.top();
 		rooms_to_give_exits.pop();
 
-		create_new_exits(cur_room, stock_room_descriptions);
+		create_new_exits(cur_room);
 		std::cout << "Generated dungeon of size " << rooms.size() << "\n";
 	}
 
@@ -57,14 +56,14 @@ dungeon::dungeon()
 
 		cur_room->set_depth_tier();
 		cur_room->spawn_enemies();
-		cur_room->assign_room_type(cur_room->get_tier(), stock_room_descriptions);
+		cur_room->assign_room_type(cur_room->get_tier());
 		cur_room->place_chests();
 	}
 	place_dragon_key();
 	place_items();
 	place_store();  
 }
-void dungeon::create_new_exits(room* cur_room, room_descriptions* descriptions)
+void dungeon::create_new_exits(room* cur_room)
 {
 	if (cur_room->get_id() == 1) //entrance room
 	{

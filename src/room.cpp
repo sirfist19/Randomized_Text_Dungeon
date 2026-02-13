@@ -1,4 +1,7 @@
 #include "room.h"
+#include "db/rooms_db.h"
+#include "static_object.h"
+#include "static_object_factory.h"
 
 //stack objects on the floor or in the player's inventory
 void stack_objects(std::vector<object*>& in)
@@ -103,8 +106,10 @@ bool room::can_be_a_hallway()
 	}
 	return false;
 }
+/*
 void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_holder)
 {
+
 	std::vector<room_description*> start_descriptions =
 		descriptions_holder->get_start_room_descriptions();
 	std::vector<room_description*> near_descriptions =
@@ -187,6 +192,86 @@ void room::assign_room_type(depth_tier tier, room_descriptions* descriptions_hol
 		break;
 	}
 }
+*/
+
+
+// helper to map enum -> string used in JSON
+static std::string tier_to_string(depth_tier t) {
+    switch (t) {
+        case depth_tier::start:    return "start";
+        case depth_tier::near:     return "near";
+        case depth_tier::mid:      return "mid";
+        case depth_tier::far:      return "far";
+        case depth_tier::very_far: return "very_far";
+        default:                   return "any";
+    }
+}
+
+// helper: pick random element from vector (assumes non-empty)
+static const std::string& pick_random_id(const std::vector<std::string>& ids) {
+    int max_range = (int)ids.size() - 1;
+    int idx = random(0, max_range);
+    return ids[idx];
+}
+
+void room::assign_room_type(depth_tier tier)
+{
+	
+    // 1) Entrance room special-case
+    if (tier == depth_tier::start && depth == 0) {
+        const RoomDef& def = RoomsDB::get("room.entrance"); // choose whatever id you used
+        name = def.name;
+        description = def.description;
+        return;
+    }
+
+    // 2) Build pool of candidate room IDs
+    // You can decide whether "any" rooms should be eligible in near/mid/far pools.
+    // Right now your JSON probably has explicit tiers, so just use the tier pool.
+    const std::string tierStr = tier_to_string(tier);
+
+    std::vector<std::string> candidates = RoomsDB::ids_for_tier(tierStr);
+
+    // Optional: also allow "any" tier rooms everywhere except start
+    {
+        std::vector<std::string> anyIds = RoomsDB::ids_for_tier("any");
+        candidates.insert(candidates.end(), anyIds.begin(), anyIds.end());
+    }
+
+    if (candidates.empty()) {
+        // Fail fast with a helpful message
+        throw std::runtime_error("No room candidates found for tier: " + tierStr);
+    }
+
+    // 3) Pick a valid room, preserving your hallway constraint
+    bool valid = false;
+    const RoomDef* chosen = nullptr;
+
+    while (!valid) {
+        const std::string& id = pick_random_id(candidates);
+        const RoomDef& def = RoomsDB::get(id);
+
+        if (def.name == "Hallway") {
+            valid = can_be_a_hallway();
+        } else {
+            valid = true;
+        }
+
+        if (valid) chosen = &def;
+    }
+
+    // 4) Assign
+    name = chosen->name;
+	description = chosen->description;
+
+	static_items.clear();
+	for (const std::string& obj_id : chosen->object_ids)
+	{
+		static_items.push_back(create_static_object(obj_id));
+	}
+
+}
+
 void room::place_chests()
 {
 	int spawn_chest = random(0, 99);

@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wno-c++11-extensions --std=c++17 -Wall
+CXXFLAGS = -Wno-c++11-extensions --std=c++17 -Wall -Ithird_party
 
 # Source files
 SRC = armor.cpp \
@@ -14,7 +14,10 @@ SRC = armor.cpp \
 	main.cpp \
 	object.cpp \
 	room.cpp \
-	weapon.cpp
+	weapon.cpp \
+	static_object_factory.cpp \
+	db/rooms_db.cpp \
+	db/static_objects_db.cpp
 
 # Object files
 OBJ = $(SRC:.cpp=.o)

@@ -1,6 +1,8 @@
 #ifndef static_object_h
 #define static_object_h
 #include "chest.h"
+#include "db/static_objects_db.h"
+
 
 struct hidden_item
 {
@@ -19,29 +21,34 @@ struct hidden_item
 };
 class static_object : public object
 {
-	//an object like a piece of furniture or a waterfall
-	//cannot be taken by the player
-	//may have an object hidden inside under some condition
-
-	//name, description, amt already included
 protected:
-	std::vector<hidden_item*> encompassed_objects;//the bool is whether the item is hidden
+    std::string static_id; // e.g. "static.pit"
+    std::vector<hidden_item*> encompassed_objects;
+
 public:
-	static_object(std::string name, std::string description, int amt)
-		: object(name, amt, description)
-	{
+    // NEW: Construct from an id, and load name/description from StaticObjectsDB
+    static_object(const std::string& id)
+        : object(StaticObjectsDB::get(id).name, StaticObjectsDB::get(id).description),
+          static_id(id)
+    {
+    }
 
-	}
-	static_object(std::string name, std::string description)//make only 1 static_object
-		: object(name, description)
-	{
+    // Keep your existing constructors for now if other code uses them
+    static_object(std::string name, std::string description, int amt)
+        : object(name, amt, description)
+    {
+    }
 
-	}
-	static_object(std::string name, std::string description, std::vector<hidden_item*> encompassed)//make only 1 static_object
-		: object(name, description), encompassed_objects(encompassed)
-	{
+    static_object(std::string name, std::string description)
+        : object(name, description)
+    {
+    }
 
-	}
+    static_object(std::string name, std::string description, std::vector<hidden_item*> encompassed)
+        : object(name, description), encompassed_objects(encompassed)
+    {
+    }
+
 	static_object(const static_object& in) //base copy constructor
 		: object(in.name, in.amt, in.description)
 	{
@@ -119,147 +126,107 @@ public:
 	virtual static_object* clone() = 0;
 };
 
-class Dragon_doors : public static_object
-{
-protected:
+class Dragon_doors : public static_object {
 public:
-	Dragon_doors()
-		: static_object("Dragon Doors",
-			"Two giant golden doors stand in front of you. There is a jade carving of a dragon breathing fire that was created with the finest craftmanship. There is a slot for a special-kind of dragon key. Perhaps if you find the dragon key, you can unlock these doors."
-		)
-	{
-
-	}
-	virtual std::string get_display_string() { return get_name(); };
-	Dragon_doors(const Dragon_doors& in) : static_object(in)
-	{
-		//copy constructor
-	}
-	virtual static_object* clone()
-	{
-		return new Dragon_doors(*this);
-	}
+    Dragon_doors() : static_object("static.dragon_doors") {}
+    virtual std::string get_display_string() override { return get_name(); }
+    Dragon_doors(const Dragon_doors& in) : static_object(in) {}
+    virtual static_object* clone() override { return new Dragon_doors(*this); }
 };
 
-class Waterfall : public static_object
-{
-protected:
+class Waterfall : public static_object {
 public:
-	Waterfall() 
-		: static_object("Waterfall", 
-			"The water crashes down at immense speeds. Going through could really hurt without a good helmet."
-			)
-	{
-
-	}
-	virtual std::string get_display_string() { return get_name(); };
-	Waterfall(const Waterfall& in) : static_object(in)
-	{
-		//copy constructor
-	}
-	virtual static_object* clone()
-	{
-		return new Waterfall(*this);
-	}
+    Waterfall() : static_object("static.waterfall") {}
+    virtual std::string get_display_string() override { return get_name(); }
+    Waterfall(const Waterfall& in) : static_object(in) {}
+    virtual static_object* clone() override { return new Waterfall(*this); }
 };
 
-class Pit : public static_object
-{
-protected:
+class Pit : public static_object {
 public:
-	Pit()
-		: static_object("Pit",
-			"It's a pitch black giant gaping pit. If it's not bottomless, then it goes down a long way."
-		)
-	{
+    Pit() : static_object("static.pit") {}
+    virtual std::string get_display_string() override { return get_name(); }
+    Pit(const Pit& in) : static_object(in) {}
+    virtual static_object* clone() override { return new Pit(*this); }
+};
+class Pedistal : public static_object {
+public:
+    Pedistal() : static_object("static.pedestal")
+    {
+        int num = random(0, 99);
+        if (num < PEDISTAL_HAS_ITEM) {
+            encompassed_objects.push_back(new hidden_item(new lesser_healing_potion(), true));
+        }
+    }
 
-	}
-	virtual std::string get_display_string() { return get_name(); };
-	Pit(const Pit& in) : static_object(in)
-	{
-		//copy constructor
-	}
-	virtual static_object* clone()
-	{
-		return new Pit(*this);
-	}
+    virtual std::string get_description() override
+    {
+        std::string new_description = object::get_description();
+
+        if (!encompassed_objects.empty()) {
+            // Use message template from JSON if present
+            std::string tmpl = StaticObjectsDB::message_or_empty("static.pedestal", "item_on_pedestal");
+            if (tmpl.empty()) {
+                new_description += (" A " + encompassed_objects[0]->item->get_name() + " sits on the top of the pedistal.");
+            } else {
+                // replace {item}
+                std::string s = tmpl;
+                // simple replace (inline)
+                size_t pos = s.find("{item}");
+                if (pos != std::string::npos) s.replace(pos, 6, encompassed_objects[0]->item->get_name());
+                new_description += (" " + s);
+            }
+        }
+        return new_description;
+    }
+
+    Pedistal(const Pedistal& in) : static_object(in) {}
+    virtual static_object* clone() override { return new Pedistal(*this); }
+    virtual std::string get_display_string() override { return get_name(); }
 };
 
-class Pedistal : public static_object
-{
-protected:
+
+class Moss : public static_object {
 public:
-	Pedistal()
-		: static_object("Pedistal",
-			"The pedistal is made out of a black volcanic stone. There is an inscription on it but you cannot read it."
-		)
-	{
-		int num = random(0, 99);
-		if (num < PEDISTAL_HAS_ITEM)
-		{
-			encompassed_objects.push_back(new hidden_item(new lesser_healing_potion(), true));
-		}
-	}
-	virtual std::string get_description() override
-	{
-		std::string new_description = object::get_description();
-		if (!encompassed_objects.empty())
-			new_description += (" A " + encompassed_objects[0]->item->get_name() + " sits on the top of the pedistal.");
-		return new_description;
-	}
+    Moss() : static_object("static.moss")
+    {
+        int rand_num = random(0, 99);
+        if (rand_num < GOLD_SPAWN_IN_MOSS) {
+            encompassed_objects.push_back(new hidden_item(new gold(random(2,10)), true));
+        }
+    }
 
-	Pedistal(const Pedistal& in) : static_object(in)
-	{
-		//copy constructor
-	}
-	virtual static_object* clone() override
-	{
-		return new Pedistal(*this);
-	}
-	
-	virtual std::string get_display_string() override { return get_name(); };
-	virtual std::string get_revealed_items_description() override
-	{
-		std::vector<object*> main = static_object::get_revealed_items();
-		std::string before = "There is ";
-		std::string after = " sitting on the pedistal.";
+    virtual std::string get_description() override
+    {
+        std::string new_description = object::get_description();
 
-		if (main.empty())
-			return "";
-		else
-			return get_items_string(main, before, after);
-	}
+        if (!encompassed_objects.empty()) {
+            std::string msg = StaticObjectsDB::message_or_empty("static.moss", "hidden_gold_found");
+            if (msg.empty()) msg = "A few gold coins are hidden in the denser portion of the moss.";
+            new_description += (" " + msg);
+        }
+        return new_description;
+    }
+
+    virtual std::string get_display_string() override { return get_name(); }
+    Moss(const Moss& in) : static_object(in) {}
+    virtual static_object* clone() override { return new Moss(*this); }
 };
 
-class Moss : public static_object
-{
-protected:
+class Boulder : public static_object {
 public:
-	Moss()
-		: static_object("Moss",
-			"The moss covers the wall in patches in some spots but is very dense in others. You touch the moss and get you hands all wet!"
-		)
-	{
-		int rand_num = random(0, 99);
-		if(rand_num < GOLD_SPAWN_IN_MOSS)
-			encompassed_objects.push_back(new hidden_item(new gold(random(2,10)), true));
-	}
-	virtual std::string get_description() override
-	{
-		std::string new_description = object::get_description();
-		if (!encompassed_objects.empty())
-			new_description += (" A few gold coins are hidden in the denser portion of the moss.");
-		return new_description;
-	}
-	virtual std::string get_display_string() override { return get_name(); };
-	Moss(const Moss& in) : static_object(in)
-	{
-		//copy constructor
-	}
-	virtual static_object* clone() override 
-	{
-		return new Moss(*this);
-	}
+    Boulder() : static_object("static.boulder") {}
+    virtual std::string get_display_string() override { return get_name(); }
+    Boulder(const Boulder& in) : static_object(in) {}
+    virtual static_object* clone() override { return new Boulder(*this); }
+};
+
+class Dining_Table : public static_object {
+public:
+    Dining_Table() : static_object("static.dining_table") {}
+    virtual std::string get_display_string() override { return get_name(); }
+    Dining_Table(const Dining_Table& in) : static_object(in) {}
+    virtual static_object* clone() override { return new Dining_Table(*this); }
 };
 
 #endif

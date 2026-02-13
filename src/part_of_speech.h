@@ -1,6 +1,7 @@
 #ifndef part_of_speech_h
 #define part_of_speech_h
 #include "player.h"
+#include "static_object.h"
 
 enum obj_location
 {

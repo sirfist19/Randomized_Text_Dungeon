@@ -4,7 +4,8 @@
 #include <string>
 #include "helper_fxns.h"
 #include "enemy.h"
-#include "room_descriptons.h"
+#include "chest.h"
+#include "static_object.h"
 #include "store.h"
 
 
@@ -138,7 +139,7 @@ class room {
 		bool can_be_a_hallway();
 		object* get_matching_object_and_delete(std::string player_input_noun);
 		void remove_room_item(object* obj_to_remove);
-		void assign_room_type(depth_tier tier, room_descriptions* descriptions_holder);
+		void assign_room_type(depth_tier tier);//, room_descriptions* descriptions_holder);
 		void set_depth_tier();
 		void spawn_enemies();
 		void place_chests();

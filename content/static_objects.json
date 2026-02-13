@@ -27,5 +27,19 @@
         "messages": {
             "hidden_gold_found": "A few gold coins are hidden in the denser portion of the moss."
         }
+    },
+    "static.boulder": {
+        "name": "Boulder",
+        "description":"The boulder is about 20 feet around but has a bulge on the north side. It is made of dark gray stone. It seems extremely heavy.",
+        "messages": {
+            "attempt_push": "The boulder doesn't even move an inch. Pushing it seems to be of no use."
+        }
+    },
+    "static.dining_table": {
+        "name": "Dining Table",
+        "description": "The table is made of mahogony wood of high quality.",
+        "messages": {
+
+        }
     }
 }

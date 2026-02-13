@@ -31,7 +31,7 @@ class dungeon
 	private:
 		std::vector<room*> rooms;
 		std::stack<room*> rooms_to_give_exits;//for dungeon generation
-		room_descriptions* stock_room_descriptions;
+		//room_descriptions* stock_room_descriptions;
 		std::unordered_map<room_coord, int, room_coord_hasher> occupied_coords;
 		std::vector<coord_and_id*> sorted_room_coords;//for map making
 	public:
@@ -46,7 +46,7 @@ class dungeon
 			{
 				delete sorted_room_coords[i];
 			}
-			delete stock_room_descriptions;
+			//delete stock_room_descriptions;
 
 			//std::cout << rooms_to_give_exits.size();
 			while(!rooms_to_give_exits.empty())//should be empty but if it is not delete everything
@@ -119,7 +119,7 @@ class dungeon
 		void place_store();
 		int get_deepest_depth();
 		void display_all_rooms_coords();
-		void create_new_exits(room* cur_room, room_descriptions* descriptions);
+		void create_new_exits(room* cur_room);
 		int get_opposite_exit(int exit_num);
 		void display_debug();
 		void display_dungeon_info();

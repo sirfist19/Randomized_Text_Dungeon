@@ -37,7 +37,7 @@ dungeon::dungeon()
 		rooms_to_give_exits.pop();
 
 		create_new_exits(cur_room);
-		std::cout << "Generated dungeon of size " << rooms.size() << "\n";
+		//std::cout << "Generated dungeon of size " << rooms.size() << "\n";
 	}
 
 	//empty the rooms to give exits stack - its not needed anymore

@@ -600,16 +600,23 @@ void commands::help()
 		
 		print("BASIC COMMANDS: ");
 		print("1. go - Allows the player to move through the dungeon. Need to type a direction (Ex: north or east) as the object.");
+		print("\tEx: go west");
+		print("\tShortcut: type the first letter of the direction. This will replace the entire command. Ex: w is the same as go west");
 		print("2. quit - Quits the game to the title screen. Restarts all progress.");
 		print("3. inventory - Shows your health, current weapon, and items.");
+		print("\tShortcut: i");
 		print("4. map - Displays a dungeon map of the areas you have already visited.");
 		print("5. open - Opens chests.");
-		print("6. take - Take objects off the ground or from chests.");
+		print("\tEx: open chest");
+		print("6. take - Take objects off the ground or from chests and places the object into your inventory.");
+		print("\tEx: take dagger");
 		print("7. equip - Equips items from the inventory into use.");
+		print("\tNOTE: After taking a weapon, you must equip it to be able to use it in battle.");
 		print("8. examine - Gives more information on an object in the room, in a chest, or in your inventory.");
+		print("\tNOTE: Examining objects in the room can allow you to find hidden loot!");
 		print();
-		print("- To get a full list of commands type 'list'.");
-		print("- To find out more information about a specific command, type 'help' followed by the command you want to learn more about. Ex: help equip");
+		print("- To get a full list of commands type 'help all'.");
+		//print("- To find out more information about a specific command, type 'help' followed by the command you want to learn more about. Ex: help equip");
 		print();
 
 		print("SYNTAX: ");
@@ -619,8 +626,61 @@ void commands::help()
 		std::cout << "             VERB   OBJ\n";
 		print("Example 2: 'look'");
 		std::cout << "            VERB\n\n";
+
+		/*
+		Here is a list of other commands not covered here:
+		jump
+		drink
+		look
+		clear
+		hello // not telling the player about this one
+		drop
+		*/
 	}
-	/*else if (player_input_noun == "hello")
+	else if (cur_noun == noun_type::all) 
+	{
+		print("ALL COMMANDS AND INPUT INFO");
+		print("1. go: Allows the player to move through the dungeon one room at a time.");
+		print("\tEx: go north");
+		print("\tShortcut: type the first letter of the direction. This will replace the entire command. Ex: w is the same as go west.");
+		print("2. quit - Quits the game to the title screen. Restarts all progress.");
+		print("\tShortcut: q");
+		print("3. inventory - Shows your health, current weapon, and items.");
+		print("\tShortcut: i");
+		print("4. map - Displays a dungeon map of the areas you have already visited.");
+		print("\tAs you explore more the map will grow!");
+		print("5. open - Opens chests");
+		print("\tEx: open chest");
+		print("6. take - Take objects off the ground or from chests and places the object into your inventory.");
+		print("\tEx: take dagger");
+		print("7. equip - Equips items from the inventory into use.");
+		print("\tNOTE: After taking a weapon, you must equip it to be able to use it in battle.");
+		print("8. examine - Gives more information on an object in the room, in a chest, or in your inventory.");
+		print("\tNOTE: Examining objects in the room can allow you to find hidden loot!");
+		print("9. use - activates objects that you can't drink.");
+		print("\tEx: use compass");
+		print("10. drink - drinking liquid objects.");
+		print("\tEx: drink lesser healing potion");
+		print("11. jump - you jump in the air. But sometimes jumping can yield different results.");
+		print("12. look - you look around the room and get a description of the room.");
+		print("13. clear - clears the terminal screen allowing you to see just the top bar giving basic info and the room description.");
+		print("14. drop - drop an item onto the floor of the current room");
+		print("\tEx: drop sword");
+		print();
+		print("Additional shortcuts and tips:");
+		print("A. Placing 'all' after certain commands allows you do things all at once instead of multiple times.");
+		print("\tEx: take all - this picks up all objects in the room");
+		print("\tEx: drink all - drinks all potions till you are full health");
+		print("\tEx: equip all - equips all armor and weapons in your inventory. By default this equips the weapon with the ");
+		print("\t\thighest damage and highest defense armor. This command doesn't consider weapon enchantments or hit rates.");
+		print("B. When menus pop up with numbers and options, you can either type the number to select that option or type out the full word given.");
+		print("C. Typing is not case sensitive so you can type in either upper or lowercase.");
+		print("D. The deeper into the dungeon you go the harder enemies get. Pay attention to the changing regions in the upper bar.");
+		print("\tThe deeper region you go to, the more difficult fights will be ... and the better the loot!");
+		print("E. Running from battles has a 50 percent chance of working. So only run if you desperately need to.");
+	}
+	/*
+	else if (player_input_noun == "hello")
 	{
 		print("COMMAND: hello");
 		print("Needs Object: No");
@@ -755,7 +815,8 @@ void commands::help()
 	else
 	{
 		print("Object not recognized. The object of the help command needs to be a command such as 'go' or 'clear'.");
-	}*/
+	}
+	*/
 }
 void commands::jump()
 {

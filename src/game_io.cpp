@@ -1,7 +1,22 @@
 #include "game_io.h"
 
+#include <algorithm>
+
 GameStreamBuf g_game_stream_buf;
 std::ostream game_out(&g_game_stream_buf);
+
+static thread_local int g_output_columns = 120;
+
+void set_output_columns(int cols) {
+	// Clamp to something reasonable so we don't generate absurd separator lines.
+	cols = std::max(20, cols);
+	cols = std::min(240, cols);
+	g_output_columns = cols;
+}
+
+int get_output_columns() {
+	return g_output_columns;
+}
 
 int GameStreamBuf::overflow(int c) {
 	if (c == EOF) {

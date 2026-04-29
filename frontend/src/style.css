@@ -50,8 +50,12 @@ header {
   width: 100%;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: auto;
+  /* Keep layout stable for backend "columns" formatting.
+     When overflow-y switches between `auto` and `scroll`, the scrollbar
+     can consume horizontal space and effectively reduce usable columns.
+     Force the scrollbar to be reserved so `clientWidth` stays consistent. */
+  overflow-y: scroll;
+  overflow-x: hidden;
   background: #141820;
   border: 1px solid #2a3140;
   border-radius: 6px;

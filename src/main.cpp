@@ -3,6 +3,8 @@
 #include "game_io.h"
 
 #include <iostream>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include <string>
 
 static void print_step(const StepResult& r) {
@@ -20,7 +22,20 @@ int main()
 	set_cli_os_screen_clear_allowed(true);
 	set_current_game_io(nullptr);
 
-	GameSession session("");
+	auto terminal_columns = []() -> int {
+		struct winsize ws {};
+		if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0 && ws.ws_col > 0) {
+			return static_cast<int>(ws.ws_col);
+		}
+		return 0;
+	};
+
+	int cols = terminal_columns();
+	if (cols <= 0) {
+		cols = 120;
+	}
+
+	GameSession session("", cols);
 	StepResult r = session.bootstrap();
 	print_step(r);
 

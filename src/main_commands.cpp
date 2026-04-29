@@ -1,4 +1,5 @@
 #include <string>
+#include <algorithm>
 #include "commands.h"
 
 //all the commands themselves in alphabetical order
@@ -339,6 +340,27 @@ void commands::basic_map()
 
 	//now draw the map
 	print("DUNGEON MAP:\n");
+
+	// Crop horizontally around the player's '@' so the ASCII grid stays aligned
+	// on narrow widths (mobile/web).
+	const int width = get_output_columns();
+	int max_x = 0;
+	int player_col = -1;
+	for (coord_and_id* c : coords) {
+		max_x = std::max(max_x, c->coord->get_x());
+		if (c->id == player->get_cur_room_id()) {
+			player_col = c->coord->get_x();
+		}
+	}
+	const int max_col = max_x + 1;
+	int view_left = 0;
+	if (player_col >= 0) {
+		view_left = player_col - width / 2;
+	}
+	view_left = std::max(0, view_left);
+	view_left = std::min(view_left, std::max(0, max_col - width));
+	const int view_right = view_left + width;
+
 	std::vector<std::string> lines;
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -359,13 +381,23 @@ void commands::basic_map()
 			if (cur_room->get_visited_status())
 			{
 				if (player->get_cur_room_id() == id)
-					cur += "@";
+					{
+						if (cursor_x >= view_left && cursor_x < view_right) {
+							cur += "@";
+						}
+					}
 				else
-					cur += "o";
+					{
+						if (cursor_x >= view_left && cursor_x < view_right) {
+							cur += "o";
+						}
+					}
 			}
 			else
 			{
-				cur += " ";
+				if (cursor_x >= view_left && cursor_x < view_right) {
+					cur += " ";
+				}
 			}
 			
 			//cur += std::to_string(coords[i]->id);//adds the number of the room to the map
@@ -374,7 +406,9 @@ void commands::basic_map()
 		else if ((cursor_y == y) && (cursor_x != x))
 		{
 			cursor_x++;
-			cur += " ";
+			if (cursor_x >= view_left && cursor_x < view_right) {
+				cur += " ";
+			}
 			i--;//repeat the same coord
 		}
 		else if (cursor_y != y)
@@ -418,6 +452,35 @@ void commands::map(bool& print_all_map)
 	print("\t\t\t\t\t\t\t\t\tG - gold chest, D - dragon chest, C - compass");
 	print("\t\t\t\t\t\t\t\t\tT - teleporter");
 
+	// Crop horizontally around the player's '@' so the ASCII grid stays aligned
+	// on narrow widths (mobile/web).
+	const int width = get_output_columns();
+	int max_x = 0;
+	int player_col = -1;
+	for (coord_and_id* c : coords) {
+		max_x = std::max(max_x, c->coord->get_x());
+		if (c->id == player->get_cur_room_id()) {
+			player_col = c->coord->get_x();
+		}
+	}
+	const int max_col = max_x + 1;
+	int view_left = 0;
+	if (player_col >= 0) {
+		view_left = player_col - width / 2;
+	}
+	view_left = std::max(0, view_left);
+	view_left = std::min(view_left, std::max(0, max_col - width));
+	const int view_right = view_left + width;
+
+	const auto depth_marker = [](int depth) -> char {
+		if (depth < 0) return '-';
+		if (depth <= 15) {
+			static constexpr const char* hex = "0123456789abcdef";
+			return hex[depth];
+		}
+		return '>';
+	};
+
 	std::vector<std::string> lines;
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -446,15 +509,19 @@ void commands::map(bool& print_all_map)
 		{
 			if (cur_room == nullptr) //if it is a connection
 			{
-				if(id == -3)
-					cur += "|";
-				if (id == -4)
-					cur += "-";
+				if (cursor_x >= view_left && cursor_x < view_right) {
+					if (id == -3) cur += "|";
+					if (id == -4) cur += "-";
+				}
 			}
 			else 
 			{
-				if((cur_noun == noun_type::depth) || (cur_noun == noun_type::full_depth)) //the depth map
-					cur += std::to_string(cur_room->get_depth());
+				if((cur_noun == noun_type::depth) || (cur_noun == noun_type::full_depth)) {
+					// Depth map debug: keep it single-character so the grid aligns.
+					if (cursor_x >= view_left && cursor_x < view_right) {
+						cur += depth_marker(cur_room->get_depth());
+					}
+				}
 				else 
 				{
 					int amt_enemies = cur_room->get_enemies().size();
@@ -471,29 +538,77 @@ void commands::map(bool& print_all_map)
 					teleporter* Teleporter = (teleporter*)cur_room->get_matching_object("teleporter");
 
 					if (player->get_cur_room_id() == id)
-						cur += "@";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "@";
+							}
+						}
 					else if (id == 1)//start room
-						cur += "S";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "S";
+							}
+						}
 					else if (id == -2)
-						cur += "X";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "X";
+							}
+						}
 					else if (cur_room->get_name() == "Dragon's Lair")
-						cur += "B";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "B";
+							}
+						}
 					else if (cur_room->get_name() == "Store")
-						cur += "$";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "$";
+							}
+						}
 					else if (Compass != nullptr)
-						cur += "C";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "C";
+							}
+						}
 					else if (Teleporter != nullptr)
-						cur += "T";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "T";
+							}
+						}
 					else if (amt_enemies > 0)
-						cur += "E";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "E";
+							}
+						}
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Wooden Chest"))
-						cur += "W";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "W";
+							}
+						}
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Gold Chest"))
-						cur += "G";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "G";
+							}
+						}
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Dragon Chest"))
-						cur += "D";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "D";
+							}
+						}
 					else
-						cur += "o";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "o";
+							}
+						}
 				}
 				
 			}
@@ -504,7 +619,9 @@ void commands::map(bool& print_all_map)
 		else if ((cursor_y == y) && (cursor_x != x))
 		{
 			cursor_x++;
-			cur += " ";
+			if (cursor_x >= view_left && cursor_x < view_right) {
+				cur += " ";
+			}
 			i--;//repeat the same coord
 		}
 		else if (cursor_y != y)

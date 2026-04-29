@@ -16,6 +16,11 @@ public:
 	virtual bool supports_shell_clear() const { return true; }
 };
 
+// Output formatting width (in monospace character columns).
+// Stored thread-locally so each web session/request can format independently.
+void set_output_columns(int cols);
+int get_output_columns();
+
 class TerminalGameIO : public IGameIO {
 public:
 	void write(std::string_view s) override;

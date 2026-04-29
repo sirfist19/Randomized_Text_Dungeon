@@ -68,11 +68,15 @@ int main(int argc, char* argv[]) {
 
 	svr.Post("/api/sessions", [](const httplib::Request& req, httplib::Response& res) {
 		std::string content_root = "../content";
+		int line_width = 0;
 		try {
 			if (!req.body.empty()) {
 				json body = json::parse(req.body);
 				if (body.contains("contentRoot") && body["contentRoot"].is_string()) {
 					content_root = body["contentRoot"].get<std::string>();
+				}
+				if (body.contains("lineWidth") && body["lineWidth"].is_number_integer()) {
+					line_width = body["lineWidth"].get<int>();
 				}
 			}
 		} catch (...) {
@@ -82,7 +86,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		std::string id = make_session_id();
-		auto sess = std::make_unique<GameSession>(content_root);
+		auto sess = std::make_unique<GameSession>(content_root, line_width);
 		StepResult boot = sess->bootstrap();
 
 		json out = step_result_to_json(boot);
@@ -107,8 +111,12 @@ int main(int argc, char* argv[]) {
 		}
 
 		std::string line;
+		int line_width = 0;
 		if (body.contains("line") && body["line"].is_string()) {
 			line = body["line"].get<std::string>();
+		}
+		if (body.contains("lineWidth") && body["lineWidth"].is_number_integer()) {
+			line_width = body["lineWidth"].get<int>();
 		}
 
 		std::lock_guard<std::mutex> lock(g_mutex);
@@ -119,6 +127,9 @@ int main(int argc, char* argv[]) {
 			return;
 		}
 
+		if (line_width > 0) {
+			it->second->set_line_width(line_width);
+		}
 		StepResult r = it->second->step(line);
 		res.status = 200;
 		res.set_content(step_result_to_json(r).dump(2) + "\n", "application/json");

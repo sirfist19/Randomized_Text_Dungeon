@@ -31,16 +31,19 @@ enum class SessionPhase {
 
 class GameSession {
 public:
-	explicit GameSession(std::string content_root);
+	explicit GameSession(std::string content_root, int line_width = 0);
 
 	StepResult bootstrap();
 	StepResult step(const std::string& line);
 
 	std::string content_root() const { return content_root_; }
+	void set_line_width(int line_width);
 
 private:
 	std::string content_root_;
 	SessionPhase phase_ = SessionPhase::Boot;
+
+	int line_width_ = 0;
 
 	std::string pending_name_;
 	std::unique_ptr<commands> game_;

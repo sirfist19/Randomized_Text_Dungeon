@@ -18,13 +18,17 @@ static std::string env_or_default(const char* key, const char* fallback) {
 	return std::string(fallback);
 }
 
-GameSession::GameSession(std::string content_root)
-	: content_root_(std::move(content_root)) {
+GameSession::GameSession(std::string content_root, int line_width)
+	: content_root_(std::move(content_root)), line_width_(line_width) {
 	if (content_root_.empty()) {
 		content_root_ = env_or_default("CONTENT_ROOT", "../content");
 	}
 	if (!content_root_.empty() && content_root_.back() == '/') {
 		content_root_.pop_back();
+	}
+
+	if (line_width_ <= 0) {
+		line_width_ = MAX_CHAR_PER_LINE;
 	}
 }
 
@@ -32,11 +36,20 @@ void GameSession::bind_io() {
 	set_current_game_io(&buffered_io_);
 	set_buffered_input_mode(false);
 	set_wait_fast(false);
+	set_output_columns(line_width_);
 }
 
 void GameSession::flush_output(StepResult& r) {
 	r.output = buffered_io_.take_lines();
 	r.clearViewport = buffered_io_.take_viewport_clear_requested();
+}
+
+void GameSession::set_line_width(int line_width) {
+	if (line_width <= 0) {
+		return;
+	}
+	line_width_ = line_width;
+	set_output_columns(line_width_);
 }
 
 StepResult GameSession::bootstrap() {

@@ -21,6 +21,46 @@ const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonEleme
 
 let sessionId: string | null = null;
 let requestInFlight = false;
+let currentLineWidth = 120;
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, n));
+}
+
+function measureCharWidthPx(): number {
+  // Monospace: all chars have (roughly) the same advance width, so measure a representative one.
+  const span = document.createElement('span');
+  span.textContent = '0';
+  span.style.position = 'absolute';
+  span.style.visibility = 'hidden';
+  span.style.whiteSpace = 'pre';
+  span.style.padding = '0';
+  span.style.margin = '0';
+  span.style.font = getComputedStyle(logEl).font;
+  document.body.appendChild(span);
+  const w = span.getBoundingClientRect().width;
+  span.remove();
+  return w || 8;
+}
+
+function computeLineWidth(): number {
+  const charPx = measureCharWidthPx();
+  const availablePx = logEl.clientWidth;
+  const cols = Math.floor(availablePx / charPx);
+  // Keep in a sane range so we don't generate microscopic/giant separator lines.
+  return clamp(cols, 20, 200);
+}
+
+let resizeTimer: number | undefined;
+function updateLineWidthFromLayout() {
+  currentLineWidth = computeLineWidth();
+  document.documentElement.style.setProperty('--game-columns', String(currentLineWidth));
+}
+
+window.addEventListener('resize', () => {
+  if (resizeTimer) window.clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(() => updateLineWidthFromLayout(), 150);
+});
 
 function setControlsEnabled(enabled: boolean) {
   input.disabled = !enabled;
@@ -101,8 +141,10 @@ async function bootstrap() {
   logEl.textContent = '';
   requestInFlight = true;
   setControlsEnabled(false);
+  updateLineWidthFromLayout();
   const data = await postJson<StepPayload>(`${API_BASE}/sessions`, {
     contentRoot: '../content',
+    lineWidth: currentLineWidth,
   });
   requestInFlight = false;
   sessionId = data.sessionId ?? null;
@@ -119,6 +161,7 @@ async function sendLine(line: string) {
   setControlsEnabled(false);
   const data = await postJson<StepPayload>(`${API_BASE}/sessions/${encodeURIComponent(sessionId)}/step`, {
     line,
+    lineWidth: currentLineWidth,
   });
   requestInFlight = false;
   if (data.clearViewport) {

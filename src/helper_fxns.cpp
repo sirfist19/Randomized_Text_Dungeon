@@ -47,6 +47,7 @@ void print(std::string in)
 void print_no_newline(std::string in) {
 	std::vector<std::string> text = basic_parse(in);
 	int cur = 0;
+	const int width = get_output_columns();
 
 	for (unsigned int i = 0; i < text.size(); i++)
 	{
@@ -57,11 +58,11 @@ void print_no_newline(std::string in) {
 			
 			continue;
 		}
-		int temp_total = text[i].size() + cur;
-		if (temp_total <= MAX_CHAR_PER_LINE)
+		int temp_total = static_cast<int>(text[i].size()) + cur;
+		if (temp_total <= width)
 		{
 			io_write(text[i]);
-			if (temp_total == MAX_CHAR_PER_LINE)
+			if (temp_total == width)
 			{
 				io_newline();
 				temp_total = 0;
@@ -247,14 +248,14 @@ void clear_()
 }
 void printEquals()
 {
-	for (int i = 0; i < MAX_CHAR_PER_LINE; i++)
+	for (int i = 0; i < get_output_columns(); i++)
 	{
 		io_write("=");
 	}
 }
 void printUnderscore()
 {
-	for (int i = 0; i < MAX_CHAR_PER_LINE; i++)
+	for (int i = 0; i < get_output_columns(); i++)
 	{
 		io_write("_");
 	}

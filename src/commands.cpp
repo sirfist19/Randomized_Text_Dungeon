@@ -530,11 +530,8 @@ void commands::game_loop_step(commands* game, bool& game_over, bool& quit_to_tit
 	room* cur_room = player->get_cur_room();
 
 	if (!combat_active_) {
-		if (!first_time_enter) {
-			display_cur_room_with_top_bar(cur_room);
-		} else {
+		if (first_time_enter)
 			first_time_enter = false;
-		}
 		std::vector<Enemy*> enemies = cur_room->get_enemies();
 		if (!enemies.empty()) {
 			combat_start(cur_room, player);
@@ -562,6 +559,8 @@ void commands::game_loop_step(commands* game, bool& game_over, bool& quit_to_tit
 	}
 	if (!res) {
 		bool loop = parseInputVector(game_over, quit_to_title_screen);
+		if (!loop && !quit_to_title_screen && player->is_alive())
+			display_cur_room_with_top_bar(player->get_cur_room());
 		if (loop)
 			printUnderscore();
 	}

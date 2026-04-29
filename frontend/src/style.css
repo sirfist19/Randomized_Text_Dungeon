@@ -8,14 +8,16 @@
 
 html {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
   padding: 1rem;
   box-sizing: border-box;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -25,6 +27,8 @@ body {
   width: 100%;
   margin: 0 auto;
   flex: 1;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 0;

@@ -123,7 +123,7 @@ public:
 	virtual weapon* clone_weapon() = 0;
 	virtual void display()
 	{
-		std::cout << get_display_string();
+		game_out << get_display_string();
 
 	}
 	virtual std::string get_display_string()
@@ -136,7 +136,7 @@ public:
 	virtual void display_chest()
 	{
 		display();
-		std::cout << "\n";
+		game_out << "\n";
 	}
 	bool hasEnchantment() {
 		return !enchantment.enchanment_is_none();
@@ -223,7 +223,7 @@ public:
 			float chance = random(10, 50) / 100.0;
 			chance = std::round(chance*10)/ 10.0;
 			//float chance = 1;
-			//std::cout<<"Mult:"<<multiplier<<"Chance"<<chance<<std::endl;
+			//game_out<<"Mult:"<<multiplier<<"Chance"<<chance<<std::endl;
 			this->add_enchantment(effect, chance, multiplier);
 		}
 		update_stats_from_enchantment();

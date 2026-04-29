@@ -4,6 +4,7 @@
 #include "weapon.h"
 #include "armor.h"
 #include "potion.h"
+#include "game_io.h"
 #include <map>
 
 class ware
@@ -223,6 +224,10 @@ public:
 	}
 	void display_inventory()
 	{
+		const int line_width = get_output_columns();
+		const int stock_start = line_width / 2;
+		const int price_start = (line_width * 2) / 3;
+
 		print("The shop keeper greets you.");
 		print("\t" + shopkeeper_name + ": '" + shopkeeper_intro_dialogue + "'\n");
 		print("Items:");
@@ -233,44 +238,41 @@ public:
 		}
 		for (unsigned int i = 0; i < inventory.size(); i++)
 		{
-			for (int i = 0; i < STORE_NUM_DASHES; i++)
+			for (int j = 0; j < line_width; j++)
 			{
-				std::cout << "_";
+				game_out << "_";
 			}
-			std::cout << "\n";
+			game_out << "\n";
 			std::string res = std::to_string(i+1) + ". " + inventory[i]->get_item()->get_display_string();
 			std::string stock_str = "Stock: " + std::to_string(inventory[i]->get_stock());
 			std::string price_str = "Price: " + std::to_string(inventory[i]->get_price()) + " Gold";
 
-			const int stock_start = 60;
-			const int price_start = 80;
-
-			std::cout << res;
+			game_out << res;
 			int cur_pos = res.size();
 
 			while (cur_pos < stock_start)
 			{
-				std::cout << " ";
+				game_out << " ";
 				cur_pos++;
 			}
-			std::cout << stock_str;
+			game_out << stock_str;
 			cur_pos += stock_str.size();
 
 			while (cur_pos < price_start)
 			{
-				std::cout << " ";
+				game_out << " ";
 				cur_pos++;
 			}
-			std::cout << price_str << std::endl;
+			game_out << price_str << std::endl;
 		}
-		for (int i = 0; i < STORE_NUM_DASHES; i++)
+		for (int j = 0; j < line_width; j++)
 		{
-			std::cout << "_";
+			game_out << "_";
 		}
 	}
 	void display_options()
 	{
-		//std::cout << "\n";
+		//game_out << "\n";
 		print("Options: ");
 		print("1. Buy");
 		print("2. Talk with the shopkeeper.");

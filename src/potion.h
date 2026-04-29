@@ -38,7 +38,7 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << name << " (Heals " << heal_amt << " health)";
+		game_out << name << " (Heals " << heal_amt << " health)";
 	}
 	virtual std::string get_display_string()
 	{
@@ -46,7 +46,7 @@ public:
 	}
 	virtual void display_chest()
 	{
-		std::cout << name << " (Heals " << heal_amt << " health)\n";
+		game_out << name << " (Heals " << heal_amt << " health)\n";
 	}
 };
 

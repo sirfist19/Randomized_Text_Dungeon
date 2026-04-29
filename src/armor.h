@@ -18,7 +18,7 @@ public:
 	virtual armor* clone_armor() = 0;
 	virtual void display()
 	{
-		std::cout << get_display_string();
+		game_out << get_display_string();
 	}
 	virtual std::string get_display_string()
 	{
@@ -27,7 +27,7 @@ public:
 	virtual void display_chest()
 	{
 		display();
-		std::cout << "\n";
+		game_out << "\n";
 	}
 	std::string identify()
 	{

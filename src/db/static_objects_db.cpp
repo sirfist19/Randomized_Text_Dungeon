@@ -1,4 +1,5 @@
 #include "static_objects_db.h"
+#include "../game_io.h"
 
 #include <fstream>
 #include <iostream>
@@ -93,28 +94,28 @@ const std::unordered_map<std::string, StaticObjectDef>& StaticObjectsDB::all() {
 }
 
 void StaticObjectsDB::display() {
-    std::cout << "=========================\n";
-    std::cout << " StaticObjectsDB Contents\n";
-    std::cout << " Loaded Objects: " << defs.size() << "\n";
-    std::cout << "=========================\n\n";
+    game_out << "=========================\n";
+    game_out << " StaticObjectsDB Contents\n";
+    game_out << " Loaded Objects: " << defs.size() << "\n";
+    game_out << "=========================\n\n";
 
     for (const auto& [id, def] : defs) {
-        std::cout << "ID: " << def.id << "\n";
-        std::cout << "Name: " << def.name << "\n";
-        std::cout << "Description:\n";
-        std::cout << "  " << def.description << "\n";
+        game_out << "ID: " << def.id << "\n";
+        game_out << "Name: " << def.name << "\n";
+        game_out << "Description:\n";
+        game_out << "  " << def.description << "\n";
 
-        std::cout << "Messages (" << def.messages.size() << "):\n";
+        game_out << "Messages (" << def.messages.size() << "):\n";
         if (def.messages.empty()) {
-            std::cout << "  (none)\n";
+            game_out << "  (none)\n";
         } else {
             for (const auto& [k, v] : def.messages) {
-                std::cout << "  " << k << " => " << v << "\n";
+                game_out << "  " << k << " => " << v << "\n";
             }
         }
 
-        std::cout << "-------------------------\n";
+        game_out << "-------------------------\n";
     }
 
-    std::cout << "\nEnd of StaticObjectsDB display.\n";
+    game_out << "\nEnd of StaticObjectsDB display.\n";
 }

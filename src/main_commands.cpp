@@ -1,4 +1,5 @@
 #include <string>
+#include <algorithm>
 #include "commands.h"
 
 //all the commands themselves in alphabetical order
@@ -59,7 +60,7 @@ void commands::drink_individual_potion(object* obj_to_drink)
 		player->delete_item_from_inventory(obj_to_drink, 1);
 		player_health->heal(heal_amt);
 		int healed_amt = player_health->get_health() - cur_health;
-		std::cout << "You were healed by " << healed_amt << " health.\n";
+		game_out << "You were healed by " << healed_amt << " health.\n";
 	}
 	else
 	{
@@ -97,7 +98,7 @@ void commands::drop()
 		int amt_to_drop = 1;
 		if (amt > 1)
 		{
-			std::cout << "There are " << amt << " of those in your inventory. How many do you want to drop?";
+			game_out << "There are " << amt << " of those in your inventory. How many do you want to drop?";
 			std::string answer = "0";
 
 			while (!is_number_in_range(answer, 1, amt))
@@ -276,11 +277,11 @@ void commands::equip_armor(armor* obj_to_equip)
 	if (old_armor_piece != nullptr)
 	{
 		player->add_item_to_inventory(old_armor_piece);
-		std::cout << "You equipped " << clone_obj_to_equip->get_name() << " and "<<old_armor_piece->get_name()<<" was placed in your inventory.\n";
+		game_out << "You equipped " << clone_obj_to_equip->get_name() << " and "<<old_armor_piece->get_name()<<" was placed in your inventory.\n";
 	}
 	else
 	{
-		std::cout << "You equipped " << clone_obj_to_equip->get_name() << ".\n";
+		game_out << "You equipped " << clone_obj_to_equip->get_name() << ".\n";
 	}
 	player->compute_stats();
 }
@@ -295,12 +296,12 @@ void commands::equip_weapon(object* obj_to_equip)
 	if (old_weapon->get_name() != "Fists")
 	{
 		player->add_item_to_inventory(old_weapon);
-		std::cout << "You equipped " << obj_to_equip_name <<
+		game_out << "You equipped " << obj_to_equip_name <<
 			" and " << old_weapon->get_name() << " has been placed into you inventory.\n";
 	}
 	else //if the player only had fists before
 	{
-		std::cout << "You equipped " << obj_to_equip_name << ".\n";
+		game_out << "You equipped " << obj_to_equip_name << ".\n";
 	}
 }
 void commands::examine()
@@ -339,6 +340,47 @@ void commands::basic_map()
 
 	//now draw the map
 	print("DUNGEON MAP:\n");
+
+	// Crop horizontally around the player's '@' so the ASCII grid stays aligned
+	// on narrow widths (mobile/web).
+	const int width = get_output_columns();
+	const int width_safe = std::max(1, width - 1); // safety margin to avoid last-column wrapping
+
+	int min_x = 0;
+	int max_x = 0;
+	bool have_bounds = false;
+	int player_col = -1;
+	for (coord_and_id* c : coords) {
+		const int cx = c->coord->get_x();
+		if (!have_bounds) {
+			min_x = cx;
+			max_x = cx;
+			have_bounds = true;
+		} else {
+			min_x = std::min(min_x, cx);
+			max_x = std::max(max_x, cx);
+		}
+		if (c->id == player->get_cur_room_id()) {
+			player_col = cx;
+		}
+	}
+	if (!have_bounds) {
+		min_x = 0;
+		max_x = 0;
+	}
+
+	int view_left = min_x;
+	if (player_col >= 0) {
+		view_left = player_col - width_safe / 2;
+		const int max_left = max_x - width_safe + 1;
+		if (max_left < min_x) {
+			view_left = min_x;
+		} else {
+			view_left = std::max(min_x, std::min(view_left, max_left));
+		}
+	}
+	const int view_right = view_left + width_safe;
+
 	std::vector<std::string> lines;
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -359,13 +401,23 @@ void commands::basic_map()
 			if (cur_room->get_visited_status())
 			{
 				if (player->get_cur_room_id() == id)
-					cur += "@";
+					{
+						if (cursor_x >= view_left && cursor_x < view_right) {
+							cur += "@";
+						}
+					}
 				else
-					cur += "o";
+					{
+						if (cursor_x >= view_left && cursor_x < view_right) {
+							cur += "o";
+						}
+					}
 			}
 			else
 			{
-				cur += " ";
+				if (cursor_x >= view_left && cursor_x < view_right) {
+					cur += " ";
+				}
 			}
 			
 			//cur += std::to_string(coords[i]->id);//adds the number of the room to the map
@@ -374,12 +426,19 @@ void commands::basic_map()
 		else if ((cursor_y == y) && (cursor_x != x))
 		{
 			cursor_x++;
-			cur += " ";
+			if (cursor_x >= view_left && cursor_x < view_right) {
+				cur += " ";
+			}
 			i--;//repeat the same coord
 		}
 		else if (cursor_y != y)
 		{
 			//push the previous line and start a new one
+			if (cur.size() < static_cast<size_t>(width_safe)) {
+				cur.append(width_safe - cur.size(), ' ');
+			} else if (cur.size() > static_cast<size_t>(width_safe)) {
+				cur.resize(width_safe);
+			}
 			lines.push_back(cur);
 			cur = "";
 			cursor_y++;
@@ -387,22 +446,27 @@ void commands::basic_map()
 			i--;//do the same coord again
 		}
 	}
+	if (cur.size() < static_cast<size_t>(width_safe)) {
+		cur.append(width_safe - cur.size(), ' ');
+	} else if (cur.size() > static_cast<size_t>(width_safe)) {
+		cur.resize(width_safe);
+	}
 	lines.push_back(cur);
 
 	//draw the lines vector to draw the map
 	for (unsigned int i = 0; i < lines.size(); i++)
 	{
-		std::cout << lines[i] << "\n";
+		game_out << lines[i] << "\n";
 	}
 }
 void commands::map(bool& print_all_map)
 {
 	Dungeon->create_sorted_room_coords(print_all_map);//set the coords again for the map adding the one that was just visited
 	std::vector<coord_and_id*> coords = Dungeon->get_sorted_room_coords();
-	//std::cout<<coords.size()<<"\n";
+	//game_out<<coords.size()<<"\n";
 	//for (coord_and_id* coord : coords) {
 	//	coord->coord->display();
-	//	std::cout<<"coord_id: "<<coord->id;
+	//	game_out<<"coord_id: "<<coord->id;
 	//}
 	//add in the connection characters to the coords vector
 	//clear_();
@@ -418,6 +482,55 @@ void commands::map(bool& print_all_map)
 	print("\t\t\t\t\t\t\t\t\tG - gold chest, D - dragon chest, C - compass");
 	print("\t\t\t\t\t\t\t\t\tT - teleporter");
 
+	// Crop horizontally around the player's '@' so the ASCII grid stays aligned
+	// on narrow widths (mobile/web).
+	const int width = get_output_columns();
+	const int width_safe = std::max(1, width - 1); // safety margin to avoid last-column wrapping
+
+	int min_x = 0;
+	int max_x = 0;
+	bool have_bounds = false;
+	int player_col = -1;
+	for (coord_and_id* c : coords) {
+		const int cx = c->coord->get_x();
+		if (!have_bounds) {
+			min_x = cx;
+			max_x = cx;
+			have_bounds = true;
+		} else {
+			min_x = std::min(min_x, cx);
+			max_x = std::max(max_x, cx);
+		}
+		if (c->id == player->get_cur_room_id()) {
+			player_col = cx;
+		}
+	}
+	if (!have_bounds) {
+		min_x = 0;
+		max_x = 0;
+	}
+
+	int view_left = min_x;
+	if (player_col >= 0) {
+		view_left = player_col - width_safe / 2;
+		const int max_left = max_x - width_safe + 1;
+		if (max_left < min_x) {
+			view_left = min_x;
+		} else {
+			view_left = std::max(min_x, std::min(view_left, max_left));
+		}
+	}
+	const int view_right = view_left + width_safe;
+
+	const auto depth_marker = [](int depth) -> char {
+		if (depth < 0) return '-';
+		if (depth <= 15) {
+			static constexpr const char* hex = "0123456789abcdef";
+			return hex[depth];
+		}
+		return '>';
+	};
+
 	std::vector<std::string> lines;
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -432,8 +545,8 @@ void commands::map(bool& print_all_map)
 		y = coords[i]->coord->get_y();
 		id = coords[i]->id;
 		room* cur_room = nullptr;
-		//std::cout<<"i: "<<i<<"\n";
-		//std::cout<<"C_x: "<<cursor_x<<", C_y: "<<cursor_y<<", x: "<<x<<", y: "<<y<<"\n";
+		//game_out<<"i: "<<i<<"\n";
+		//game_out<<"C_x: "<<cursor_x<<", C_y: "<<cursor_y<<", x: "<<x<<", y: "<<y<<"\n";
 
 		if ((id != -3) && (id != -4) && (id != -2)) // not a connection and not the exit room
 			cur_room = Dungeon->get_room(id);
@@ -446,15 +559,19 @@ void commands::map(bool& print_all_map)
 		{
 			if (cur_room == nullptr) //if it is a connection
 			{
-				if(id == -3)
-					cur += "|";
-				if (id == -4)
-					cur += "-";
+				if (cursor_x >= view_left && cursor_x < view_right) {
+					if (id == -3) cur += "|";
+					if (id == -4) cur += "-";
+				}
 			}
 			else 
 			{
-				if((cur_noun == noun_type::depth) || (cur_noun == noun_type::full_depth)) //the depth map
-					cur += std::to_string(cur_room->get_depth());
+				if((cur_noun == noun_type::depth) || (cur_noun == noun_type::full_depth)) {
+					// Depth map debug: keep it single-character so the grid aligns.
+					if (cursor_x >= view_left && cursor_x < view_right) {
+						cur += depth_marker(cur_room->get_depth());
+					}
+				}
 				else 
 				{
 					int amt_enemies = cur_room->get_enemies().size();
@@ -471,29 +588,77 @@ void commands::map(bool& print_all_map)
 					teleporter* Teleporter = (teleporter*)cur_room->get_matching_object("teleporter");
 
 					if (player->get_cur_room_id() == id)
-						cur += "@";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "@";
+							}
+						}
 					else if (id == 1)//start room
-						cur += "S";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "S";
+							}
+						}
 					else if (id == -2)
-						cur += "X";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "X";
+							}
+						}
 					else if (cur_room->get_name() == "Dragon's Lair")
-						cur += "B";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "B";
+							}
+						}
 					else if (cur_room->get_name() == "Store")
-						cur += "$";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "$";
+							}
+						}
 					else if (Compass != nullptr)
-						cur += "C";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "C";
+							}
+						}
 					else if (Teleporter != nullptr)
-						cur += "T";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "T";
+							}
+						}
 					else if (amt_enemies > 0)
-						cur += "E";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "E";
+							}
+						}
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Wooden Chest"))
-						cur += "W";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "W";
+							}
+						}
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Gold Chest"))
-						cur += "G";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "G";
+							}
+						}
 					else if ((cur_room->get_chest() != nullptr) && (chest_name == "Dragon Chest"))
-						cur += "D";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "D";
+							}
+						}
 					else
-						cur += "o";
+						{
+							if (cursor_x >= view_left && cursor_x < view_right) {
+								cur += "o";
+							}
+						}
 				}
 				
 			}
@@ -504,12 +669,19 @@ void commands::map(bool& print_all_map)
 		else if ((cursor_y == y) && (cursor_x != x))
 		{
 			cursor_x++;
-			cur += " ";
+			if (cursor_x >= view_left && cursor_x < view_right) {
+				cur += " ";
+			}
 			i--;//repeat the same coord
 		}
 		else if (cursor_y != y)
 		{
 			//push the previous line and start a new one
+			if (cur.size() < static_cast<size_t>(width_safe)) {
+				cur.append(width_safe - cur.size(), ' ');
+			} else if (cur.size() > static_cast<size_t>(width_safe)) {
+				cur.resize(width_safe);
+			}
 			lines.push_back(cur);
 			cur = "";
 			cursor_y++;
@@ -517,12 +689,17 @@ void commands::map(bool& print_all_map)
 			i--;//do the same coord again
 		}
 	}
+	if (cur.size() < static_cast<size_t>(width_safe)) {
+		cur.append(width_safe - cur.size(), ' ');
+	} else if (cur.size() > static_cast<size_t>(width_safe)) {
+		cur.resize(width_safe);
+	}
 	lines.push_back(cur);
 
 	//draw the lines vector to draw the map
 	for (unsigned int i = 0; i < lines.size(); i++)
 	{
-		std::cout << lines[i] << "\n";
+		game_out << lines[i] << "\n";
 	}
 }
 bool commands::go(int index) //returning true doesn't reprint the room info and top bar, returning false does
@@ -551,7 +728,7 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 
 	if (new_room_id == 0)
 	{
-		std::cout << "There is no exit in that direction.\n";
+		game_out << "There is no exit in that direction.\n";
 		return true;
 	}
 	else if (new_room_id == -2)
@@ -562,18 +739,18 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 	else
 	{
 		int new_index = new_room_id;
-		//std::cout << "New index:" <<new_index;
+		//game_out << "New index:" <<new_index;
 		room* player_next_room = Dungeon->get_room(new_index);
 
 		if (player_next_room == nullptr)
 		{
-			std::cout << "It's a nullptr again!";
+			game_out << "It's a nullptr again!";
 		}
 
 		player_next_room->visited_cur_room();
 		player->set_location(player_next_room);
 		
-		std::cout << "Going " << dir_string << "...\n";
+		game_out << "Going " << dir_string << "...\n";
 		wait(2);
 		clear_();
 		return false;//redisplays the room
@@ -581,16 +758,16 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 }
 void commands::hello()
 {
-	std::cout << "Hello there! How do you do?";
+	game_out << "Hello there! How do you do?";
 	nl(2);
 	wait(2);
-	std::cout << "Oh wait, I'm not supposed to respond to questions. I'm the omniscient narrator after all; I could give something\naway ... ";
+	game_out << "Oh wait, I'm not supposed to respond to questions. I'm the omniscient narrator after all; I could give something\naway ... ";
 	wait(15);
-	std::cout << "by accident.";
+	game_out << "by accident.";
 	wait(3);
-	std::cout << " That would be bad.";
+	game_out << " That would be bad.";
 	nl(2);
-	std::cout << "Get back to the task at hand! Enter another response...";
+	game_out << "Get back to the task at hand! Enter another response...";
 	nl(1);
 }
 void commands::help()
@@ -621,11 +798,11 @@ void commands::help()
 
 		print("SYNTAX: ");
 		print("When typing a command always use the syntax VERB then an OBJECT.");
-		std::cout << "    NOTE: In certain commands objects are optional.\n\n";
+		game_out << "    NOTE: In certain commands objects are optional.\n\n";
 		print("Example 1: 'examine key'");
-		std::cout << "             VERB   OBJ\n";
+		game_out << "             VERB   OBJ\n";
 		print("Example 2: 'look'");
-		std::cout << "            VERB\n\n";
+		game_out << "            VERB\n\n";
 
 		/*
 		Here is a list of other commands not covered here:
@@ -828,7 +1005,7 @@ void commands::jump()
 	}
 	else if ((cur_noun == noun_type::noun_none ) && (cur_preposition == preposition_type::preposition_none))
 	{
-		std::cout << "You jump high into the air, but nothing happens.\n";
+		game_out << "You jump high into the air, but nothing happens.\n";
 	}
 	else if (cur_preposition == preposition_type::preposition_none)
 	{
@@ -845,7 +1022,7 @@ void commands::open()
 
 	if ((cur_noun == noun_type::noun_none) && (cur_room_chest != cur_obj))
 	{
-		std::cout << "You can't open nothing. Type an object for the open command.\n";
+		game_out << "You can't open nothing. Type an object for the open command.\n";
 	}
 	else if ((cur_room_chest != nullptr) && (cur_room_chest == cur_obj))
 	{
@@ -857,7 +1034,7 @@ void commands::take() //take objects either from the room's items or an open che
 	//the noun is invalid
 	if ((cur_noun == noun_type::noun_none) && (cur_obj == nullptr))
 	{
-		std::cout << "You can't take nothing. Type an object for the take command.\n";
+		game_out << "You can't take nothing. Type an object for the take command.\n";
 		return;
 	}
 

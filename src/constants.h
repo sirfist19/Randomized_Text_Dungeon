@@ -40,12 +40,12 @@ const int HEAVY_HIT_RATE_REDUCER = 40;
 
 //depth tiers
 const int MIN_START_AREA = 0;
-const int MAX_START_AREA = 1;
+const int MAX_START_AREA = 2;
 
-const int MIN_NEAR = 2;
-const int MAX_NEAR = 4;
+const int MIN_NEAR = 3;
+const int MAX_NEAR = 5;
 
-const int MIN_MID = 5;
+const int MIN_MID = 6;
 const int MAX_MID = 9;
 
 const int MIN_FAR = 10;

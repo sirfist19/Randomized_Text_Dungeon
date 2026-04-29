@@ -59,8 +59,8 @@ public:
 		health->increase_max_health(change_in_health);
 		health->heal(change_in_health);
 		int new_health = health->get_health();
-		std::cout << "You leveled up to level " << desired_level << " and gained " << change_in_health << " max health points.\n";
-		//std::cout << "You were healed by "<<new_health - old_health<<" health points to full health.\n";
+		game_out << "You leveled up to level " << desired_level << " and gained " << change_in_health << " max health points.\n";
+		//game_out << "You were healed by "<<new_health - old_health<<" health points to full health.\n";
 	}
 	int get_exp() const
 	{
@@ -200,69 +200,69 @@ public:
 		std::vector<healing_potion*> inventory_healing_potions = get_inventory_healing_potions();
 		std::vector<object*> inventory_misc_objs = get_misc_objs();
 
-		std::cout << name << "'s Inventory\n";
-		std::cout << "Level: " << level <<"\n";
-		std::cout << "\tExp till next level: " << exp_to_next_level << "\n";
-		std::cout << "\tCurrent Exp: " << cur_exp << "\n\n";
+		game_out << name << "'s Inventory\n";
+		game_out << "Level: " << level <<"\n";
+		game_out << "\tExp till next level: " << exp_to_next_level << "\n";
+		game_out << "\tCurrent Exp: " << cur_exp << "\n\n";
 
 		health->display_health_bar();
-		std::cout << "Gold: " << gold_amt << "\n";
-		std::cout << "Weapon: ";
+		game_out << "Gold: " << gold_amt << "\n";
+		game_out << "Weapon: ";
 		main_weapon->display_chest();
-		std::cout << "Defense: " << defense << std::endl;
+		game_out << "Defense: " << defense << std::endl;
 		display_armor();
 		
-		std::cout << "\nGeneral Items:\n";
+		game_out << "\nGeneral Items:\n";
 
 		if ((inventory.size() == 0) || ((inventory.size() == 1) && (inventory[0]->get_name() == "Gold")))
 		{
-			std::cout << " NO ITEMS IN INVENTORY\n";
+			game_out << " NO ITEMS IN INVENTORY\n";
 			return;
 		}
 
 		//print out all of the inventory unorganized
-		//std::cout << "\n";
+		//game_out << "\n";
 		//for (unsigned int i = 0; i < inventory.size(); i++)
 		//{
-		//	std::cout << "\tx";
-		//	std::cout << inventory[i]->get_amt() << " - ";
+		//	game_out << "\tx";
+		//	game_out << inventory[i]->get_amt() << " - ";
 		//	inventory[i]->display_chest();
 		//}
-		//std::cout << "\n\n\n";
+		//game_out << "\n\n\n";
 		
 		if (!inventory_weapons.empty())
-			std::cout << "\tWeapons:\n";
+			game_out << "\tWeapons:\n";
 		for (unsigned int i = 0; i < inventory_weapons.size(); i++)
 		{
-			std::cout << "\t\tx";
-			std::cout << inventory_weapons[i]->get_amt() << " - ";
+			game_out << "\t\tx";
+			game_out << inventory_weapons[i]->get_amt() << " - ";
 			inventory_weapons[i]->display_chest();
 		}
 		
 		if (!inventory_armor.empty())
-			std::cout << "\tArmor:\n";
+			game_out << "\tArmor:\n";
 		for (unsigned int i = 0; i < inventory_armor.size(); i++)
 		{
-			std::cout << "\t\tx";
-			std::cout << inventory_armor[i]->get_amt() << " - ";
+			game_out << "\t\tx";
+			game_out << inventory_armor[i]->get_amt() << " - ";
 			inventory_armor[i]->display_chest();
 		}
 		
 		if (!inventory_healing_potions.empty())
-			std::cout << "\tPotions:\n";
+			game_out << "\tPotions:\n";
 		for (unsigned int i = 0; i < inventory_healing_potions.size(); i++)
 		{
-			std::cout << "\t\tx";
-			std::cout << inventory_healing_potions[i]->get_amt() << " - ";
+			game_out << "\t\tx";
+			game_out << inventory_healing_potions[i]->get_amt() << " - ";
 			inventory_healing_potions[i]->display_chest();
 		}
 
 		if (!inventory_misc_objs.empty())
-			std::cout << "\tMiscellaneous Items:\n";
+			game_out << "\tMiscellaneous Items:\n";
 		for (unsigned int i = 0; i < inventory_misc_objs.size(); i++)
 		{
-			std::cout << "\t\tx";
-			std::cout << inventory_misc_objs[i]->get_amt() << " - ";
+			game_out << "\t\tx";
+			game_out << inventory_misc_objs[i]->get_amt() << " - ";
 			inventory_misc_objs[i]->display_chest();
 		}
 	}
@@ -430,11 +430,11 @@ public:
 	}
 	virtual void display_attack_info() 
 	{
-		std::cout << "Player: " << name << "    Level: "<<level<<"\n";
-		std::cout << "Status effect: " << status_effect->get_display_str() << "\n";
+		game_out << "Player: " << name << "    Level: "<<level<<"\n";
+		game_out << "Status effect: " << status_effect->get_display_str() << "\n";
 		health->display_health_bar();
-		std::cout << "Defense: " << defense << std::endl;
-		std::cout << "Weapon: " << main_weapon->get_name() 
+		game_out << "Defense: " << defense << std::endl;
+		game_out << "Weapon: " << main_weapon->get_name() 
 				  << " " << main_weapon->get_enchantment_str() << "\n";
 	}
 	room* get_cur_room() {
@@ -468,7 +468,7 @@ public:
 		std::string health_str = "Health: " + std::to_string(health->get_health()) + "/" + std::to_string(health->get_max_health());
 		std::string player_gold = "Gold: " + std::to_string(get_amt_gold());
 		std::string all = player_name + room_name + region_name + health_str + player_gold;
-		//std::cout << all << "\n";
+		//game_out << all << "\n";
 
 		int room_name_start_pos = 5;//23
 		int region_name_start_pos = 30;//48
@@ -476,44 +476,44 @@ public:
 		int player_gold_start_pos = 81;//94
 
 		
-		std::cout<<player_name;
+		game_out<<player_name;
 		int pos = 0;
 
 		while (pos < room_name_start_pos)
 		{
-			std::cout << " ";
+			game_out << " ";
 			pos++;
 		}
 		pos += room_name.size();
-		std::cout << room_name;
+		game_out << room_name;
 
 		while (pos < region_name_start_pos)
 		{
-			std::cout << " ";
+			game_out << " ";
 			pos++;
 		}
 		pos += region_name.size();
-		std::cout << region_name;
+		game_out << region_name;
 
 		while (pos < health_str_start_pos)
 		{
-			std::cout << " ";
+			game_out << " ";
 			pos++;
 		}
 		pos += health_str.size();
-		std::cout << health_str;
+		game_out << health_str;
 
 
 		while (pos < player_gold_start_pos)
 		{
-			std::cout << " ";
+			game_out << " ";
 			pos++;
 		}
 		pos += player_gold.size();
-		std::cout << player_gold;
-		std::cout << std::endl;
+		game_out << player_gold;
+		game_out << std::endl;
 		printEquals();
-		std::cout << "\n";
+		game_out << "\n";
 	}
 };
 #endif

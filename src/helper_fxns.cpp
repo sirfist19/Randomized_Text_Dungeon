@@ -1,49 +1,84 @@
 #include "helper_fxns.h"
 #include "constants.h"
+#include "game_io.h"
+
+#include <cstdlib>
+#include "game_input.h"
+#include "game_errors.h"
 #include <vector>
 #include <map>
 
-void print(std::string in) 
+static thread_local bool g_wait_fast = false;
+static bool g_cli_os_screen_clear_allowed = false;
+
+void set_wait_fast(bool fast) {
+	g_wait_fast = fast;
+}
+
+void set_cli_os_screen_clear_allowed(bool allowed) {
+	g_cli_os_screen_clear_allowed = allowed;
+}
+
+static void shell_clear_screen() {
+#ifdef _WIN32
+	system("cls");
+#elif defined(__APPLE__) || defined(__linux__)
+	system("clear");
+#else
+	io_write("Clearing screen not supported on this operating system.");
+	io_newline();
+#endif
+}
+
+static std::string read_line_raw() {
+	if (is_buffered_input_mode()) {
+		return pop_input_line_or_throw();
+	}
+	std::string in;
+	std::getline(std::cin, in);
+	return in;
+}
+
+void print(std::string in)
 {
 	print_no_newline(in);
-	std::cout << std::endl;
+	io_newline();
 }
 void print_no_newline(std::string in) {
-	//std::cout << in << std::endl;
-
 	std::vector<std::string> text = basic_parse(in);
 	int cur = 0;
+	const int width = get_output_columns();
 
 	for (unsigned int i = 0; i < text.size(); i++)
 	{
 		if (text[i] == "\n")
 		{
-			std::cout << "\n";
+			io_write("\n");
 			cur = 0;
 			
 			continue;
 		}
-		int temp_total = text[i].size() + cur;
-		if (temp_total <= MAX_CHAR_PER_LINE)
+		int temp_total = static_cast<int>(text[i].size()) + cur;
+		if (temp_total <= width)
 		{
-			//print the text and increment cur
-			std::cout << text[i];
-			if (temp_total == MAX_CHAR_PER_LINE)
+			io_write(text[i]);
+			if (temp_total == width)
 			{
-				std::cout << std::endl;
+				io_newline();
 				temp_total = 0;
 			}
 			else if (i != text.size() - 1)
 			{
-				std::cout << " ";
+				io_write(" ");
 				temp_total++;
 			}
 			cur = temp_total;
 		}
 		else//if it goes over
 		{
-			//start a new line, reset cur, and print
-			std::cout << "\n" << text[i] << " ";
+			io_write("\n");
+			io_write(text[i]);
+			io_write(" ");
 			cur = text[i].size() + 1;
 		}
 	}
@@ -61,8 +96,8 @@ int random(int start, int end)//picks a random number from the start to the end 
 void game_Over(bool& game_over, bool& quit_to_title_screen)
 {
 	printEquals();
-	std::cout << "\nGAME OVER!\n";
-	std::cout << "You died. Better luck next time.\n";
+	io_write("\nGAME OVER!\n");
+	io_write("You died. Better luck next time.\n");
 	printEquals();
 
 	print("\nDo you want to restart or quit the game?");
@@ -98,9 +133,6 @@ void game_Over(bool& game_over, bool& quit_to_title_screen)
 			in = "";
 		}
 	}
-	
-	
-	//exit(0);
 }
 bool is_number_in_range(const std::string& in, const int& start, const int& end)//inclusive of both start and end
 {
@@ -120,7 +152,7 @@ bool is_number_in_range(const std::string& in, const int& start, const int& end)
 	return false;
 }
 void print() {
-	std::cout << std::endl;
+	io_newline();
 }
 
 bool str_input_accepted(std::string& to_check, std::string* inputs, int size, bool& valid_input) {
@@ -161,16 +193,15 @@ bool str_input_accepted(std::vector<std::string>& to_check, std::string* inputs,
 std::string input()
 {
 	print();
-	std::cout << ">";
-	std::string in;
-	std::getline(std::cin, in);
+	io_write(">");
+	std::string in = read_line_raw();
 	turn_to_lower_case(in);
 	return in;
 }
 void Quit()
 {
 	print("You quit the game. Bye bye for now.");
-	exit(0);
+	throw GameQuitException();
 }
 void invalid_input() {
 	print("Invalid input");
@@ -179,12 +210,14 @@ void nl(int amount)//newline fxn
 {
 	for (int i = 0; i < amount; i++)
 	{
-		std::cout << std::endl;
+		io_newline();
 	}
 }
 void wait(long seconds)
 {
-	//Sleep(seconds );
+	if (g_wait_fast) {
+		return;
+	}
 	long topBounds = 75000000;
 	int b = 1;
 	for (long y = 0; y < (seconds * topBounds); y++)//250 million times of repeating nothing
@@ -196,40 +229,42 @@ void wait(long seconds)
 }
 void clear_()
 {
-	if(!DISABLE_CLEARING_SCREEN) {
-		#ifdef _WIN32
-    		// Clear screen for Windows
-    		system("cls");
-		#elif defined(__APPLE__) || defined(__linux__)
-    		// Clear screen for Mac and Linux
-    		system("clear");
-		#else
-    	// Unsupported operating system
-    	std::cout << "Clearing screen not supported on this operating system." << std::endl;
-		#endif
+	if (DISABLE_CLEARING_SCREEN) {
+		return;
 	}
+	IGameIO* io = get_current_game_io();
+	if (io && !io->supports_shell_clear()) {
+		if (g_cli_os_screen_clear_allowed) {
+			shell_clear_screen();
+		} else if (BufferedGameIO* buf = dynamic_cast<BufferedGameIO*>(io)) {
+			// In buffered/web mode, emulate an actual clear by dropping anything
+			// already emitted this step before marking the viewport for clear.
+			buf->clear();
+			buf->request_viewport_clear();
+		}
+		return;
+	}
+	shell_clear_screen();
 }
 void printEquals()
 {
-	for (int i = 0; i < MAX_CHAR_PER_LINE; i++)
+	for (int i = 0; i < get_output_columns(); i++)
 	{
-		std::cout << "=";
+		io_write("=");
 	}
-	//std::cout << "\n";
 }
 void printUnderscore()
 {
-	for (int i = 0; i < MAX_CHAR_PER_LINE; i++)
+	for (int i = 0; i < get_output_columns(); i++)
 	{
-		std::cout << "_";
+		io_write("_");
 	}
-	std::cout << "\n";
+	io_newline();
 }
 std::vector<std::string> prompt()
 {
-	std::cout << ">";
-	std::string temp = "";
-	std::getline(std::cin, temp);
+	io_write(">");
+	std::string temp = read_line_raw();
 	std::vector<std::string> res;
 	if (temp != "") {
 		res = basic_parse(temp);
@@ -301,11 +336,12 @@ void turn_to_lower_case(std::vector<std::string>& user_input)
 }
 std::string get_player_name()
 {
-	std::cout << "\n";
-	std::cout << ">";
-	std::string name;
-	std::getline(std::cin, name);
-	std::cout << "\nAre you sure that " << name << " is correct?\n";
+	io_newline();
+	io_write(">");
+	std::string name = read_line_raw();
+	io_write("\nAre you sure that ");
+	io_write(name);
+	io_write(" is correct?\n");
 	print("1. Yes");
 	print("2. No");
 	return name;
@@ -398,7 +434,9 @@ std::string welcome_screen()
 			valid_input = false;
 		}
 		else if (str_input_accepted(answer, yes_input, 2, valid_input)) {
-			std::cout << "Well then " << name << " welcome to the dungeon! And best of luck.\n\n";
+			io_write("Well then ");
+			io_write(name);
+			io_write(" welcome to the dungeon! And best of luck.\n\n");
 		}
 		else {
 			invalid_input();
@@ -414,10 +452,10 @@ void winning_screen()
 {
 	clear_();
 	printEquals();
+	io_newline();
 	print("You insert the Dragon Key into the keyhole of the golden doors. As soon as you insert the key a wind rises up around you. You slowly turn the key to the left and hear the sound of the mechanism opening. The carving of the dragon on the door begins to glow and with a click the doors begin to open.");
-	print("\nYou up the steps that lead down to the dungeon and enter the forest you came to right before entering. You look up at the blue sky.");
+	print("\nYou go up the steps that lead down to the dungeon and enter the forest you came to right before entering. You look up at the blue sky.");
 	print("\nYou escaped the dungeon! YOU WIN! CONGRATULATIONS!");
 	printEquals();
-	exit(0);
+	throw GameWonException();
 }
-

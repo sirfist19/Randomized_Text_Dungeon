@@ -1,36 +1,39 @@
 # Compiler
 CXX = g++
 
-# Compiler flags
-CXXFLAGS = -Wno-c++11-extensions --std=c++17 -Wall -Ithird_party
+# Compiler flags (-I. for third_party/cpp-httplib and local includes)
+CXXFLAGS = -Wno-c++11-extensions --std=c++17 -Wall -I. -Ithird_party
 
-# Source files
-SRC = armor.cpp \
+# Shared objects (no main.cpp / http_server.cpp)
+COMMON_CPP = armor.cpp \
 	attacking.cpp \
 	commands.cpp \
 	dungeon.cpp \
 	helper_fxns.cpp \
 	main_commands.cpp \
-	main.cpp \
 	object.cpp \
 	room.cpp \
 	weapon.cpp \
 	static_object_factory.cpp \
 	db/rooms_db.cpp \
-	db/static_objects_db.cpp
+	db/static_objects_db.cpp \
+	game_io.cpp \
+	game_input.cpp \
+	game_session.cpp
 
-# Object files
-OBJ = $(SRC:.cpp=.o)
+COMMON_OBJ = $(COMMON_CPP:.cpp=.o)
 
-# Target executable
+# CLI game
 TARGET = game.exe
 
 # Default rule
 all: $(TARGET)
 
-# Rule to build the target executable
-$(TARGET): $(OBJ)
+$(TARGET): main.o $(COMMON_OBJ)
 	$(CXX) $(CXXFLAGS) $^ -o $@
+
+http_server: http_server.o $(COMMON_OBJ)
+	$(CXX) $(CXXFLAGS) -pthread $^ -o $@
 
 # Rule to build object files
 %.o: %.cpp
@@ -38,4 +41,4 @@ $(TARGET): $(OBJ)
 
 # Rule to clean up generated files
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(COMMON_OBJ) main.o http_server.o $(TARGET) http_server

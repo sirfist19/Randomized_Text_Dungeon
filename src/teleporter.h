@@ -24,7 +24,7 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << get_display_string();
+		game_out << get_display_string();
 	}
 	virtual std::string get_display_string()
 	{

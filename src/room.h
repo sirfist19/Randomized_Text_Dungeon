@@ -53,7 +53,7 @@ public:
 	}
 	void display()
 	{
-		std::cout << "(" << x << ", " << y << ") ";
+		game_out << "(" << x << ", " << y << ") ";
 	}
 	int get_x() const
 	{

@@ -3,6 +3,13 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "game_io.h"
+
+// When true, wait() returns immediately (HTTP / server builds).
+void set_wait_fast(bool fast);
+
+// When true, clear_() runs system("clear")/cls even with BufferedGameIO (CLI game.exe only).
+void set_cli_os_screen_clear_allowed(bool allowed);
 
 void print(std::string in);
 void print_no_newline(std::string in);

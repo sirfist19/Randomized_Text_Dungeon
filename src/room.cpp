@@ -17,7 +17,7 @@ void stack_objects(std::vector<object*>& in)
 
 			if (combine)
 			{
-				//std::cout << "Combining " << in[i]->get_name() << " with " << in[j]->get_name();
+				//game_out << "Combining " << in[i]->get_name() << " with " << in[j]->get_name();
 				in[i]->combine(in[j]);//in[j] is now invalid
 
 				//remove in[j]
@@ -216,48 +216,51 @@ static const std::string& pick_random_id(const std::vector<std::string>& ids) {
 
 void room::assign_room_type(depth_tier tier)
 {
-	
-    // 1) Entrance room special-case
-    if (tier == depth_tier::start && depth == 0) {
-        const RoomDef& def = RoomsDB::get("room.entrance"); // choose whatever id you used
-        name = def.name;
-        description = def.description;
-        return;
-    }
-
-    // 2) Build pool of candidate room IDs
-    // You can decide whether "any" rooms should be eligible in near/mid/far pools.
-    // Right now your JSON probably has explicit tiers, so just use the tier pool.
-    const std::string tierStr = tier_to_string(tier);
-
-    std::vector<std::string> candidates = RoomsDB::ids_for_tier(tierStr);
-
-    // Optional: also allow "any" tier rooms everywhere except start
-    {
-        std::vector<std::string> anyIds = RoomsDB::ids_for_tier("any");
-        candidates.insert(candidates.end(), anyIds.begin(), anyIds.end());
-    }
-
-    if (candidates.empty()) {
-        // Fail fast with a helpful message
-        throw std::runtime_error("No room candidates found for tier: " + tierStr);
-    }
-
-    // 3) Pick a valid room, preserving your hallway constraint
-    bool valid = false;
     const RoomDef* chosen = nullptr;
 
-    while (!valid) {
-        const std::string& id = pick_random_id(candidates);
-        const RoomDef& def = RoomsDB::get(id);
+    // 1) Entrance room special-case
+    if (tier == depth_tier::start && depth == 0) {
+        chosen = &RoomsDB::get("room.entrance");
+    }
 
-        if (def.name == "Hallway") {
-            valid = can_be_a_hallway();
+    // 2) Build pool of candidate room IDs when not entrance.
+    const std::string tierStr = tier_to_string(tier);
+    if (chosen == nullptr) {
+        std::vector<std::string> candidates;
+
+        if (tier == depth_tier::start && depth > 0) {
+            // Early start-area rooms should be flexible; prefer "any" pool.
+            candidates = RoomsDB::ids_for_tier("any");
+            if (candidates.empty()) {
+                // Safety fallback if no "any" rooms are defined.
+                candidates = RoomsDB::ids_for_tier("start");
+            }
         } else {
-            valid = true;
+            candidates = RoomsDB::ids_for_tier(tierStr);
+            std::vector<std::string> anyIds = RoomsDB::ids_for_tier("any");
+            candidates.insert(candidates.end(), anyIds.begin(), anyIds.end());
         }
 
-        if (valid) chosen = &def;
+        if (candidates.empty()) {
+            // Fail fast with a helpful message
+            throw std::runtime_error("No room candidates found for tier: " + tierStr);
+        }
+
+        // 3) Pick a valid room, preserving your hallway constraint
+        bool valid = false;
+
+        while (!valid) {
+            const std::string& id = pick_random_id(candidates);
+            const RoomDef& def = RoomsDB::get(id);
+
+            if (def.name == "Hallway") {
+                valid = can_be_a_hallway();
+            } else {
+                valid = true;
+            }
+
+            if (valid) chosen = &def;
+        }
     }
 
     // 4) Assign
@@ -355,7 +358,7 @@ void room::spawn_enemies()
 void room::set_depth_tier()
 {
 	if (DEBUG_MODE)
-		std::cout << "Currently the depth is " << depth << std::endl;
+		game_out << "Currently the depth is " << depth << std::endl;
 	if ((depth >= MIN_START_AREA) && (depth <= MAX_START_AREA))
 		tier = depth_tier::start;
 	else if ((depth >= MIN_NEAR) && (depth <= MAX_NEAR))
@@ -374,6 +377,7 @@ std::string room::get_depth_tier_string()
 	switch (tier)
 	{
 	case depth_tier::start:
+		return "Entrance";
 	case depth_tier::near:
 		return "Reception Area";
 	case depth_tier::mid:
@@ -397,12 +401,12 @@ void room::display_room()
 		terrain_items_string += static_items[i]->get_revealed_items_description();
 	}
 	
-	std::cout << "\n";
+	game_out << "\n";
 
 	if (terrain_items_string != "")
 	{
 		print_no_newline(terrain_items_string);
-		std::cout << " ";
+		game_out << " ";
 	}
 
 	std::string before_string = "";
@@ -426,7 +430,7 @@ void room::display_room()
 
 	if (id == 1)
 	{
-		std::cout << "\n";
+		game_out << "\n";
 		print("TIP: Don't know what to type? Type 'help' for more information.");
 	}
 }
@@ -439,23 +443,23 @@ void room::display_exit_information() const
 			num++;
 		else if (exits[i] == -2)
 		{
-			std::cout << "The locked gold jade doors that lead to the exit of the dungeon lies to your ";
+			game_out << "The locked gold jade doors that lead to the exit of the dungeon lies to your ";
 			switch (i)
 			{
 			case 0:
-				std::cout << "North.\n";
+				game_out << "North.\n";
 				break;
 			case 1:
-				std::cout << "South.\n";
+				game_out << "South.\n";
 				break;
 			case 2:
-				std::cout << "East.\n";
+				game_out << "East.\n";
 				break;
 			case 3:
-				std::cout << "West.\n";
+				game_out << "West.\n";
 				break;
 			default:
-				std::cout << i << "room.h  - display_exit_information index error.\n";
+				game_out << i << "room.h  - display_exit_information index error.\n";
 				break;
 			}
 		}
@@ -463,171 +467,171 @@ void room::display_exit_information() const
 
 	if (num == 1)
 	{
-		std::cout << "There is an exit to the ";
+		game_out << "There is an exit to the ";
 		if (exits[0] > 0)
-			std::cout << "North";
+			game_out << "North";
 		if (exits[1] > 0)
-			std::cout << "South";
+			game_out << "South";
 		if (exits[2] > 0)
-			std::cout << "East";
+			game_out << "East";
 		if (exits[3] > 0)
-			std::cout << "West";
+			game_out << "West";
 	}
 	else if (num == 2)
 	{
-		std::cout << "There are exits to the ";
+		game_out << "There are exits to the ";
 		if (exits[3] > 0)
 		{
 			if (exits[0] > 0)
-				std::cout << "North";
+				game_out << "North";
 			if (exits[1] > 0)
-				std::cout << "South";
+				game_out << "South";
 			if (exits[2] > 0)
-				std::cout << "East";
+				game_out << "East";
 			if (exits[3] > 0)
-				std::cout << " and West";
+				game_out << " and West";
 		}
 		else if ((exits[3] <= 0) && (exits[2] > 0))
 		{
 			if (exits[0] > 0)
-				std::cout << "North";
+				game_out << "North";
 			if (exits[1] > 0)
-				std::cout << "South";
+				game_out << "South";
 			if (exits[2] > 0)
-				std::cout << " and East";
+				game_out << " and East";
 		}
 		else if ((exits[3] <= 0) && (exits[2] <= 0))
 		{
 			if (exits[0] > 0)
-				std::cout << "North";
+				game_out << "North";
 			if (exits[1] > 0)
-				std::cout << " and South";
+				game_out << " and South";
 		}
 	}
 	else if (num == 3)
 	{
-		std::cout << "There are exits to the ";
+		game_out << "There are exits to the ";
 		if (exits[3] > 0)
 		{
 			if (exits[0] > 0)
 			{
 				if (exits[0] > 0)
-					std::cout << "North";
+					game_out << "North";
 				if (exits[1] > 0)
-					std::cout << ", South ";
+					game_out << ", South ";
 				if (exits[2] > 0)
-					std::cout << ", East ";
+					game_out << ", East ";
 				if (exits[3] > 0)
-					std::cout << "and West";
+					game_out << "and West";
 			}
 			else //if north is 0
 			{
 				if (exits[1] > 0)
-					std::cout << "South";
+					game_out << "South";
 				if (exits[2] > 0)
-					std::cout << ", East ";
+					game_out << ", East ";
 				if (exits[3] > 0)
-					std::cout << "and West";
+					game_out << "and West";
 			}
 		}
 		else
 		{
 			if (exits[0] > 0)
-				std::cout << "North";
+				game_out << "North";
 			if (exits[1] > 0)
-				std::cout << ", South ";
+				game_out << ", South ";
 			if (exits[2] > 0)
-				std::cout << "and East";
+				game_out << "and East";
 		}
 	}
 	else if (num == 4)
 	{
-		std::cout << "There are exits to the ";
+		game_out << "There are exits to the ";
 		if (exits[0] > 0)
-			std::cout << "North";
+			game_out << "North";
 		if (exits[1] > 0)
-			std::cout << ", South";
+			game_out << ", South";
 		if (exits[2] > 0)
-			std::cout << ", East";
+			game_out << ", East";
 		if (exits[3] > 0)
-			std::cout << " and West";
+			game_out << " and West";
 	}
 	else
 	{
-		std::cout << "Num exits out of range: " << num_exits;
+		game_out << "Num exits out of range: " << num_exits;
 	}
-	std::cout << ".\n";
+	game_out << ".\n";
 }
 void room::display_room_debug() const
 {
 	printUnderscore();
-	std::cout << "Room " << id << " - " << name << std::endl;
-	std::cout << "Coord: ";
+	game_out << "Room " << id << " - " << name << std::endl;
+	game_out << "Coord: ";
 	location->display();
 
-	std::cout << "\nDepth: " << depth << std::endl;
-	std::cout << "Depth Tier: ";
+	game_out << "\nDepth: " << depth << std::endl;
+	game_out << "Depth Tier: ";
 	switch (tier)
 	{
 	case depth_tier::start:
-		std::cout << "start";
+		game_out << "start";
 		break;
 	case depth_tier::near:
-		std::cout << "near";
+		game_out << "near";
 		break;
 	case depth_tier::mid:
-		std::cout << "mid";
+		game_out << "mid";
 		break;
 	case depth_tier::far:
-		std::cout << "far";
+		game_out << "far";
 		break;
 	case depth_tier::very_far:
-		std::cout << "very far";
+		game_out << "very far";
 		break;
 	case depth_tier::unassigned:
-		std::cout << "unassigned";
+		game_out << "unassigned";
 		break;
 	default:
 		break;
 	}
-	std::cout << "\n\nITEMS: ";
+	game_out << "\n\nITEMS: ";
 	if (items.empty())
-		std::cout << "NONE";
+		game_out << "NONE";
 	for (unsigned int i = 0; i < items.size(); i++)
 	{
-		std::cout << items[i]->get_name();
+		game_out << items[i]->get_name();
 	}
-	std::cout << "\n\nTERRAIN: ";
+	game_out << "\n\nTERRAIN: ";
 	if (static_items.empty())
-		std::cout << "NONE";
+		game_out << "NONE";
 	for (unsigned int i = 0; i < static_items.size(); i++)
 	{
-		std::cout << static_items[i]->get_name();
+		game_out << static_items[i]->get_name();
 	}
-	std::cout << "\n\nCHESTS: ";
+	game_out << "\n\nCHESTS: ";
 	if (Chest != nullptr)
 	{
-		std::cout << "\nName: " << Chest->get_name() << "\n";
+		game_out << "\nName: " << Chest->get_name() << "\n";
 		Chest->display_chest_contents();
 	}
 	else
 	{
-		std::cout << "NONE";
+		game_out << "NONE";
 	}
-	std::cout << "\nENEMIES: ";
+	game_out << "\nENEMIES: ";
 	if (enemies.empty())
-		std::cout << "NONE";
+		game_out << "NONE";
 	for (unsigned int i = 0; i < enemies.size(); i++)
 	{
-		std::cout << "\n";
+		game_out << "\n";
 		enemies[i]->display_attack_info();
-		std::cout << "Exp to drop: " << enemies[i]->get_exp();
+		game_out << "Exp to drop: " << enemies[i]->get_exp();
 	}
-	std::cout << "\n\nEXITS:\n";
-	std::cout << "North: " << exits[0] << std::endl;
-	std::cout << "South: " << exits[1] << std::endl;
-	std::cout << "East: " << exits[2] << std::endl;
-	std::cout << "West: " << exits[3] << std::endl << std::endl;
+	game_out << "\n\nEXITS:\n";
+	game_out << "North: " << exits[0] << std::endl;
+	game_out << "South: " << exits[1] << std::endl;
+	game_out << "East: " << exits[2] << std::endl;
+	game_out << "West: " << exits[3] << std::endl << std::endl;
 }
 bool room::has_terrain(object* in)
 {

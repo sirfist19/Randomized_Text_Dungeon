@@ -1,4 +1,5 @@
 #include "rooms_db.h"
+#include "../game_io.h"
 
 #include <fstream>
 #include <stdexcept>
@@ -109,22 +110,22 @@ const std::unordered_map<std::string, RoomDef>& RoomsDB::all() {
 }
 
 void RoomsDB::display() {
-    std::cout << "=========================\n";
-    std::cout << " RoomsDB Contents\n";
-    std::cout << " Loaded Rooms: " << defs.size() << "\n";
-    std::cout << "=========================\n\n";
+    game_out << "=========================\n";
+    game_out << " RoomsDB Contents\n";
+    game_out << " Loaded Rooms: " << defs.size() << "\n";
+    game_out << "=========================\n\n";
 
     for (const auto& [id, def] : defs) {
-        std::cout << "ID: " << def.id << "\n";
-        std::cout << "Name: " << def.name << "\n";
-        std::cout << "Tier: " << (def.tier.empty() ? "(none)" : def.tier) << "\n";
-        std::cout << "Biome: " << def.biome << "\n";
+        game_out << "ID: " << def.id << "\n";
+        game_out << "Name: " << def.name << "\n";
+        game_out << "Tier: " << (def.tier.empty() ? "(none)" : def.tier) << "\n";
+        game_out << "Biome: " << def.biome << "\n";
 
-        std::cout << "Description:\n";
-        std::cout << "  " << def.description << "\n";
+        game_out << "Description:\n";
+        game_out << "  " << def.description << "\n";
 
-        std::cout << "-------------------------\n";
+        game_out << "-------------------------\n";
     }
 
-    std::cout << "\nEnd of RoomsDB display.\n";
+    game_out << "\nEnd of RoomsDB display.\n";
 }

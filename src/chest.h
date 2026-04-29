@@ -30,7 +30,7 @@ public:
 	}
 	virtual object* clone()
 	{
-		std::cout << "ERROR: Attempting to clone a chest. This is not implemented.";
+		game_out << "ERROR: Attempting to clone a chest. This is not implemented.";
 		return nullptr;
 	}
 	void open()
@@ -76,7 +76,7 @@ public:
 			{
 				std::string cur_name = contents[i]->get_name();
 				turn_to_lower_case(cur_name);
-				//std::cout << "Cur Chest obj name: " << cur_name<<"\n";
+				//game_out << "Cur Chest obj name: " << cur_name<<"\n";
 
 				if (player_input_noun == cur_name)
 				{
@@ -113,7 +113,7 @@ public:
 			{
 				std::string cur_name = contents[i]->get_name();
 				turn_to_lower_case(cur_name);
-				//std::cout << "Cur Chest obj name: " << cur_name<<"\n";
+				//game_out << "Cur Chest obj name: " << cur_name<<"\n";
 
 				if (player_input_noun == cur_name)
 				{
@@ -149,11 +149,11 @@ public:
 			print("\tEMPTY");
 		for (unsigned int i = 0; i < contents.size(); i++)
 		{
-			std::cout << "\t-";
+			game_out << "\t-";
 			if (contents[i]->get_amt() != 1)
-				std::cout << contents[i]->get_amt() << " ";
+				game_out << contents[i]->get_amt() << " ";
 			else if (contents[i]->identify() == "gold")
-				std::cout << "1 ";
+				game_out << "1 ";
 			contents[i]->display_chest();
 		}
 	}
@@ -167,8 +167,8 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << name <<"\n";
-		std::cout << "\tDescription: ";
+		game_out << name <<"\n";
+		game_out << "\tDescription: ";
 		print(description);
 	}
 };

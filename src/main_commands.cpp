@@ -344,22 +344,42 @@ void commands::basic_map()
 	// Crop horizontally around the player's '@' so the ASCII grid stays aligned
 	// on narrow widths (mobile/web).
 	const int width = get_output_columns();
+	const int width_safe = std::max(1, width - 1); // safety margin to avoid last-column wrapping
+
+	int min_x = 0;
 	int max_x = 0;
+	bool have_bounds = false;
 	int player_col = -1;
 	for (coord_and_id* c : coords) {
-		max_x = std::max(max_x, c->coord->get_x());
+		const int cx = c->coord->get_x();
+		if (!have_bounds) {
+			min_x = cx;
+			max_x = cx;
+			have_bounds = true;
+		} else {
+			min_x = std::min(min_x, cx);
+			max_x = std::max(max_x, cx);
+		}
 		if (c->id == player->get_cur_room_id()) {
-			player_col = c->coord->get_x();
+			player_col = cx;
 		}
 	}
-	const int max_col = max_x + 1;
-	int view_left = 0;
-	if (player_col >= 0) {
-		view_left = player_col - width / 2;
+	if (!have_bounds) {
+		min_x = 0;
+		max_x = 0;
 	}
-	view_left = std::max(0, view_left);
-	view_left = std::min(view_left, std::max(0, max_col - width));
-	const int view_right = view_left + width;
+
+	int view_left = min_x;
+	if (player_col >= 0) {
+		view_left = player_col - width_safe / 2;
+		const int max_left = max_x - width_safe + 1;
+		if (max_left < min_x) {
+			view_left = min_x;
+		} else {
+			view_left = std::max(min_x, std::min(view_left, max_left));
+		}
+	}
+	const int view_right = view_left + width_safe;
 
 	std::vector<std::string> lines;
 	int cursor_x = 0;
@@ -414,12 +434,22 @@ void commands::basic_map()
 		else if (cursor_y != y)
 		{
 			//push the previous line and start a new one
+			if (cur.size() < static_cast<size_t>(width_safe)) {
+				cur.append(width_safe - cur.size(), ' ');
+			} else if (cur.size() > static_cast<size_t>(width_safe)) {
+				cur.resize(width_safe);
+			}
 			lines.push_back(cur);
 			cur = "";
 			cursor_y++;
 			cursor_x = 0;
 			i--;//do the same coord again
 		}
+	}
+	if (cur.size() < static_cast<size_t>(width_safe)) {
+		cur.append(width_safe - cur.size(), ' ');
+	} else if (cur.size() > static_cast<size_t>(width_safe)) {
+		cur.resize(width_safe);
 	}
 	lines.push_back(cur);
 
@@ -455,22 +485,42 @@ void commands::map(bool& print_all_map)
 	// Crop horizontally around the player's '@' so the ASCII grid stays aligned
 	// on narrow widths (mobile/web).
 	const int width = get_output_columns();
+	const int width_safe = std::max(1, width - 1); // safety margin to avoid last-column wrapping
+
+	int min_x = 0;
 	int max_x = 0;
+	bool have_bounds = false;
 	int player_col = -1;
 	for (coord_and_id* c : coords) {
-		max_x = std::max(max_x, c->coord->get_x());
+		const int cx = c->coord->get_x();
+		if (!have_bounds) {
+			min_x = cx;
+			max_x = cx;
+			have_bounds = true;
+		} else {
+			min_x = std::min(min_x, cx);
+			max_x = std::max(max_x, cx);
+		}
 		if (c->id == player->get_cur_room_id()) {
-			player_col = c->coord->get_x();
+			player_col = cx;
 		}
 	}
-	const int max_col = max_x + 1;
-	int view_left = 0;
-	if (player_col >= 0) {
-		view_left = player_col - width / 2;
+	if (!have_bounds) {
+		min_x = 0;
+		max_x = 0;
 	}
-	view_left = std::max(0, view_left);
-	view_left = std::min(view_left, std::max(0, max_col - width));
-	const int view_right = view_left + width;
+
+	int view_left = min_x;
+	if (player_col >= 0) {
+		view_left = player_col - width_safe / 2;
+		const int max_left = max_x - width_safe + 1;
+		if (max_left < min_x) {
+			view_left = min_x;
+		} else {
+			view_left = std::max(min_x, std::min(view_left, max_left));
+		}
+	}
+	const int view_right = view_left + width_safe;
 
 	const auto depth_marker = [](int depth) -> char {
 		if (depth < 0) return '-';
@@ -627,12 +677,22 @@ void commands::map(bool& print_all_map)
 		else if (cursor_y != y)
 		{
 			//push the previous line and start a new one
+			if (cur.size() < static_cast<size_t>(width_safe)) {
+				cur.append(width_safe - cur.size(), ' ');
+			} else if (cur.size() > static_cast<size_t>(width_safe)) {
+				cur.resize(width_safe);
+			}
 			lines.push_back(cur);
 			cur = "";
 			cursor_y++;
 			cursor_x = 0;
 			i--;//do the same coord again
 		}
+	}
+	if (cur.size() < static_cast<size_t>(width_safe)) {
+		cur.append(width_safe - cur.size(), ' ');
+	} else if (cur.size() > static_cast<size_t>(width_safe)) {
+		cur.resize(width_safe);
 	}
 	lines.push_back(cur);
 

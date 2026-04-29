@@ -174,7 +174,7 @@ bool commands::combat_process_line(const std::string& line, room* cur_room, bool
 
 	combat_need_menu_ = true;
 	combat_awaiting_action_ = false;
-	return true;
+	return combat_process_line("", cur_room, game_over, player);
 }
 
 //attacking — legacy blocking path (CLI) uses fighting_input_loop

@@ -41,6 +41,11 @@ header h1 {
   flex-shrink: 0;
 }
 
+header {
+  width: 100%;
+  text-align: center;
+}
+
 .log {
   width: 100%;
   flex: 1;

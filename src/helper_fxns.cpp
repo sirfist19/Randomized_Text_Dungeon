@@ -236,6 +236,9 @@ void clear_()
 		if (g_cli_os_screen_clear_allowed) {
 			shell_clear_screen();
 		} else if (BufferedGameIO* buf = dynamic_cast<BufferedGameIO*>(io)) {
+			// In buffered/web mode, emulate an actual clear by dropping anything
+			// already emitted this step before marking the viewport for clear.
+			buf->clear();
 			buf->request_viewport_clear();
 		}
 		return;
@@ -448,8 +451,9 @@ void winning_screen()
 {
 	clear_();
 	printEquals();
+	io_newline();
 	print("You insert the Dragon Key into the keyhole of the golden doors. As soon as you insert the key a wind rises up around you. You slowly turn the key to the left and hear the sound of the mechanism opening. The carving of the dragon on the door begins to glow and with a click the doors begin to open.");
-	print("\nYou up the steps that lead down to the dungeon and enter the forest you came to right before entering. You look up at the blue sky.");
+	print("\nYou go up the steps that lead down to the dungeon and enter the forest you came to right before entering. You look up at the blue sky.");
 	print("\nYou escaped the dungeon! YOU WIN! CONGRATULATIONS!");
 	printEquals();
 	throw GameWonException();

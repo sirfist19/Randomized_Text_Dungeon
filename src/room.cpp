@@ -216,48 +216,51 @@ static const std::string& pick_random_id(const std::vector<std::string>& ids) {
 
 void room::assign_room_type(depth_tier tier)
 {
-	
-    // 1) Entrance room special-case
-    if (tier == depth_tier::start && depth == 0) {
-        const RoomDef& def = RoomsDB::get("room.entrance"); // choose whatever id you used
-        name = def.name;
-        description = def.description;
-        return;
-    }
-
-    // 2) Build pool of candidate room IDs
-    // You can decide whether "any" rooms should be eligible in near/mid/far pools.
-    // Right now your JSON probably has explicit tiers, so just use the tier pool.
-    const std::string tierStr = tier_to_string(tier);
-
-    std::vector<std::string> candidates = RoomsDB::ids_for_tier(tierStr);
-
-    // Optional: also allow "any" tier rooms everywhere except start
-    {
-        std::vector<std::string> anyIds = RoomsDB::ids_for_tier("any");
-        candidates.insert(candidates.end(), anyIds.begin(), anyIds.end());
-    }
-
-    if (candidates.empty()) {
-        // Fail fast with a helpful message
-        throw std::runtime_error("No room candidates found for tier: " + tierStr);
-    }
-
-    // 3) Pick a valid room, preserving your hallway constraint
-    bool valid = false;
     const RoomDef* chosen = nullptr;
 
-    while (!valid) {
-        const std::string& id = pick_random_id(candidates);
-        const RoomDef& def = RoomsDB::get(id);
+    // 1) Entrance room special-case
+    if (tier == depth_tier::start && depth == 0) {
+        chosen = &RoomsDB::get("room.entrance");
+    }
 
-        if (def.name == "Hallway") {
-            valid = can_be_a_hallway();
+    // 2) Build pool of candidate room IDs when not entrance.
+    const std::string tierStr = tier_to_string(tier);
+    if (chosen == nullptr) {
+        std::vector<std::string> candidates;
+
+        if (tier == depth_tier::start && depth > 0) {
+            // Early start-area rooms should be flexible; prefer "any" pool.
+            candidates = RoomsDB::ids_for_tier("any");
+            if (candidates.empty()) {
+                // Safety fallback if no "any" rooms are defined.
+                candidates = RoomsDB::ids_for_tier("start");
+            }
         } else {
-            valid = true;
+            candidates = RoomsDB::ids_for_tier(tierStr);
+            std::vector<std::string> anyIds = RoomsDB::ids_for_tier("any");
+            candidates.insert(candidates.end(), anyIds.begin(), anyIds.end());
         }
 
-        if (valid) chosen = &def;
+        if (candidates.empty()) {
+            // Fail fast with a helpful message
+            throw std::runtime_error("No room candidates found for tier: " + tierStr);
+        }
+
+        // 3) Pick a valid room, preserving your hallway constraint
+        bool valid = false;
+
+        while (!valid) {
+            const std::string& id = pick_random_id(candidates);
+            const RoomDef& def = RoomsDB::get(id);
+
+            if (def.name == "Hallway") {
+                valid = can_be_a_hallway();
+            } else {
+                valid = true;
+            }
+
+            if (valid) chosen = &def;
+        }
     }
 
     // 4) Assign
@@ -374,6 +377,7 @@ std::string room::get_depth_tier_string()
 	switch (tier)
 	{
 	case depth_tier::start:
+		return "Entrance";
 	case depth_tier::near:
 		return "Reception Area";
 	case depth_tier::mid:

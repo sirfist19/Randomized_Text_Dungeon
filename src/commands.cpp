@@ -559,8 +559,19 @@ void commands::game_loop_step(commands* game, bool& game_over, bool& quit_to_tit
 	}
 	if (!res) {
 		bool loop = parseInputVector(game_over, quit_to_title_screen);
-		if (!loop && !quit_to_title_screen && player->is_alive())
+		if (!loop && !quit_to_title_screen && player->is_alive()) {
 			display_cur_room_with_top_bar(player->get_cur_room());
+			room* post_command_room = player->get_cur_room();
+			if (!combat_active_ && post_command_room != nullptr) {
+				std::vector<Enemy*> enemies = post_command_room->get_enemies();
+				if (!enemies.empty()) {
+					combat_start(post_command_room, player);
+					bool still = combat_process_line("", post_command_room, game_over, player);
+					if (game_over || still)
+						return;
+				}
+			}
+		}
 		if (loop)
 			printUnderscore();
 	}

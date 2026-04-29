@@ -316,10 +316,10 @@ bool commands::parseInputVector(bool& game_over, bool& quit_to_title_screen)
 
 	if (DISPLAY_PARSED_INFO)
 	{
-		std::cout << "\nVerb: " << cur_verb << std::endl;
-		std::cout << "Preposition: " << cur_preposition << std::endl;
-		std::cout << "Noun: " << cur_noun << std::endl;
-		std::cout << "Cur obj: " << cur_obj << std::endl;
+		game_out << "\nVerb: " << cur_verb << std::endl;
+		game_out << "Preposition: " << cur_preposition << std::endl;
+		game_out << "Noun: " << cur_noun << std::endl;
+		game_out << "Cur obj: " << cur_obj << std::endl;
 	}
 	
 	return pick_command_fxn(game_over, quit_to_title_screen);//picks the command using the selected verb, noun, and preposition
@@ -347,7 +347,7 @@ bool commands::pick_command_fxn(bool& game_over, bool& quit_to_title_screen)
 			return go(3);
 		}
 		else
-			std::cout << "Direction of the go command not recognized.\n";
+			game_out << "Direction of the go command not recognized.\n";
 		break;
 	case verb_type::clear:
 		clear_();
@@ -388,7 +388,7 @@ bool commands::pick_command_fxn(bool& game_over, bool& quit_to_title_screen)
 		clear_();
 		return false;
 		break;
-	case verb_type::open:
+	case verb_type::open_verb:
 		open();
 		break;
 	case verb_type::hello:
@@ -482,9 +482,9 @@ void commands::intro_cut_scene()
 	//wait(5);
 	print("All of a sudden the two golden doors begin to swing shut. You run towards the entrance, but it's too late. They've already closed. You push the door with all your might, but it won't budge. It looks like you'll need to figure out a way out on your own.");
 	//wait(5);
-	std::cout << "\n";
+	game_out << "\n";
 	player->get_cur_room()->display_exit_information();
-	std::cout << "\n";
+	game_out << "\n";
 	print("TIP: Don't know what to type? Type 'help' for more information.");
 }
 
@@ -492,10 +492,10 @@ void commands::intro_cut_scene()
 void commands::print_all_commands()
 {
 	print("Note: Objects found in rooms are also valid objects.");
-	std::cout << "\nList of all valid verbs: \n";
+	game_out << "\nList of all valid verbs: \n";
 	print_all_verbs();
 
-	std::cout << "\nList of all valid objects: \n";
+	game_out << "\nList of all valid objects: \n";
 	print_all_nouns();
 }
 void commands::print_all_verbs()
@@ -519,5 +519,55 @@ void commands::print_all_nouns()
 	//}
 }
 
+void commands::game_loop_step(commands* game, bool& game_over, bool& quit_to_title_screen, bool& first_time_enter,
+	const std::string& line)
+{
+	(void)game;
+	game_over = !(player->is_alive());
+	if (game_over)
+		return;
+
+	room* cur_room = player->get_cur_room();
+
+	if (!combat_active_) {
+		if (!first_time_enter) {
+			display_cur_room_with_top_bar(cur_room);
+		} else {
+			first_time_enter = false;
+		}
+		std::vector<Enemy*> enemies = cur_room->get_enemies();
+		if (!enemies.empty()) {
+			combat_start(cur_room, player);
+		}
+	}
+
+	if (combat_active_) {
+		bool still = combat_process_line(line, cur_room, game_over, player);
+		if (game_over)
+			return;
+		if (still)
+			return;
+		// Combat consumed this line (including kill); next line is for exploration.
+		return;
+	}
+
+	std::string line_mut = line;
+	cur_player_input = basic_parse(line_mut);
+	turn_to_lower_case(cur_player_input);
+	printUnderscore();
+	bool res = false;
+	store* cur_store = player->get_cur_room()->get_store();
+	if (cur_store != nullptr) {
+		res = store_input(cur_player_input, cur_store);
+	}
+	if (!res) {
+		bool loop = parseInputVector(game_over, quit_to_title_screen);
+		if (loop)
+			printUnderscore();
+	}
+	else {
+		printUnderscore();
+	}
+}
 
 

@@ -1,0 +1,108 @@
+/* Matches C++ MAX_CHAR_PER_LINE (120) — terminal width for wrapped text */
+:root {
+  --game-columns: 120;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: #0f1115;
+  color: #e6e6e6;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 1rem;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+#app {
+  max-width: calc(var(--game-columns) * 1ch);
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+header h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  flex-shrink: 0;
+}
+
+.log {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: auto;
+  background: #141820;
+  border: 1px solid #2a3140;
+  border-radius: 6px;
+  padding: 0.75rem 0;
+  margin: 0 0 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  scrollbar-color: #3d4a63 #141820;
+  scrollbar-width: thin;
+}
+
+.log::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.log::-webkit-scrollbar-track {
+  background: #141820;
+}
+
+.log::-webkit-scrollbar-thumb {
+  background: #3d4a63;
+  border-radius: 5px;
+}
+
+.log::-webkit-scrollbar-thumb:hover {
+  background: #4a5a7a;
+}
+
+.line {
+  margin: 0;
+}
+
+#cmd-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+#cmd-input {
+  flex: 1;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #2a3140;
+  background: #141820;
+  color: inherit;
+}
+
+button {
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #3d4a63;
+  background: #1e2633;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2a3445;
+}

@@ -352,6 +352,23 @@ healthchecksdb
 *.dll
 *.dylib
 
+# This repo: local C++ binaries (Makefile produces these in src/)
+src/http_server
+
+# Clang/GCC makefile dependency stubs
+*.d
+
+# Clangd / Bear (often generated locally; do not commit)
+compile_commands.json
+
+# Vite caches (normally under frontend/, also if tooling runs from repo root)
+.vite/
+
+# Secrets / local env (optional future use)
+.env
+.env.local
+.env.*.local
+
 # Ignore editor and OS files
 .DS_Store
 .vscode/
@@ -362,7 +379,6 @@ dist/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
-Makefile
 
 # Ignore user-specific files
 *.user

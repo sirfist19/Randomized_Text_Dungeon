@@ -48,7 +48,7 @@ class dungeon
 			}
 			//delete stock_room_descriptions;
 
-			//std::cout << rooms_to_give_exits.size();
+			//game_out << rooms_to_give_exits.size();
 			while(!rooms_to_give_exits.empty())//should be empty but if it is not delete everything
 			{
 				rooms_to_give_exits.pop();
@@ -60,7 +60,7 @@ class dungeon
 		}
 		room* get_room(int index)
 		{
-			//std::cout << "Index: " << index<<std::endl;
+			//game_out << "Index: " << index<<std::endl;
 			//rooms[index]->display_room();
 			return rooms[index];
 		}

@@ -1,6 +1,7 @@
 #ifndef object_h
 #define object_h
 #include "constants.h"
+#include "game_errors.h"
 #include <vector>
 #include "helper_fxns.h"
 
@@ -59,12 +60,12 @@ public:
 	virtual void use() 
 	{
 		print("ERROR: You can't use a base class object.");
-		exit(1);
+		throw GameEngineError("invalid object use");
 	}
 	virtual void use(int* cur_room_exits)
 	{
 		print("ERROR: You can't use a base class object.");
-		exit(1);
+		throw GameEngineError("invalid object use");
 	}
 	//init one obj
 	object(std::string name, std::string description):name(name), description(description), amt(1)
@@ -97,7 +98,7 @@ public:
 	virtual std::string get_display_string() = 0;
 	virtual void display_chest()
 	{
-		std::cout << "Key\n";
+		game_out << "Key\n";
 	}
 	virtual std::string identify()
 	{
@@ -128,7 +129,7 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << "Dragon Key";
+		game_out << "Dragon Key";
 	}
 	virtual std::string get_display_string()
 	{
@@ -136,7 +137,7 @@ public:
 	}
 	virtual void display_chest()
 	{
-		std::cout << "Dragon Key\n";
+		game_out << "Dragon Key\n";
 	}
 	virtual std::string identify()
 	{
@@ -177,8 +178,8 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << "Gold x"<<amt;
-		//std::cout << "\tDescription: ";
+		game_out << "Gold x"<<amt;
+		//game_out << "\tDescription: ";
 		//print(description);
 		//print(description);
 	}
@@ -188,7 +189,7 @@ public:
 	}
 	virtual void display_chest()
 	{
-		std::cout << "Gold\n";
+		game_out << "Gold\n";
 	}
 	std::string identify()
 	{
@@ -218,7 +219,7 @@ public:
 	}
 	virtual void display()
 	{
-		std::cout << "Compass";
+		game_out << "Compass";
 	}
 	virtual std::string get_display_string()
 	{
@@ -226,7 +227,7 @@ public:
 	}
 	virtual void display_chest()
 	{
-		std::cout << "Compass\n";
+		game_out << "Compass\n";
 	}
 	std::string identify()
 	{

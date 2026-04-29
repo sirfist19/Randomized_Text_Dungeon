@@ -30,31 +30,31 @@ public:
 	virtual weapon* weapon_by_level(const int& level) = 0;
 
 	virtual void display_attack_info() {
-		std::cout << "Enemy: " << name << "   Level: "<<level<<"\n";
+		game_out << "Enemy: " << name << "   Level: "<<level<<"\n";
 		health->display_health_bar();
-		std::cout << "Status effect: " << status_effect->get_display_str() << "\n";
-		std::cout << "Weapon: " << main_weapon->get_name() 
+		game_out << "Status effect: " << status_effect->get_display_str() << "\n";
+		game_out << "Weapon: " << main_weapon->get_name() 
 				  << " " << main_weapon->get_enchantment_str() << "\n";
-		std::cout << "Defense: " << defense << std::endl;
-		std::cout << "Armor:\n";
+		game_out << "Defense: " << defense << std::endl;
+		game_out << "Armor:\n";
 		if (Helmet != nullptr)
 		{
-			std::cout << "\t- ";
+			game_out << "\t- ";
 			Helmet->display_chest();
 		}
 		if (Chestplate != nullptr)
 		{
-			std::cout << "\t- ";
+			game_out << "\t- ";
 			Chestplate->display_chest();
 		}
 		if (Boots != nullptr)
 		{
-			std::cout << "\t- ";
+			game_out << "\t- ";
 			Boots->display_chest();
 		}
 		if (defense == 0)
-			std::cout << "NONE\n";
-		std::cout << "\n";
+			game_out << "NONE\n";
+		game_out << "\n";
 	}
 	int get_exp() const
 	{

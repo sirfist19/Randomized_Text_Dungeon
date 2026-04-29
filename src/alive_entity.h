@@ -25,7 +25,7 @@ public:
 	}
 	void display_health_bar()
 	{
-		std::cout << "Health: " << health << "/" << max_health << std::endl;
+		game_out << "Health: " << health << "/" << max_health << std::endl;
 	}
 	virtual void kill()//kills the entity
 	{
@@ -213,23 +213,23 @@ public:
 	}
 	void display_armor() const
 	{
-		std::cout << "Armor: \n";
-		std::cout << "\tHelmet: ";
+		game_out << "Armor: \n";
+		game_out << "\tHelmet: ";
 		if (Helmet == nullptr)
-			std::cout << " NONE\n";
+			game_out << " NONE\n";
 		else
 			Helmet->display_chest();
-		std::cout << "\tChestplate: ";
+		game_out << "\tChestplate: ";
 		if (Chestplate == nullptr)
-			std::cout << " NONE\n";
+			game_out << " NONE\n";
 		else
 			Chestplate->display_chest();
-		std::cout << "\tBoots: ";
+		game_out << "\tBoots: ";
 		if (Boots == nullptr)
-			std::cout << " NONE\n";
+			game_out << " NONE\n";
 		else
 			Boots->display_chest();
-		std::cout << std::endl;
+		game_out << std::endl;
 	}
 	virtual void compute_stats()
 	{

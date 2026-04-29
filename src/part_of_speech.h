@@ -9,7 +9,7 @@ enum obj_location
 };
 enum verb_type {
 	verb_none, go, examine, use, take, drop, drink, quit, clear, look,
-	open, jump, hello, inventory, help, list, equip, map
+	open_verb, jump, hello, inventory, help, list, equip, map
 };
 enum preposition_type {
 	preposition_none, in, through, on, off, up, down, above, below, under, over
@@ -47,7 +47,7 @@ public:
 		verb_type_chart["quit"] = verb_type::quit;
 		verb_type_chart["q"] = verb_type::quit;
 		verb_type_chart["clear"] = verb_type::clear;
-		verb_type_chart["open"] = verb_type::open;
+		verb_type_chart["open"] = verb_type::open_verb;
 		verb_type_chart["jump"] = verb_type::jump;
 		verb_type_chart["inventory"] = verb_type::inventory;
 		verb_type_chart["i"] = verb_type::inventory;
@@ -70,7 +70,7 @@ public:
 
 		if (gotVerb == verb_type_chart.end())
 		{
-			//std::cout << "Command not recognized! Please try again.\n";
+			//game_out << "Command not recognized! Please try again.\n";
 			//return true;
 			return verb_type::verb_none;
 		}
@@ -107,7 +107,7 @@ public:
 
 		if (got_preposition == preposition_type_chart.end())
 		{
-			//std::cout << "Command not recognized! Please try again.\n";
+			//game_out << "Command not recognized! Please try again.\n";
 			//return true;
 			return preposition_type::preposition_none;
 		}
@@ -148,7 +148,7 @@ public:
 
 		if (got_noun == noun_type_chart.end())
 		{
-			//std::cout << "Command not recognized! Please try again.\n";
+			//game_out << "Command not recognized! Please try again.\n";
 			//return true;
 			return noun_type::noun_none;
 		}

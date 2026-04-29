@@ -59,7 +59,7 @@ void commands::drink_individual_potion(object* obj_to_drink)
 		player->delete_item_from_inventory(obj_to_drink, 1);
 		player_health->heal(heal_amt);
 		int healed_amt = player_health->get_health() - cur_health;
-		std::cout << "You were healed by " << healed_amt << " health.\n";
+		game_out << "You were healed by " << healed_amt << " health.\n";
 	}
 	else
 	{
@@ -97,7 +97,7 @@ void commands::drop()
 		int amt_to_drop = 1;
 		if (amt > 1)
 		{
-			std::cout << "There are " << amt << " of those in your inventory. How many do you want to drop?";
+			game_out << "There are " << amt << " of those in your inventory. How many do you want to drop?";
 			std::string answer = "0";
 
 			while (!is_number_in_range(answer, 1, amt))
@@ -276,11 +276,11 @@ void commands::equip_armor(armor* obj_to_equip)
 	if (old_armor_piece != nullptr)
 	{
 		player->add_item_to_inventory(old_armor_piece);
-		std::cout << "You equipped " << clone_obj_to_equip->get_name() << " and "<<old_armor_piece->get_name()<<" was placed in your inventory.\n";
+		game_out << "You equipped " << clone_obj_to_equip->get_name() << " and "<<old_armor_piece->get_name()<<" was placed in your inventory.\n";
 	}
 	else
 	{
-		std::cout << "You equipped " << clone_obj_to_equip->get_name() << ".\n";
+		game_out << "You equipped " << clone_obj_to_equip->get_name() << ".\n";
 	}
 	player->compute_stats();
 }
@@ -295,12 +295,12 @@ void commands::equip_weapon(object* obj_to_equip)
 	if (old_weapon->get_name() != "Fists")
 	{
 		player->add_item_to_inventory(old_weapon);
-		std::cout << "You equipped " << obj_to_equip_name <<
+		game_out << "You equipped " << obj_to_equip_name <<
 			" and " << old_weapon->get_name() << " has been placed into you inventory.\n";
 	}
 	else //if the player only had fists before
 	{
-		std::cout << "You equipped " << obj_to_equip_name << ".\n";
+		game_out << "You equipped " << obj_to_equip_name << ".\n";
 	}
 }
 void commands::examine()
@@ -392,17 +392,17 @@ void commands::basic_map()
 	//draw the lines vector to draw the map
 	for (unsigned int i = 0; i < lines.size(); i++)
 	{
-		std::cout << lines[i] << "\n";
+		game_out << lines[i] << "\n";
 	}
 }
 void commands::map(bool& print_all_map)
 {
 	Dungeon->create_sorted_room_coords(print_all_map);//set the coords again for the map adding the one that was just visited
 	std::vector<coord_and_id*> coords = Dungeon->get_sorted_room_coords();
-	//std::cout<<coords.size()<<"\n";
+	//game_out<<coords.size()<<"\n";
 	//for (coord_and_id* coord : coords) {
 	//	coord->coord->display();
-	//	std::cout<<"coord_id: "<<coord->id;
+	//	game_out<<"coord_id: "<<coord->id;
 	//}
 	//add in the connection characters to the coords vector
 	//clear_();
@@ -432,8 +432,8 @@ void commands::map(bool& print_all_map)
 		y = coords[i]->coord->get_y();
 		id = coords[i]->id;
 		room* cur_room = nullptr;
-		//std::cout<<"i: "<<i<<"\n";
-		//std::cout<<"C_x: "<<cursor_x<<", C_y: "<<cursor_y<<", x: "<<x<<", y: "<<y<<"\n";
+		//game_out<<"i: "<<i<<"\n";
+		//game_out<<"C_x: "<<cursor_x<<", C_y: "<<cursor_y<<", x: "<<x<<", y: "<<y<<"\n";
 
 		if ((id != -3) && (id != -4) && (id != -2)) // not a connection and not the exit room
 			cur_room = Dungeon->get_room(id);
@@ -522,7 +522,7 @@ void commands::map(bool& print_all_map)
 	//draw the lines vector to draw the map
 	for (unsigned int i = 0; i < lines.size(); i++)
 	{
-		std::cout << lines[i] << "\n";
+		game_out << lines[i] << "\n";
 	}
 }
 bool commands::go(int index) //returning true doesn't reprint the room info and top bar, returning false does
@@ -551,7 +551,7 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 
 	if (new_room_id == 0)
 	{
-		std::cout << "There is no exit in that direction.\n";
+		game_out << "There is no exit in that direction.\n";
 		return true;
 	}
 	else if (new_room_id == -2)
@@ -562,18 +562,18 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 	else
 	{
 		int new_index = new_room_id;
-		//std::cout << "New index:" <<new_index;
+		//game_out << "New index:" <<new_index;
 		room* player_next_room = Dungeon->get_room(new_index);
 
 		if (player_next_room == nullptr)
 		{
-			std::cout << "It's a nullptr again!";
+			game_out << "It's a nullptr again!";
 		}
 
 		player_next_room->visited_cur_room();
 		player->set_location(player_next_room);
 		
-		std::cout << "Going " << dir_string << "...\n";
+		game_out << "Going " << dir_string << "...\n";
 		wait(2);
 		clear_();
 		return false;//redisplays the room
@@ -581,16 +581,16 @@ bool commands::go(int index) //returning true doesn't reprint the room info and 
 }
 void commands::hello()
 {
-	std::cout << "Hello there! How do you do?";
+	game_out << "Hello there! How do you do?";
 	nl(2);
 	wait(2);
-	std::cout << "Oh wait, I'm not supposed to respond to questions. I'm the omniscient narrator after all; I could give something\naway ... ";
+	game_out << "Oh wait, I'm not supposed to respond to questions. I'm the omniscient narrator after all; I could give something\naway ... ";
 	wait(15);
-	std::cout << "by accident.";
+	game_out << "by accident.";
 	wait(3);
-	std::cout << " That would be bad.";
+	game_out << " That would be bad.";
 	nl(2);
-	std::cout << "Get back to the task at hand! Enter another response...";
+	game_out << "Get back to the task at hand! Enter another response...";
 	nl(1);
 }
 void commands::help()
@@ -621,11 +621,11 @@ void commands::help()
 
 		print("SYNTAX: ");
 		print("When typing a command always use the syntax VERB then an OBJECT.");
-		std::cout << "    NOTE: In certain commands objects are optional.\n\n";
+		game_out << "    NOTE: In certain commands objects are optional.\n\n";
 		print("Example 1: 'examine key'");
-		std::cout << "             VERB   OBJ\n";
+		game_out << "             VERB   OBJ\n";
 		print("Example 2: 'look'");
-		std::cout << "            VERB\n\n";
+		game_out << "            VERB\n\n";
 
 		/*
 		Here is a list of other commands not covered here:
@@ -828,7 +828,7 @@ void commands::jump()
 	}
 	else if ((cur_noun == noun_type::noun_none ) && (cur_preposition == preposition_type::preposition_none))
 	{
-		std::cout << "You jump high into the air, but nothing happens.\n";
+		game_out << "You jump high into the air, but nothing happens.\n";
 	}
 	else if (cur_preposition == preposition_type::preposition_none)
 	{
@@ -845,7 +845,7 @@ void commands::open()
 
 	if ((cur_noun == noun_type::noun_none) && (cur_room_chest != cur_obj))
 	{
-		std::cout << "You can't open nothing. Type an object for the open command.\n";
+		game_out << "You can't open nothing. Type an object for the open command.\n";
 	}
 	else if ((cur_room_chest != nullptr) && (cur_room_chest == cur_obj))
 	{
@@ -857,7 +857,7 @@ void commands::take() //take objects either from the room's items or an open che
 	//the noun is invalid
 	if ((cur_noun == noun_type::noun_none) && (cur_obj == nullptr))
 	{
-		std::cout << "You can't take nothing. Type an object for the take command.\n";
+		game_out << "You can't take nothing. Type an object for the take command.\n";
 		return;
 	}
 

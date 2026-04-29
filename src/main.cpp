@@ -1,44 +1,36 @@
-﻿#include "commands.h" //top level header file
-#include "db/rooms_db.h"
-#include "db/static_objects_db.h"
+#include "game_session.h"
+#include "helper_fxns.h"
+#include "game_io.h"
 
-int main() 
-{
-	bool game_over = false;
-	bool quit_to_title_screen = false;
+#include <iostream>
+#include <string>
 
-	while (!game_over)
-	{
-		RoomsDB::load("../content/rooms.json"); // set the rooms db
-		StaticObjectsDB::load("../content/static_objects.json");
-		//RoomsDB::display();
-		//StaticObjectsDB::display();
-
-		quit_to_title_screen = false;
-		std::string player_name = welcome_screen();
-
-		commands* game = new commands(player_name);
-		dungeon* Dungeon = game->get_dungeon();
-		Player* player = game->get_player();
-		
-
-		bool first_time_enter = true;
-		game->intro_cut_scene();
-		//Dungeon->display_debug();
-		//Dungeon->display_dungeon_info();
-
-		while (!quit_to_title_screen)
-		{
-			game->game_loop(game, game_over, quit_to_title_screen, first_time_enter);
-
-			if (game_over)
-			{
-				game_Over(game_over, quit_to_title_screen);
-			}
-		}
-		//print("Deleting the game.");
-		delete game;
+static void print_step(const StepResult& r) {
+	for (const auto& line : r.output) {
+		std::cout << line << "\n";
 	}
-    
+	if (!r.error.empty()) {
+		std::cerr << "Error: " << r.error << "\n";
+	}
+}
+
+int main()
+{
+	set_wait_fast(false);
+	set_cli_os_screen_clear_allowed(true);
+	set_current_game_io(nullptr);
+
+	GameSession session("");
+	StepResult r = session.bootstrap();
+	print_step(r);
+
+	std::string line;
+	while (!r.session_ended) {
+		std::cout << '>' << std::flush;
+		std::getline(std::cin, line);
+		r = session.step(line);
+		print_step(r);
+	}
+
 	return 0;
 }

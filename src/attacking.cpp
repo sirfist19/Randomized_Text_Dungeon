@@ -10,28 +10,191 @@ bool try_crit(Alive_Entity* attacking_entity);
 
 const int ATTACK_WAIT_SECONDS = 5;
 
-//attacking
+void commands::combat_reset()
+{
+	combat_active_ = false;
+	combat_need_banner_ = false;
+	combat_need_menu_ = false;
+	combat_awaiting_action_ = false;
+	combat_run_awaiting_direction_ = false;
+	combat_enemy_ = nullptr;
+	combat_room_ = nullptr;
+}
+
+bool commands::combat_start(room* cur_room, Player* player)
+{
+	std::vector<Enemy*> enemies = cur_room->get_enemies();
+	if (enemies.empty()) {
+		return false;
+	}
+	combat_enemy_ = enemies[enemies.size() - 1];
+	combat_room_ = cur_room;
+	combat_active_ = true;
+	combat_need_banner_ = true;
+	combat_need_menu_ = true;
+	combat_awaiting_action_ = false;
+	combat_run_awaiting_direction_ = false;
+	return true;
+}
+
+static void display_combat_round_ui(Enemy* enemy, Player* player)
+{
+	enemy->display_attack_info();
+	player->display_attack_info();
+	weapon* player_weapon = player->get_weapon();
+	int base_damage = player_weapon->get_light_damage();
+	int base_hit_rate = player_weapon->get_light_hit_rate();
+	int heavy_damage = player_weapon->get_heavy_damage();
+	int heavy_hit_rate = player_weapon->get_heavy_hit_rate();
+	game_out << "\n";
+	game_out << "1. Heavy Attack (Base Damage: " << heavy_damage << ", Base Hit Rate: " << heavy_hit_rate << ")\n";
+	game_out << "2. Light Attack (Base Damage: "<< base_damage<<", Base Hit Rate: "<<base_hit_rate<<")\n";
+	game_out << "3. Run\n";
+}
+
+// Returns true if combat continues (caller should get another line).
+bool commands::combat_process_line(const std::string& line, room* cur_room, bool& game_over, Player* player)
+{
+	Enemy* enemy = combat_enemy_;
+	if (!enemy || !cur_room) {
+		combat_reset();
+		return false;
+	}
+
+	if (combat_need_banner_) {
+		printUnderscore();
+		game_out << "A " << enemy->get_name() << " appeared and starts attacking you!\n\n";
+		combat_need_banner_ = false;
+	}
+	if (combat_need_menu_) {
+		printEquals();
+		print();
+		display_combat_round_ui(enemy, player);
+		combat_need_menu_ = false;
+		combat_awaiting_action_ = true;
+		if (line.empty()) {
+			return true;
+		}
+		// Same line can be the first combat action (e.g. "2" right after entering combat).
+	}
+
+	if (combat_run_awaiting_direction_) {
+		std::string in = line;
+		turn_to_lower_case(in);
+		bool moved = false;
+		if ((in == "north") || (in == "go north") || (in == "go n") || (in == "n")) {
+			moved = !go(0);
+		} else if ((in == "south") || (in == "go south") || (in == "go s") || (in == "s")) {
+			moved = !go(1);
+		} else if ((in == "east") || (in == "go east") || (in == "go e") || (in == "e")) {
+			moved = !go(2);
+		} else if ((in == "west") || (in == "go west") || (in == "go w") || (in == "w")) {
+			moved = !go(3);
+		} else {
+			game_out << "Direction not not recognized.\n";
+			return true;
+		}
+		combat_run_awaiting_direction_ = false;
+		if (moved) {
+			display_cur_room_with_top_bar(player->get_cur_room());
+			printEquals();
+			print();
+			combat_reset();
+			player->get_status_effect()->reset_status_effect();
+			return false;
+		}
+		display_cur_room_with_top_bar(player->get_cur_room());
+		printEquals();
+		print();
+		return true;
+	}
+
+	if (!combat_awaiting_action_) {
+		combat_need_menu_ = true;
+		return combat_process_line(line, cur_room, game_over, player);
+	}
+
+	std::string usr_text = line;
+	turn_to_lower_case(usr_text);
+
+	std::string valid_heavy_attack_opt[] = { "1", "heavy attack", "heavy" };
+	std::string valid_light_attack_opt[] = { "2", "light attack", "light" };
+	std::string valid_run_opt[] = { "3", "run" };
+
+	bool valid_input = false;
+	bool only_enemy_attacks = false;
+	bool is_player_heavy_attack = false;
+
+	if (str_input_accepted(usr_text, valid_heavy_attack_opt, 3, valid_input)) {
+		is_player_heavy_attack = true;
+		clear_();
+		display_cur_room_with_top_bar(cur_room);
+		printEquals();
+		print();
+		attack(game_over, player, enemy, only_enemy_attacks, is_player_heavy_attack);
+	} else if (str_input_accepted(usr_text, valid_light_attack_opt, 3, valid_input)) {
+		clear_();
+		display_cur_room_with_top_bar(cur_room);
+		printEquals();
+		print();
+		attack(game_over, player, enemy, only_enemy_attacks, is_player_heavy_attack);
+	} else if (str_input_accepted(usr_text, valid_run_opt, 2, valid_input)) {
+		int num = random(1, 100);
+		if (num < RUN_AWAY_CHANCE) {
+			printUnderscore();
+			print("Which direction do you want to run in?");
+			cur_room->display_exit_information();
+			combat_run_awaiting_direction_ = true;
+			combat_awaiting_action_ = false;
+			return true;
+		}
+		only_enemy_attacks = true;
+		attack(game_over, player, enemy, only_enemy_attacks, is_player_heavy_attack);
+	} else {
+		invalid_input();
+		combat_awaiting_action_ = true;
+		return true;
+	}
+
+	if (game_over) {
+		combat_reset();
+		return false;
+	}
+
+	if (!enemy->is_alive()) {
+		std::vector<Enemy*> enemies = cur_room->get_enemies();
+		if (!enemies.empty()) {
+			enemies.pop_back();
+			cur_room->set_enemies(enemies);
+		}
+		combat_reset();
+		player->get_status_effect()->reset_status_effect();
+		return false;
+	}
+
+	combat_need_menu_ = true;
+	combat_awaiting_action_ = false;
+	return true;
+}
+
+//attacking — legacy blocking path (CLI) uses fighting_input_loop
 void commands::fighting(room* cur_room, bool& game_over, Player* player)
 {
-	//fighting stuff
 	std::vector<Enemy*> enemies = cur_room->get_enemies();
 
 	if (!enemies.empty())
 	{
 		bool fighting = true;
-		int index = enemies.size() - 1;
-		Enemy* enemy = enemies[index];//grab the last enemy in the list
+		Enemy* enemy = enemies[enemies.size() - 1];
 
-		//display intial attacking info
 		printUnderscore();
-		std::cout << "A " << enemy->get_name() << " appeared and starts attacking you!\n\n";
+		game_out << "A " << enemy->get_name() << " appeared and starts attacking you!\n\n";
 
 		while (fighting)
 		{
 			printEquals();
 			print();
 
-			//display attacking info
 			enemy->display_attack_info();
 			player->display_attack_info();
 
@@ -40,10 +203,10 @@ void commands::fighting(room* cur_room, bool& game_over, Player* player)
 			int base_hit_rate = player_weapon->get_light_hit_rate();
 			int heavy_damage = player_weapon->get_heavy_damage();
 			int heavy_hit_rate = player_weapon->get_heavy_hit_rate();
-			std::cout << "\n";
-			std::cout << "1. Heavy Attack (Base Damage: " << heavy_damage << ", Base Hit Rate: " << heavy_hit_rate << ")\n";
-			std::cout << "2. Light Attack (Base Damage: "<< base_damage<<", Base Hit Rate: "<<base_hit_rate<<")\n";
-			std::cout << "3. Run\n";
+			game_out << "\n";
+			game_out << "1. Heavy Attack (Base Damage: " << heavy_damage << ", Base Hit Rate: " << heavy_hit_rate << ")\n";
+			game_out << "2. Light Attack (Base Damage: "<< base_damage<<", Base Hit Rate: "<<base_hit_rate<<")\n";
+			game_out << "3. Run\n";
 
 			bool ran_away = false;
 			fighting_input_loop(game_over, player, enemy, ran_away, cur_room);
@@ -64,8 +227,6 @@ void commands::fighting(room* cur_room, bool& game_over, Player* player)
 			}
 		}
 		player->get_status_effect()->reset_status_effect();
-		//player->printTopBar();
-		//player->get_cur_room()->display_room();
 	}
 }
 void commands::fighting_input_loop(bool& game_over, Player* player, 
@@ -132,7 +293,7 @@ void commands::fighting_input_loop(bool& game_over, Player* player,
 					}
 					else
 					{
-						std::cout << "Direction not not recognized.\n";
+						game_out << "Direction not not recognized.\n";
 						return;
 					}
 					display_cur_room_with_top_bar(player->get_cur_room());
@@ -168,7 +329,7 @@ void commands::attack(bool& game_over, Player* player, Enemy* enemy,
 	}
 	else //if only the enemy attacks (coming from not being able to run from the encounter)
 	{
-		std::cout << "You couldn't get away!\n";
+		game_out << "You couldn't get away!\n";
 	}
 
 	attacks(player, enemy, false, false); // enemy attacks
@@ -390,11 +551,11 @@ void print_attack(bool player_attacking, Enemy* enemy, Player* player, int damag
 		std::string player_attack_type = " uses " + player_weapon->get_name() + attack_type_str;
 		if (missed) 
 		{
-			std::cout << player->get_name() << player_attack_type << " but you miss.\n\n";
+			game_out << player->get_name() << player_attack_type << " but you miss.\n\n";
 		}
 		else 
 		{
-			std::cout << player->get_name() << player_attack_type << " for " << damage << " damage.\n\n";
+			game_out << player->get_name() << player_attack_type << " for " << damage << " damage.\n\n";
 		}
 	}
 	else 
@@ -402,11 +563,11 @@ void print_attack(bool player_attacking, Enemy* enemy, Player* player, int damag
 		std::string enemy_attack_type = " uses " + enemy_weapon->get_name() + attack_type_str;
 		if (missed)
 		{
-			std::cout << enemy->get_name() << enemy_attack_type << " but misses.\n\n";
+			game_out << enemy->get_name() << enemy_attack_type << " but misses.\n\n";
 		}
 		else 
 		{
-			std::cout << enemy->get_name() << enemy_attack_type << " for " << damage << " damage.\n\n";
+			game_out << enemy->get_name() << enemy_attack_type << " for " << damage << " damage.\n\n";
 		}
 	}
 	wait(ATTACK_WAIT_SECONDS);
@@ -451,7 +612,7 @@ void enemy_drop_items(Enemy* enemy, Player* player)
 		cur_room->add_item(copy_gold_to_drop);
 	}
 
-	std::cout << "\nYou killed the " << enemy->get_name() << "!\n";
+	game_out << "\nYou killed the " << enemy->get_name() << "!\n";
 	std::vector<object*> to_drop;
 	if (copy_obj_to_drop != nullptr)
 		to_drop.push_back(copy_obj_to_drop);
@@ -463,6 +624,6 @@ void enemy_drop_items(Enemy* enemy, Player* player)
 	print_items(to_drop, before, after);
 
 	int gained_exp = enemy->get_exp();
-	std::cout << "You gained " << gained_exp << "xp points.\n\n";
+	game_out << "You gained " << gained_exp << "xp points.\n\n";
 	player->increase_exp(gained_exp);		
 }

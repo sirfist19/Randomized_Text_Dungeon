@@ -1,4 +1,5 @@
 #include "dungeon.h"
+#include "game_errors.h"
 #include "enemy.h"
 #include <algorithm>
 #include <queue>
@@ -37,7 +38,7 @@ dungeon::dungeon()
 		rooms_to_give_exits.pop();
 
 		create_new_exits(cur_room);
-		//std::cout << "Generated dungeon of size " << rooms.size() << "\n";
+		//game_out << "Generated dungeon of size " << rooms.size() << "\n";
 	}
 
 	//empty the rooms to give exits stack - its not needed anymore
@@ -129,14 +130,14 @@ void dungeon::create_new_exits(room* cur_room)
 			//{
 			//	this->display_debug();
 
-				//std::cout << "---------Displaying a room---------\n";
-				//std::cout << "Current Room: " << cur_room->get_id()<<"\n";
-				//std::cout << "Want a room with index " << index <<std::endl;
+				//game_out << "---------Displaying a room---------\n";
+				//game_out << "Current Room: " << cur_room->get_id()<<"\n";
+				//game_out << "Want a room with index " << index <<std::endl;
 				//if (adj_room != nullptr)
 				//	adj_room->display_room();
 				//else
-				//	std::cout << "Nullptr\n";
-				//std::cout << "-----------------------------------\n";*/
+				//	game_out << "Nullptr\n";
+				//game_out << "-----------------------------------\n";*/
 			//}
 			room* adj_room = find_adj_room(index, cur_room);
 
@@ -193,9 +194,9 @@ void dungeon::display_all_rooms_coords()
 {
 	for (unsigned int i = 0; i < sorted_room_coords.size(); i++)
 	{
-		std::cout << "Room " << sorted_room_coords[i]->id << " with coord ";
+		game_out << "Room " << sorted_room_coords[i]->id << " with coord ";
 		sorted_room_coords[i]->coord->display();
-		std::cout << "\n";
+		game_out << "\n";
 	}
 }
 /*
@@ -509,7 +510,7 @@ room* dungeon::find_adj_room(int& index, room* cur_room) const//finds any adjace
 {
 	if (DEBUG_MODE)
 	{
-		std::cout << "\nIn Room " << cur_room->get_id() << " and have index " << index << "\n";
+		game_out << "\nIn Room " << cur_room->get_id() << " and have index " << index << "\n";
 	}
 	room_coord delta_coord = get_coord(index);
 	room_coord* cur_coord = cur_room->get_coord();
@@ -529,12 +530,12 @@ room* dungeon::find_adj_room(int& index, room* cur_room) const//finds any adjace
 	/*//assert to make sure that no two rooms generated on top of each other
 	if (!no_two_rooms_have_same_coord())
 	{
-		std::cout << "Two rooms are on top of each other\n";
+		game_out << "Two rooms are on top of each other\n";
 		exit(1);
 	}
 	else if (DEBUG_MODE)
 	{
-		std::cout << "No two rooms are on top of each other!";
+		game_out << "No two rooms are on top of each other!";
 	}
 
 	//goes through all the generated rooms and tries to find a room that matches the desired coords
@@ -545,11 +546,11 @@ room* dungeon::find_adj_room(int& index, room* cur_room) const//finds any adjace
 		if (desired_coord.is_equal(*new_room_coord, desired_coord))
 		{
 			if (DEBUG_MODE) {
-				std::cout << "Want ";
+				game_out << "Want ";
 				desired_coord.display();
-				std::cout << "have room " << rooms[i]->get_id() << " with coord";
+				game_out << "have room " << rooms[i]->get_id() << " with coord";
 				new_room_coord->display();
-				std::cout << "\n";
+				game_out << "\n";
 			}
 			return rooms[i];
 		}
@@ -663,8 +664,8 @@ room_coord dungeon::get_coord(int& index) const//uses the room index, to the nor
 	case 3:
 		return room_coord(-1, 0);
 	default:
-		std::cout << "In function dungeon::get_coord(int& index), the index was out of range. Index: " << index;
-		exit(1);
+		game_out << "In function dungeon::get_coord(int& index), the index was out of range. Index: " << index;
+		throw GameEngineError("dungeon::get_coord index out of range");
 	}
 }
 int dungeon::get_opposite_exit(int exit_num)
@@ -676,8 +677,8 @@ int dungeon::get_opposite_exit(int exit_num)
 	case 2: return 3;
 	case 3: return 2;
 	default:
-		std::cout << "exit_num out of range.";
-		exit(1);
+		game_out << "exit_num out of range.";
+		throw GameEngineError("dungeon::get_opposite_exit out of range");
 	}
 }
 void dungeon::display_debug() {
@@ -703,12 +704,12 @@ bool dungeon::no_two_rooms_have_same_coord() const //a debugging fxn
 
 			if ((first->is_equal(*first, *second)) && (first_id != second_id))
 			{
-				std::cout << "\n\nFirst Room:\nID: " << first_id;
-				std::cout << "\nCoord: ";
+				game_out << "\n\nFirst Room:\nID: " << first_id;
+				game_out << "\nCoord: ";
 				first->display();
 
-				std::cout << "\n\nSecond Room:\nID: " << second_id;
-				std::cout << "\nCoord: ";
+				game_out << "\n\nSecond Room:\nID: " << second_id;
+				game_out << "\nCoord: ";
 				second->display();
 
 				return false;

@@ -34,9 +34,25 @@ private:
 	object* cur_obj;//the object the player wants to interact with
 	obj_location cur_obj_orig_location;
 
-	
+	// Step-based combat (HTTP / single-line driver)
+	bool combat_active_ = false;
+	bool combat_need_banner_ = false;
+	bool combat_need_menu_ = false;
+	bool combat_awaiting_action_ = false;
+	bool combat_run_awaiting_direction_ = false;
+	Enemy* combat_enemy_ = nullptr;
+	room* combat_room_ = nullptr;
+
+	void combat_reset();
+	bool combat_start(room* cur_room, Player* player);
+	// Returns true if still in combat (awaiting another line).
+	bool combat_process_line(const std::string& line, room* cur_room, bool& game_over, Player* player);
+
 public:
 	void game_loop(commands* game, bool& game_over, bool& quit_to_title_screen, bool& first_time_enter);
+	// Single exploration command line (after combat resolved for current room).
+	void game_loop_step(commands* game, bool& game_over, bool& quit_to_title_screen, bool& first_time_enter,
+		const std::string& line);
 	
 	commands(std::string player_name);//default constructor
 	~commands();

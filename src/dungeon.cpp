@@ -2,6 +2,7 @@
 #include "game_errors.h"
 #include "enemy.h"
 #include <algorithm>
+#include <climits>
 #include <queue>
 #include <assert.h>
 
@@ -429,7 +430,6 @@ void dungeon::bfs_set_depth() const
 			//don't add to the queue cause no exits
 		}
 	}
-	int k = 0;
 	//go through the stack (set up by the first room)
 	while (!Queue.empty())
 	{

@@ -55,10 +55,8 @@ public:
 		int cur_max_health = health->get_max_health();
 		int desired_max_health = desired_level_info->hp;
 		int change_in_health = desired_max_health - cur_max_health;
-		int old_health = health->get_health();
 		health->increase_max_health(change_in_health);
 		health->heal(change_in_health);
-		int new_health = health->get_health();
 		game_out << "You leveled up to level " << desired_level << " and gained " << change_in_health << " max health points.\n";
 		//game_out << "You were healed by "<<new_health - old_health<<" health points to full health.\n";
 	}

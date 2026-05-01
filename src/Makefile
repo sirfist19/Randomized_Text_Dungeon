@@ -2,7 +2,8 @@
 CXX = g++
 
 # Compiler flags (-I. for third_party/cpp-httplib and local includes)
-CXXFLAGS = -Wno-c++11-extensions --std=c++17 -Wall -I. -Ithird_party
+# GCC does not recognize -Wno-c++11-extensions (Clang-only); omit for portable builds.
+CXXFLAGS = --std=c++17 -Wall -I. -Ithird_party
 
 # Shared objects (no main.cpp / http_server.cpp)
 COMMON_CPP = armor.cpp \

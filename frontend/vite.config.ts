@@ -17,9 +17,9 @@ export default defineConfig(({ mode, command }) => {
 	const env = loadEnv(mode, '.', '');
 
 	return {
-		// Dev: '/' so `npm run dev` stays at http://localhost:5173/
-		// Build: subpath so assets resolve on GitHub Pages project sites
-		base: command === 'serve' ? '/' : GITHUB_PAGES_BASE,
+    // Custom domain is hosted at the root:
+		// https://randomdungeon.aidancini.com/
+		base: '/',
 		server: {
 			proxy: {
 				'/api': {

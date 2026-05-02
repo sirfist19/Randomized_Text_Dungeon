@@ -1,0 +1,10 @@
+# Example Caddy v2 site for api.aidancini.com → http_server on localhost.
+#
+# Do not add Access-Control-* headers in Caddy when the app already sends CORS.
+# Duplicate ACAO from Caddy + http_server breaks browsers ("multiple values").
+#
+# Replace the hostname/port to match your VM; ensure TLS (Caddy handles HTTPS).
+
+api.aidancini.com {
+	reverse_proxy 127.0.0.1:8765
+}

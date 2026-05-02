@@ -78,7 +78,24 @@ const std::string* matched_allowed_origin(const std::vector<std::string>& allowe
 	return nullptr;
 }
 
-void set_acah_headers(httplib::Response& res) {
+// httplib::Response::set_header emplace()s; duplicate keys break CORS in browsers.
+void strip_cors_headers(httplib::Response& res) {
+	static const char* keys[] = {
+		"Access-Control-Allow-Origin", "Access-Control-Allow-Methods",
+		"Access-Control-Allow-Headers", "Access-Control-Max-Age",
+		"Access-Control-Expose-Headers", "Access-Control-Allow-Credentials",
+	};
+	for (const char* k : keys) {
+		res.headers.erase(std::string(k));
+	}
+}
+
+// If allow_origin is null, only non-Origin preflight fields are set (e.g. curl without Origin).
+void apply_cors_headers(httplib::Response& res, const std::string* allow_origin) {
+	strip_cors_headers(res);
+	if (allow_origin != nullptr) {
+		res.set_header("Access-Control-Allow-Origin", *allow_origin);
+	}
 	res.set_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
 	res.set_header("Access-Control-Allow-Headers", "Content-Type");
 	res.set_header("Access-Control-Max-Age", "86400");
@@ -136,8 +153,7 @@ int main(int argc, char* argv[]) {
 		const std::string* origin = matched_allowed_origin(allowed_origins, req);
 		if (origin != nullptr) {
 			res.status = 204;
-			res.set_header("Access-Control-Allow-Origin", *origin);
-			set_acah_headers(res);
+			apply_cors_headers(res, origin);
 			return httplib::Server::HandlerResponse::Handled;
 		}
 		if (req.headers.find("Origin") != req.headers.end()) {
@@ -146,7 +162,7 @@ int main(int argc, char* argv[]) {
 			return httplib::Server::HandlerResponse::Handled;
 		}
 		res.status = 204;
-		set_acah_headers(res);
+		apply_cors_headers(res, nullptr);
 		return httplib::Server::HandlerResponse::Handled;
 	});
 
@@ -157,8 +173,7 @@ int main(int argc, char* argv[]) {
 		}
 		const std::string* origin = matched_allowed_origin(allowed_origins, req);
 		if (origin != nullptr) {
-			res.set_header("Access-Control-Allow-Origin", *origin);
-			set_acah_headers(res);
+			apply_cors_headers(res, origin);
 		}
 	});
 

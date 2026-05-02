@@ -1,6 +1,22 @@
 import './style.css';
 
-const API_BASE = '/api';
+/** Dev: relative `/api` → Vite proxy (see vite.config.ts). Prod: full backend origin + `/api` (set at build time). */
+function resolveApiBase(): string {
+	if (import.meta.env.DEV) {
+		return '/api';
+	}
+	const raw = import.meta.env.VITE_API_BASE_URL as string | undefined;
+	const origin = raw?.trim().replace(/\/+$/, '');
+	if (!origin) {
+		console.error(
+			'[Randomized Text Dungeon] Missing VITE_API_BASE_URL. Set it when running `vite build` (your Oracle API origin, e.g. http://203.0.113.10:8765).'
+		);
+		return '/api';
+	}
+	return `${origin}/api`;
+}
+
+const API_BASE = resolveApiBase();
 const MASTER_COMBAT_WAIT_MS = 1000;
 
 type StepPayload = {

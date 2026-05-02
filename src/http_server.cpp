@@ -14,6 +14,8 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 using json = nlohmann::json;
 
@@ -21,6 +23,66 @@ namespace {
 
 std::mutex g_mutex;
 std::unordered_map<std::string, std::unique_ptr<GameSession>> g_sessions;
+
+std::string trim_whitespace(std::string s) {
+	while (!s.empty() && (s.back() == ' ' || s.back() == '\t' || s.back() == '\r' || s.back() == '\n')) {
+		s.pop_back();
+	}
+	size_t start = 0;
+	while (start < s.size() && (s[start] == ' ' || s[start] == '\t')) {
+		++start;
+	}
+	return s.substr(start);
+}
+
+std::vector<std::string> load_allowed_origins() {
+	const char* env = std::getenv("RTD_ALLOWED_ORIGINS");
+	std::string raw = env ? std::string(env)
+			      : std::string("https://randomdungeon.aidancini.com,http://localhost:5173,"
+					    "http://127.0.0.1:5173");
+	std::vector<std::string> out;
+	size_t pos = 0;
+	while (pos < raw.size()) {
+		size_t comma = raw.find(',', pos);
+		std::string part = trim_whitespace(raw.substr(pos, comma == std::string::npos ? std::string::npos : comma - pos));
+		if (!part.empty()) {
+			out.push_back(std::move(part));
+		}
+		if (comma == std::string::npos) {
+			break;
+		}
+		pos = comma + 1;
+	}
+	return out;
+}
+
+bool cors_relevant_path(const std::string& path) {
+	if (path == "/health") {
+		return true;
+	}
+	return path.rfind("/api/", 0) == 0;
+}
+
+const std::string* matched_allowed_origin(const std::vector<std::string>& allowed,
+					  const httplib::Request& req) {
+	auto it = req.headers.find("Origin");
+	if (it == req.headers.end()) {
+		return nullptr;
+	}
+	const std::string& origin = it->second;
+	for (const std::string& o : allowed) {
+		if (origin == o) {
+			return &o;
+		}
+	}
+	return nullptr;
+}
+
+void set_acah_headers(httplib::Response& res) {
+	res.set_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+	res.set_header("Access-Control-Allow-Headers", "Content-Type");
+	res.set_header("Access-Control-Max-Age", "86400");
+}
 
 std::string make_session_id() {
 	static std::atomic<uint64_t> seq{1};
@@ -59,7 +121,46 @@ int main(int argc, char* argv[]) {
 		port = std::atoi(argv[1]);
 	}
 
+	const std::vector<std::string> allowed_origins = load_allowed_origins();
+
 	httplib::Server svr;
+
+	svr.set_pre_routing_handler([&allowed_origins](const httplib::Request& req,
+						       httplib::Response& res) {
+		if (req.method != "OPTIONS") {
+			return httplib::Server::HandlerResponse::Unhandled;
+		}
+		if (!cors_relevant_path(req.path)) {
+			return httplib::Server::HandlerResponse::Unhandled;
+		}
+		const std::string* origin = matched_allowed_origin(allowed_origins, req);
+		if (origin != nullptr) {
+			res.status = 204;
+			res.set_header("Access-Control-Allow-Origin", *origin);
+			set_acah_headers(res);
+			return httplib::Server::HandlerResponse::Handled;
+		}
+		if (req.headers.find("Origin") != req.headers.end()) {
+			res.status = 403;
+			res.set_content("origin not allowed\n", "text/plain");
+			return httplib::Server::HandlerResponse::Handled;
+		}
+		res.status = 204;
+		set_acah_headers(res);
+		return httplib::Server::HandlerResponse::Handled;
+	});
+
+	svr.set_post_routing_handler([&allowed_origins](const httplib::Request& req,
+							 httplib::Response& res) {
+		if (!cors_relevant_path(req.path)) {
+			return;
+		}
+		const std::string* origin = matched_allowed_origin(allowed_origins, req);
+		if (origin != nullptr) {
+			res.set_header("Access-Control-Allow-Origin", *origin);
+			set_acah_headers(res);
+		}
+	});
 
 	svr.Get("/health", [](const httplib::Request&, httplib::Response& res) {
 		res.status = 200;

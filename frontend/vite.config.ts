@@ -1,10 +1,20 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
-export default defineConfig({
-  server: {
-    proxy: {
-      '/api': 'http://127.0.0.1:8765',
-      '/health': 'http://127.0.0.1:8765',
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, '.', '');
+
+  return {
+    server: {
+      proxy: {
+        '/api': {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+        },
+        '/health': {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+        },
+      },
     },
-  },
+  };
 });
